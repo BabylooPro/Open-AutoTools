@@ -6,7 +6,6 @@ importlib-metadata==7.0.1
 joblib==1.3.2
 Levenshtein==0.25.0
 nltk==3.8.1
--e git+https://github.com/BabylooPro/Open-AutoTools.git@6e2aab9c4c2ee34f30297d091003775651102a51#egg=Open_AutoTools
 platformdirs==4.2.0
 python-dotenv==1.0.1
 python-Levenshtein==0.25.0
