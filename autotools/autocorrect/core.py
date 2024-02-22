@@ -14,7 +14,7 @@ def autocorrect_text(text, language="en"):
     }
     headers = {
         "content-type": "application/json",
-        "X-RapidAPI-Key": os.getenv('RAPIDAPI_REWRITER_API_KEY'), # API KEY FROM ENVIRONMENT VARIABLE
+        "X-RapidAPI-Key": os.getenv('RAPIDAPI_API_KEY'), # API KEY FROM ENVIRONMENT VARIABLE
         "X-RapidAPI-Host": "rewriter-paraphraser-text-changer-multi-language.p.rapidapi.com"
     }
 
