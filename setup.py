@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 # READING REQUIREMENTS FROM FILE
 with open('requirements.txt') as f:
-    required = f.read().splitlines()
+    required = [line for line in f.read().splitlines() if "git+" not in line] # ignore git+ links in requirements if "pip freeze > requirements.txt" generates them
 
 # SETUP CONFIGURATION FOR PACKAGE DISTRIBUTION
 setup(
