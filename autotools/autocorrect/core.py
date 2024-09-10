@@ -1,7 +1,8 @@
 import requests
 import os
+import pyperclip
 
-# AUTOCAPS FUNCTION DEFINITION
+# AUTOCORRECT FUNCTION DEFINITION
 def autocorrect_text(text, language="en"):
     # API CALL TO REWRITER API
     url = "https://rewriter-paraphraser-text-changer-multi-language.p.rapidapi.com/rewrite"
@@ -23,6 +24,11 @@ def autocorrect_text(text, language="en"):
 
     # RETURN REWRITTEN TEXT IF SUCCESSFUL ELSE RETURN ERROR MESSAGE
     if response.status_code == 200:
-        return response.json()['rewrite']
+        corrected_text = response.json()['rewrite']
+
+        # COPY CORRECTED TEXT TO CLIPBOARD
+        pyperclip.copy(corrected_text)
+
+        return corrected_text
     else:
-        return "ERROR: CORRECTION FAILED - " + response.text + response.status_code
+        return "ERROR: CORRECTION FAILED - " + response.text + str(response.status_code)

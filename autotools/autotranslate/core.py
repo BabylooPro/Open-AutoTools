@@ -1,5 +1,6 @@
 import requests
 import os
+import pyperclip
 
 # PARAMETERS API
 BASE_URL = "https://google-translate113.p.rapidapi.com/api/v1/translator/{}"
@@ -20,7 +21,7 @@ def autotranslate_supported_languages():
     return language_codes
 
 
-# FUNCTION TO TRANSLATE TEXT
+# FUNCTION TO TRANSLATE TEXT AND COPY TO CLIPBOARD
 def autotranslate_text(text, language_target):
     endpoint = "text"
     full_url = BASE_URL.format(endpoint)
@@ -30,4 +31,9 @@ def autotranslate_text(text, language_target):
     }
 
     response = requests.post(full_url, data=payload, headers=specific_headers)
-    return response.json()['trans']
+    translated_text = response.json()['trans']
+
+    # COPY TRANSLATED TEXT TO CLIPBOARD
+    pyperclip.copy(translated_text)
+
+    return translated_text
