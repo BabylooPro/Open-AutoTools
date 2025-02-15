@@ -19,5 +19,6 @@ setup(
         autodownload=autotools.cli:autodownload
         autopassword=autotools.cli:autopassword
         autotranslate=autotools.cli:autotranslate
+        autoip=autotools.cli:autoip
     ''',
 )

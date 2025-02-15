@@ -11,6 +11,9 @@ from autotools.password.core import (
 )
 from translate import Translator
 from autotools.autotranslate.core import translate_text, get_supported_languages
+import yt_dlp
+from autotools import downloader, autolower, autocaps, autoip
+import argparse
 
 # CLI FUNCTION DEFINITION
 @click.group()
@@ -140,6 +143,41 @@ def autotranslate(text: str, to: str, from_lang: str, list_languages: bool,
                           copy=copy, detect_lang=detect)
     click.echo(result)
 
+# AUTOIP COMMAND LINE INTERFACE FUNCTION DEFINITION
+@cli.command()
+@click.option('--test', '-t', is_flag=True, help='Run connectivity tests')
+@click.option('--speed', '-s', is_flag=True, help='Run internet speed test')
+@click.option('--monitor', '-m', is_flag=True, help='Monitor network traffic')
+@click.option('--ports', '-p', is_flag=True, help='Check common ports status')
+@click.option('--dns', '-d', is_flag=True, help='Show DNS servers')
+@click.option('--location', '-l', is_flag=True, help='Show IP location info')
+@click.option('--no-ip', '-n', is_flag=True, help='Hide IP addresses display')
+def autoip(test, speed, monitor, ports, dns, location, no_ip):
+    """DISPLAY LOCAL AND PUBLIC IP ADDRESSES"""
+    from autotools import autoip
+    autoip.run(test, speed, monitor, ports, dns, location, no_ip)
+
 # MAIN FUNCTION TO RUN CLI
 if __name__ == '__main__':
     cli()
+
+def download_video(url):
+    try:
+        # CONFIGURE YT-DLP WITH COOKIES AND HEADERS
+        yt_opts = {
+            'cookiefile': '~/cookies.txt',
+            'headers': {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            }
+        }
+        with yt_dlp.YoutubeDL(yt_opts) as ydl:
+            ydl.download([url])
+        return True
+    except Exception as e:
+        print(f"ERROR: {str(e)}")
+        return False
+
+# REMOVE OR COMMENT OUT THE NEW ARGPARSE-BASED MAIN FUNCTION
+# def main():
+#     parser = argparse.ArgumentParser()
+#     ...
