@@ -22,18 +22,24 @@ This command installs all the necessary tools to integrate Open-AutoTools into y
     ```
 
 ### AutoPassword
-- **Description:** Generates secure random passwords with customizable options.
+- **Description:** Generates secure random passwords and encryption keys with customizable options.
 - **Usage:** 
     ```
     ~ ❯ autopassword --length 16
     ~ ❯ autopassword --no-special --length 8
-    ~ ❯ autopassword --no-uppercase --no-numbers
+    ~ ❯ autopassword --gen-key
+    ~ ❯ autopassword --password-key "your-password" --analyze
     ```
 - **Options:**
     - `--length, -l`: Set password length (default: 12)
     - `--no-uppercase`: Exclude uppercase letters
     - `--no-numbers`: Exclude numbers
     - `--no-special`: Exclude special characters
+    - `--min-special`: Minimum number of special characters (default: 1)
+    - `--min-numbers`: Minimum number of numbers (default: 1)
+    - `--gen-key`: Generate a random encryption key
+    - `--password-key`: Generate an encryption key from a password
+    - `--analyze`: Show password strength analysis
 
 These examples demonstrate how the terminal will display the results after executing each command, providing a straightforward way for users to understand the immediate effects of these commands.
 
