@@ -23,3 +23,6 @@ websockets==13.0.1
 yapf==0.40.2
 yt-dlp==2024.8.6
 zipp==3.17.0
+translate==3.6.1
+langdetect==1.0.9
+deep-translator==1.11.4

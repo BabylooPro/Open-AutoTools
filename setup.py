@@ -17,5 +17,6 @@ setup(
         autocaps=autotools.cli:autocaps
         autodownload=autotools.cli:autodownload
         autopassword=autotools.cli:autopassword
+        autotranslate=autotools.cli:autotranslate
     ''',
 )

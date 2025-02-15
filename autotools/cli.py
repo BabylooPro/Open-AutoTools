@@ -8,6 +8,8 @@ from autotools.password.core import (
     generate_encryption_key,
     analyze_password_strength
 )
+from translate import Translator
+from autotools.autotranslate.core import translate_text, get_supported_languages
 
 # CLI FUNCTION DEFINITION
 @click.group()
@@ -101,6 +103,34 @@ def autopassword(length, no_uppercase, no_numbers, no_special,
     # SHOW PASSWORD
     click.echo(f"Generated Password: {password}")
     show_analysis(password, "Password ")
+
+# TRANSLATE COMMAND LINE INTERFACE FUNCTION DEFINITION
+@cli.command()
+@click.argument('text', required=False)
+@click.option('--to', default='en', help='Target language (default: en)')
+@click.option('--from', 'from_lang', help='Source language (default: auto-detect)')
+@click.option('--list-languages', is_flag=True, help='List all supported languages')
+@click.option('--copy', is_flag=True, help='Copy translation to clipboard')
+@click.option('--detect', is_flag=True, help='Show detected source language')
+def autotranslate(text: str, to: str, from_lang: str, list_languages: bool, 
+                  copy: bool, detect: bool):
+    """TRANSLATE TEXT TO SPECIFIED LANGUAGE (AUTO-DETECTS SOURCE LANGUAGE)"""
+    
+    # LIST ALL SUPPORTED LANGUAGES
+    if list_languages:
+        click.echo("\nSupported Languages:")
+        for code, name in get_supported_languages().items():
+            click.echo(f"{code:<8} {name}")
+        return
+    
+    # CHECK IF TEXT IS PROVIDED
+    if not text:
+        click.echo("Error: Please provide text to translate")
+        return
+        
+    result = translate_text(text, to_lang=to, from_lang=from_lang, 
+                          copy=copy, detect_lang=detect)
+    click.echo(result)
 
 # MAIN FUNCTION TO RUN CLI
 if __name__ == '__main__':
