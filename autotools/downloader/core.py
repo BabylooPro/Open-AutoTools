@@ -6,6 +6,7 @@ from tqdm import tqdm
 import yt_dlp
 import platform
 import subprocess
+import json
 
 
 # FUNCTION TO GET DEFAULT DOWNLOAD DIRECTORY
@@ -76,53 +77,91 @@ def download_file(url):
     except requests.exceptions.RequestException as e:
         print(f"Error during file download: {e}")
 
+# FUNCTION TO GET CONSENT FILE PATH
+def get_consent_file_path():
+    """GET PATH TO STORE CONSENT STATUS"""
+    return Path.home() / '.autotools' / 'consent.json'
+
+# FUNCTION TO LOAD CONSENT STATUS
+def load_consent_status():
+    """LOAD SAVED CONSENT STATUS"""
+    consent_file = get_consent_file_path()
+    
+    # CHECK IF CONSENT FILE EXISTS
+    if consent_file.exists():
+        try:
+            with open(consent_file) as f:
+                return json.load(f).get('youtube_consent', False)
+        except:
+            return False
+    return False
+
+# FUNCTION TO SAVE CONSENT STATUS
+def save_consent_status(status):
+    """SAVE CONSENT STATUS"""
+    consent_file = get_consent_file_path()
+    consent_file.parent.mkdir(exist_ok=True)
+    
+    # SAVE CONSENT STATUS TO FILE
+    with open(consent_file, 'w') as f:
+        json.dump({'youtube_consent': status}, f)
+
+# FUNCTION TO GET USER CONSENT WITH INTERACTIVE PROMPT
+def get_user_consent():
+    """GET USER CONSENT WITH INTERACTIVE PROMPT"""
+    print("\n⚠️  Important Notice:")
+    print("This tool will:")
+    print("1. Access your Chrome browser cookies")
+    print("2. Use them to authenticate with YouTube")
+    print("3. Download video content to your local machine")
+    
+    # GET USER CONSENT WITH INTERACTIVE PROMPT
+    while True:
+        response = input("\nDo you consent to these actions? (yes/no): ").lower()
+        if response in ['yes', 'y']:
+            save_consent_status(True)
+            return True
+        elif response in ['no', 'n']:
+            save_consent_status(False)
+            return False
+        print("Please answer 'yes' or 'no'")
+
 
 # FUNCTION TO DOWNLOAD YOUTUBE VIDEOS WITH YT-DLP AND SPECIFIED FORMAT AND QUALITY
-def download_youtube_video(url, file_format='mp4', quality='best'):
-    # First, validate the YouTube URL
-    if not validate_youtube_url(url):
-        print(f"Aborting download: Invalid URL {url}")
-        return
-
-    download_dir = get_default_download_dir()
-
-    video_formats = {
-        '1440p': 'bestvideo[height<=1440]+bestaudio/best[height<=1440]',
-        '1080p': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]',
-        '720p': 'bestvideo[height<=720]+bestaudio/best[height<=720]',
-        '480p': 'bestvideo[height<=480]+bestaudio/best[height<=480]',
-        '360p': 'bestvideo[height<=360]+bestaudio/best[height<=360]',
-        '240p': 'bestvideo[height<=240]+bestaudio/best[height<=240]',
-        'best': 'bestvideo+bestaudio/best'
-    }
-
-    selected_format = video_formats.get(quality, video_formats['best'])
+def download_youtube_video(url, format='mp4', quality='best'):
+    """DOWNLOAD VIDEO WITH CONSENT CHECK"""
+    # CHECK IF CONSENT IS REQUIRED
+    if not load_consent_status():
+        if not get_user_consent():
+            print("\n❌ Download cancelled by user")
+            return False
+    
+    print(f"\n🎥 Downloading video from: {url}")
+    print(f"📋 Format: {format}, Quality: {quality}\n")
 
     ydl_opts = {
-        'format': selected_format if file_format == 'mp4' else 'bestaudio',
-        'outtmpl': str(download_dir / '%(title)s.%(ext)s'),
-        'progress_hooks': [tqdm_progress_hook],
-        'quiet': True,  # SUPPRESS MOST OF YT-DLP OUTPUT EXCEPT PROGRESS
-        'no_warnings': True,  # HIDE WARNINGS
-        'merge_output_format': 'mp4'  # AUTOMATICALLY REMUX TO MP4 IF NEEDED
+        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best' if format == 'mp4' else 'bestaudio[ext=mp3]/best',
+        'quiet': False,
+        'no_warnings': False,
+        'cookiesfrombrowser': ('chrome',),
+        'extractor_args': {'youtube': {'player_client': ['android']}},
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en-us,en;q=0.5',
+            'Sec-Fetch-Mode': 'navigate'
+        },
+        'progress_hooks': [lambda d: print(f"⏳ {d['_percent_str']} of {d.get('_total_bytes_str', 'Unknown size')}") if d['status'] == 'downloading' else None]
     }
-
-    if file_format == 'mp3':
-        ydl_opts['postprocessors'] = [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192'
-        }]
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
-        # AUTOMATICALLY OPEN DOWNLOAD FOLDER AFTER YOUTUBE DOWNLOAD IS COMPLETE
-        open_download_folder(download_dir)
-    except yt_dlp.utils.DownloadError as e:
-        print(f"Error during YouTube download: {e}")
+        print("\n✅ Download completed successfully!")
+        return True
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        print(f"\n❌ ERROR: {str(e)}")
+        return False
 
 
 # FUNCTION TO LIST AVAILABLE FORMATS FOR A YOUTUBE VIDEO
