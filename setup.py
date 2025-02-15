@@ -15,6 +15,7 @@ setup(
         [console_scripts]
         autotools=autotools.cli:autotools
         autocaps=autotools.cli:autocaps
+        autolower=autotools.cli:autolower
         autodownload=autotools.cli:autodownload
         autopassword=autotools.cli:autopassword
         autotranslate=autotools.cli:autotranslate

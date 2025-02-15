@@ -2,6 +2,7 @@ import os
 import click
 import base64
 from autotools.autocaps.core import autocaps_transform
+from autotools.autolower.core import autolower_transform
 from autotools.downloader.core import download_youtube_video, download_file
 from autotools.password.core import (
     generate_password,
@@ -27,6 +28,13 @@ def autotools():
 @click.argument('text')
 def autocaps(text):
     result = autocaps_transform(text)
+    click.echo(result)
+
+# AUTOLOWER CASE COMMAND LINE INTERFACE FUNCTION DEFINITION
+@cli.command()
+@click.argument('text')
+def autolower(text):
+    result = autolower_transform(text)
     click.echo(result)
 
 # AUTODOWNLOAD COMMAND LINE INTERFACE FUNCTION DEFINITION
