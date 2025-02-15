@@ -4,6 +4,10 @@ Open-AutoTools is an innovative project developed in Python, specifically design
 
 https://github.com/BabylooPro/Open-AutoTools/assets/35376790/d57f2b9d-55f8-4368-bb40-c0010eb9d49a
 
+## General Usage
+
+Open-AutoTools is designed to be used as a set of CLI commands, making its features directly accessible from the user's terminal.
+
 ## Installation
 
 To install Open-AutoTools, use the following command in your terminal: `pip install open-autotools`
@@ -22,6 +26,18 @@ This command installs all the necessary tools to integrate Open-AutoTools into y
 - **Output:**
   ```
   YOUR TEXT HERE.
+  ```
+
+### AutoLower
+
+- **Description:** Converts any text entered by the user to lowercase.
+- **Usage:**
+  ```
+  ~ ❯ autolower "Your text here."
+  ```
+- **Output:**
+  ```
+  your text here.
   ```
 
 ### AutoPassword
@@ -73,22 +89,6 @@ These examples demonstrate how the terminal will display the results after execu
   - `--copy`: Copy translation to clipboard
   - `--detect`: Show detected source language
   - `--list-languages`: Show all supported language codes and names
-
-## General Usage
-
-Open-AutoTools is designed to be used as a set of CLI commands, making its features directly accessible from the user's terminal.
-
-## Technologies, Frameworks, Libraries, and APIs
-
-- **Programming Language:** Python (3.8 or higher)
-- **Frameworks and Libraries:**
-  - Click (CLI framework)
-  - deep-translator (Translation)
-  - langdetect (Language detection)
-
-## Contributing
-
-This project is a work in progress, and we welcome any contributions that can help improve Open-AutoTools. If you're interested in contributing, please check the project's issues or submit a pull request.
 
 ## License
 
