@@ -125,8 +125,19 @@ def run_speedtest():
         print(f"\nSpeed test failed: {str(e)}")
         return False
 
-def run(test=False, speed=False, monitor=False, ports=False, dns=False, location=False, no_ip=False):
-    """MAIN FUNCTION"""
+def run(test=False, speed=False, monitor=False, interval=1, ports=False, dns=False, location=False, no_ip=False):
+    """MAIN FUNCTION
+    
+    ARGS:
+        test (bool): RUN CONNECTIVITY TESTS
+        speed (bool): RUN SPEED TEST
+        monitor (bool): MONITOR NETWORK TRAFFIC
+        interval (int): MONITORING INTERVAL IN SECONDS
+        ports (bool): CHECK COMMON PORTS
+        dns (bool): SHOW DNS SERVERS
+        location (bool): SHOW LOCATION INFO
+        no_ip (bool): HIDE IP ADDRESSES
+    """
     # GET LOCAL AND PUBLIC IPS
     local = get_local_ips()
     public = get_public_ips()
@@ -203,12 +214,13 @@ def run(test=False, speed=False, monitor=False, ports=False, dns=False, location
             prev_bytes_sent = psutil.net_io_counters().bytes_sent
             prev_bytes_recv = psutil.net_io_counters().bytes_recv
             while True:
-                time.sleep(1)
+                time.sleep(interval)  # USING CUSTOM INTERVAL
                 bytes_sent = psutil.net_io_counters().bytes_sent
                 bytes_recv = psutil.net_io_counters().bytes_recv
                 
-                upload_speed = (bytes_sent - prev_bytes_sent) / 1024  # KB/s
-                download_speed = (bytes_recv - prev_bytes_recv) / 1024  # KB/s
+                # CALCULATE SPEEDS BASED ON INTERVAL
+                upload_speed = (bytes_sent - prev_bytes_sent) / (1024 * interval)  # KB/s
+                download_speed = (bytes_recv - prev_bytes_recv) / (1024 * interval)  # KB/s
                 
                 print(f"\rUp: {upload_speed:.2f} KB/s | Down: {download_speed:.2f} KB/s", end='')
                 
