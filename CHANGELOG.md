@@ -7,6 +7,11 @@ All notable changes to Open-AutoTools will be documented in this file.
 ### Added
 
 - Added AutoSpell command for spell checking and correction in multiple languages
+- Added flag --version to show current version and check for updates
+
+### Changed
+
+- Improved all tools flag --help message with better formatting
 
 ## [0.0.2.post2] - 2025-02-16
 
