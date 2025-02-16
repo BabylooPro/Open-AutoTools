@@ -33,8 +33,15 @@ jobs:
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git checkout master
-          git commit -am "updated: version to ${{ github.ref_name }}"
-          git push origin master
+
+          # Check if there are changes to commit
+          if git diff --quiet; then
+            echo "No changes to commit"
+            exit 0
+          else
+            git commit -am "updated: version to ${{ github.ref_name }}"
+            git push origin master
+          fi
 
   create-release:
     needs: update-version
