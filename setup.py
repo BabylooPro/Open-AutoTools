@@ -80,4 +80,12 @@ setup(
         autoip=autotools.cli:autoip
         autospell=autotools.cli:autospell
     ''',
+    
+    # TEST REQUIREMENTS
+    extras_require={
+        'test': [
+            'pytest>=7.4.0',
+            'pytest-cov>=4.1.0',
+        ],
+    },
 )
