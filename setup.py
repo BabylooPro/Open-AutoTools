@@ -44,7 +44,7 @@ required = [
 # SETUP CONFIGURATION FOR PACKAGE DISTRIBUTION
 setup(
     name='Open-AutoTools',
-    version='0.0.2.post1',
+    version='0.0.2.post2',
     packages=find_packages(),
     include_package_data=True,
     install_requires=required,
