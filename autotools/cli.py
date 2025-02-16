@@ -5,7 +5,11 @@ import json as json_module
 import pkg_resources
 from autotools.autocaps.core import autocaps_transform
 from autotools.autolower.core import autolower_transform
-from autotools.autodownload.core import download_youtube_video, download_file
+from autotools.autodownload.core import (
+    download_youtube_video,
+    download_file,
+    validate_youtube_url
+)
 from autotools.autopassword.core import (
     generate_password,
     generate_encryption_key,
@@ -160,6 +164,10 @@ def autodownload(url, format, quality):
     Supports YouTube video download with quality selection and format conversion (mp4/mp3).
     For non-YouTube URLs, downloads the file directly."""
     if "youtube.com" in url or "youtu.be" in url:
+        # VALIDATE YOUTUBE URL FIRST
+        if not validate_youtube_url(url):
+            click.echo("Invalid YouTube URL", err=True)
+            sys.exit(1)
         download_youtube_video(url, format, quality)
     else:
         download_file(url)
@@ -452,24 +460,11 @@ def test(unit, integration, no_cov, html, module):
     test_path = 'autotools'
     if module:
         if unit and not integration:
-            cmd.append(f'autotools/{module}/tests/test_core.py')
+            cmd.append(f'autotools/{module}/tests/test_{module}_core.py')
         elif integration and not unit:
-            cmd.append(f'autotools/{module}/tests/test_integration.py')
+            cmd.append(f'autotools/{module}/tests/test_{module}_integration.py')
         else:
             cmd.append(f'autotools/{module}/tests')
-    else:
-        if unit and not integration:
-            cmd.extend([
-                'autotools/autocaps/tests/test_core.py',
-                'autotools/autolower/tests/test_core.py'
-            ])
-        elif integration and not unit:
-            cmd.extend([
-                'autotools/autocaps/tests/test_integration.py',
-                'autotools/autolower/tests/test_integration.py'
-            ])
-        else:
-            cmd.append('autotools')
     
     # SHOW COMMAND BEING RUN
     click.echo(click.style("\nRunning tests with command:", fg='blue', bold=True))
