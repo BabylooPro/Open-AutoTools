@@ -7,7 +7,7 @@ with open('requirements.txt') as f:
 # SETUP CONFIGURATION FOR PACKAGE DISTRIBUTION
 setup(
     name='Open-AutoTools',
-    version='0.0.1',
+    version='0.0.2',
     packages=find_packages(),
     include_package_data=True,
     install_requires=required,
