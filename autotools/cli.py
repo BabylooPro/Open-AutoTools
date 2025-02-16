@@ -4,7 +4,7 @@ import base64
 import json as json_module
 from autotools.autocaps.core import autocaps_transform
 from autotools.autolower.core import autolower_transform
-from autotools.downloader.core import download_youtube_video, download_file
+from autotools.autodownload.core import download_youtube_video, download_file
 from autotools.password.core import (
     generate_password,
     generate_encryption_key,
@@ -13,7 +13,7 @@ from autotools.password.core import (
 from translate import Translator
 from autotools.autotranslate.core import translate_text, get_supported_languages
 import yt_dlp
-from autotools import downloader, autolower, autocaps, autoip
+from autotools import autodownload, autolower, autocaps, autoip
 import argparse
 from autotools.autospell.core import SpellChecker
 from urllib.parse import urlparse
