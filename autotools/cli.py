@@ -24,15 +24,18 @@ from datetime import datetime
 
 # CLI FUNCTION DEFINITION
 @click.group()
+@click.version_option(package_name='Open-AutoTools')
 def cli():
-    """Autotools is a set of multiple utility tools."""
+    """A suite of automated tools for various tasks.
+    
+    Run 'autotools COMMAND --help' for more information on each command."""
     pass
 
 # AUTOTOOLS COMMAND LINE INTERFACE FUNCTION DEFINITION FOR SHOW HELP MESSAGE
 @cli.command()
-@click.option('--version', '--v', is_flag=True, help='Show version')
+@click.option('--version', '--v', is_flag=True, help='Show version and check for updates')
 def autotools(version):
-    """Autotools is a set of multiple utility tools."""
+    """Display available commands and tool information."""
     if version:
         import pkg_resources
         import requests
@@ -59,7 +62,42 @@ def autotools(version):
                     click.echo(click.style("Run 'pip install --upgrade Open-AutoTools' to update", fg='red'))
         except Exception:
             pass  # SILENTLY IGNORE UPDATE CHECK FAILURES
-    return
+        return
+
+    # SHOW COMMANDS LIST WITH BETTER FORMATTING
+    ctx = click.get_current_context()
+    commands = cli.list_commands(ctx)
+    
+    click.echo(click.style("\nOpen-AutoTools Commands:", fg='blue', bold=True))
+    for cmd in sorted(commands):
+        if cmd != 'autotools':
+            cmd_obj = cli.get_command(ctx, cmd)
+            help_text = cmd_obj.help or cmd_obj.short_help or ''
+            click.echo(f"\n{click.style(cmd, fg='green', bold=True)}")
+            click.echo(f"  {help_text}")
+            
+            # GET OPTIONS FOR EACH COMMAND
+            if hasattr(cmd_obj, 'params'):
+                click.echo(click.style("\n  Options:", fg='yellow'))
+                for param in cmd_obj.params:
+                    if isinstance(param, click.Option):
+                        opts = '/'.join(param.opts)
+                        help_text = param.help or ''
+                        click.echo(f"    {click.style(opts, fg='yellow')}")
+                        click.echo(f"      {help_text}")
+
+    # SHOW USAGE EXAMPLES
+    click.echo(click.style("\nUsage Examples:", fg='blue', bold=True))
+    click.echo("  autotools --help         Show this help message")
+    click.echo("  autotools --version      Show version information")
+    click.echo("  autotools COMMAND        Run a specific command")
+    click.echo("  autotools COMMAND --help Show help for a specific command")
+
+    # CHECK FOR UPDATES
+    update_msg = check_for_updates()
+    if update_msg:
+        click.echo(click.style("\nUpdate Available:", fg='red', bold=True))
+        click.echo(update_msg)
 
 def check_for_updates():
     """CHECK IF AN UPDATE IS AVAILABLE AND RETURN UPDATE MESSAGE IF NEEDED"""
@@ -84,6 +122,7 @@ def check_for_updates():
 @cli.command()
 @click.argument('text')
 def autocaps(text):
+    """Convert text to UPPERCASE."""
     result = autocaps_transform(text)
     click.echo(result)
     
@@ -96,6 +135,7 @@ def autocaps(text):
 @cli.command()
 @click.argument('text')
 def autolower(text):
+    """Convert text to lowercase."""
     result = autolower_transform(text)
     click.echo(result)
     
@@ -107,9 +147,15 @@ def autolower(text):
 # AUTODOWNLOAD COMMAND LINE INTERFACE FUNCTION DEFINITION
 @cli.command()
 @click.argument('url')
-@click.option('--format', type=click.Choice(['mp4', 'mp3'], case_sensitive=False), default='mp4', help='Output file format (mp4 or mp3)')
-@click.option('--quality', type=click.Choice(['best', '1440p', '1080p', '720p', '480p', '360p', '240p'], case_sensitive=False), default='best', help='"Video quality (mp4 only)"')
+@click.option('--format', type=click.Choice(['mp4', 'mp3'], case_sensitive=False), 
+              default='mp4', help='Output file format')
+@click.option('--quality', type=click.Choice(['best', '1440p', '1080p', '720p', '480p', '360p', '240p'], 
+              case_sensitive=False), default='best', help='Video quality (mp4 only)')
 def autodownload(url, format, quality):
+    """Download videos from YouTube or files from any URL.
+    
+    Supports YouTube video download with quality selection and format conversion (mp4/mp3).
+    For non-YouTube URLs, downloads the file directly."""
     if "youtube.com" in url or "youtu.be" in url:
         download_youtube_video(url, format, quality)
     else:
@@ -199,8 +245,7 @@ def autopassword(length, no_uppercase, no_numbers, no_special,
 @click.option('--detect', is_flag=True, help='Show detected source language')
 def autotranslate(text: str, to: str, from_lang: str, list_languages: bool, 
                   copy: bool, detect: bool):
-    """TRANSLATE TEXT TO SPECIFIED LANGUAGE (AUTO-DETECTS SOURCE LANGUAGE)"""
-    
+    """Translate text to specified language."""
     # LIST ALL SUPPORTED LANGUAGES
     if list_languages:
         click.echo("\nSupported Languages:")
@@ -232,7 +277,11 @@ def autotranslate(text: str, to: str, from_lang: str, list_languages: bool,
 @click.option('--location', '-l', is_flag=True, help='Show IP location info')
 @click.option('--no-ip', '-n', is_flag=True, help='Hide IP addresses display')
 def autoip(test, speed, monitor, ports, dns, location, no_ip):
-    """DISPLAY LOCAL AND PUBLIC IP ADDRESSES"""
+    """Display network information and diagnostics.
+    
+    Shows local and public IP addresses, runs network diagnostics,
+    performs speed tests, monitors traffic, checks ports,
+    displays DNS information and provides geolocation data."""
     from autotools import autoip
     autoip.run(test, speed, monitor, ports, dns, location, no_ip)
     update_msg = check_for_updates()
@@ -258,7 +307,11 @@ def autoip(test, speed, monitor, ports, dns, location, no_ip):
     help='Save corrections to file')
 def autospell(texts: tuple, lang: str, fix: bool, copy: bool, list_languages: bool, 
               json: bool, ignore: tuple, interactive: bool, output: str):
-    """CHECK AND FIX SPELLING/GRAMMAR IN TEXT"""
+    """Check and fix text for spelling, grammar, style, and punctuation errors.
+    
+    Provides comprehensive text analysis with support for multiple languages,
+    interactive corrections, and various output formats (text/JSON).
+    Can ignore specific error types: spelling, grammar, style, or punctuation."""
     checker = SpellChecker()
     
     # LIST ALL SUPPORTED LANGUAGES

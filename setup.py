@@ -71,7 +71,7 @@ setup(
     
     entry_points='''
         [console_scripts]
-        autotools=autotools.cli:autotools
+        autotools=autotools.cli:cli
         autocaps=autotools.cli:autocaps
         autolower=autotools.cli:autolower
         autodownload=autotools.cli:autodownload
