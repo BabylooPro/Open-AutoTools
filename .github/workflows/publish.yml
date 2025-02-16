@@ -3,6 +3,7 @@
 # git push origin v1.0.0
 
 name: Publish to PyPI
+run-name: "Release ${{ github.ref_name }}"
 
 on:
   push:
@@ -16,6 +17,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
+          fetch-depth: 0
 
       - name: Update version in setup.py
         run: |
@@ -27,8 +30,9 @@ jobs:
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
+          git checkout main
           git commit -am "updated: version to ${{ github.ref_name }}"
-          git push
+          git push origin main
 
   create-release:
     needs: update-version
