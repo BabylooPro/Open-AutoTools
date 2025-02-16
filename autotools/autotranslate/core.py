@@ -10,7 +10,7 @@ def get_supported_languages() -> dict:
     return dict(sorted(langs.items(), key=lambda x: x[1].lower()))
 
 def translate_text(text: str, to_lang: str = 'en', from_lang: str = None, 
-                  copy: bool = False, detect_lang: bool = False) -> str:
+                  copy: bool = False, detect_lang: bool = False, output: str = None) -> str:
     """TRANSLATE TEXT TO SPECIFIED LANGUAGE
     
     ARGS:
@@ -19,6 +19,7 @@ def translate_text(text: str, to_lang: str = 'en', from_lang: str = None,
         from_lang (str): SOURCE LANGUAGE CODE (DEFAULT: AUTO-DETECT)
         copy (bool): COPY RESULT TO CLIPBOARD
         detect_lang (bool): SHOW DETECTED SOURCE LANGUAGE
+        output (str): PATH TO SAVE TRANSLATION TO FILE
         
     RETURNS:
         str: TRANSLATED TEXT
@@ -33,6 +34,17 @@ def translate_text(text: str, to_lang: str = 'en', from_lang: str = None,
     # COPY TO CLIPBOARD IF REQUESTED
     if copy:
         pyperclip.copy(result)
+    
+    # SAVE TO FILE IF OUTPUT PATH PROVIDED
+    if output:
+        try:
+            with open(output, 'w', encoding='utf-8') as f:
+                if detect_lang:
+                    f.write(f"[Detected: {source_lang}] {result}")
+                else:
+                    f.write(result)
+        except Exception as e:
+            print(f"\nError saving to file: {str(e)}")
     
     # RETURN RESULT WITH DETECTED LANGUAGE IF REQUESTED
     if detect_lang:
