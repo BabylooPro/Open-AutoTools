@@ -5,7 +5,7 @@ import json as json_module
 from autotools.autocaps.core import autocaps_transform
 from autotools.autolower.core import autolower_transform
 from autotools.autodownload.core import download_youtube_video, download_file
-from autotools.password.core import (
+from autotools.autopassword.core import (
     generate_password,
     generate_encryption_key,
     analyze_password_strength
