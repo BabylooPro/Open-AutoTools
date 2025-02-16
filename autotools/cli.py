@@ -2,6 +2,7 @@ import os
 import click
 import base64
 import json as json_module
+import pkg_resources
 from autotools.autocaps.core import autocaps_transform
 from autotools.autolower.core import autolower_transform
 from autotools.autodownload.core import download_youtube_video, download_file
@@ -17,17 +18,67 @@ from autotools import autodownload, autolower, autocaps, autoip
 import argparse
 from autotools.autospell.core import SpellChecker
 from urllib.parse import urlparse
+import requests
+from packaging import version
+from datetime import datetime
 
 # CLI FUNCTION DEFINITION
 @click.group()
 def cli():
-    """Autotools is a set of tools for text capitalization and file downloading."""
+    """Autotools is a set of multiple utility tools."""
     pass
 
 # AUTOTOOLS COMMAND LINE INTERFACE FUNCTION DEFINITION FOR SHOW HELP MESSAGE
 @cli.command()
-def autotools():
+@click.option('--version', '--v', is_flag=True, help='Show version')
+def autotools(version):
+    """Autotools is a set of multiple utility tools."""
+    if version:
+        import pkg_resources
+        import requests
+        from packaging import version
+        from datetime import datetime
+
+        # GET CURRENT VERSION
+        current_version = pkg_resources.get_distribution('Open-AutoTools').version
+        click.echo(f"Open-AutoTools version {current_version}")
+
+        try:
+            # CHECK LATEST VERSION FROM GITHUB API
+            response = requests.get("https://api.github.com/repos/BabylooPro/Open-AutoTools/releases/latest")
+            if response.status_code == 200:
+                data = response.json()
+                latest_version = data["tag_name"].replace("v", "")
+                # PARSE AND FORMAT RELEASE DATE
+                published_date = datetime.strptime(data["published_at"], "%Y-%m-%dT%H:%M:%SZ")
+                formatted_date = published_date.strftime("%B %d, %Y")
+                click.echo(f"Released: {formatted_date}")
+                
+                if version.parse(latest_version) > version.parse(current_version):
+                    click.echo(click.style(f"\nUpdate available: v{latest_version}", fg='red', bold=True))
+                    click.echo(click.style("Run 'pip install --upgrade Open-AutoTools' to update", fg='red'))
+        except Exception:
+            pass  # SILENTLY IGNORE UPDATE CHECK FAILURES
     return
+
+def check_for_updates():
+    """CHECK IF AN UPDATE IS AVAILABLE AND RETURN UPDATE MESSAGE IF NEEDED"""
+    
+    # GET CURRENT VERSION
+    try:
+        current_version = pkg_resources.get_distribution('Open-AutoTools').version
+        
+        # CHECK FOR UPDATES FROM GITHUB API RELEASES PAGE
+        response = requests.get("https://api.github.com/repos/BabylooPro/Open-AutoTools/releases/latest")
+        
+        # CHECK IF RESPONSE IS SUCCESSFUL
+        if response.status_code == 200:
+            latest_version = response.json()["tag_name"].replace("v", "")
+            if version.parse(latest_version) > version.parse(current_version):
+                return f"\nUpdate available: v{latest_version}\nRun 'pip install --upgrade Open-AutoTools' to update"
+    except Exception:
+        pass
+    return None
 
 # AUTOCAPS COMMAND LINE INTERFACE FUNCTION DEFINITION
 @cli.command()
@@ -35,6 +86,11 @@ def autotools():
 def autocaps(text):
     result = autocaps_transform(text)
     click.echo(result)
+    
+    # UPDATE CHECK AT THE END
+    update_msg = check_for_updates()
+    if update_msg:
+        click.echo(update_msg)
 
 # AUTOLOWER CASE COMMAND LINE INTERFACE FUNCTION DEFINITION
 @cli.command()
@@ -42,6 +98,11 @@ def autocaps(text):
 def autolower(text):
     result = autolower_transform(text)
     click.echo(result)
+    
+    # UPDATE CHECK AT THE END
+    update_msg = check_for_updates()
+    if update_msg:
+        click.echo(update_msg)
 
 # AUTODOWNLOAD COMMAND LINE INTERFACE FUNCTION DEFINITION
 @cli.command()
@@ -53,6 +114,11 @@ def autodownload(url, format, quality):
         download_youtube_video(url, format, quality)
     else:
         download_file(url)
+        
+    # UPDATE CHECK AT THE END
+    update_msg = check_for_updates()
+    if update_msg:
+        click.echo(update_msg)
 
 # AUTOPASSWORD COMMAND LINE INTERFACE FUNCTION DEFINITION
 @cli.command()
@@ -117,6 +183,11 @@ def autopassword(length, no_uppercase, no_numbers, no_special,
     # SHOW PASSWORD
     click.echo(f"Generated Password: {password}")
     show_analysis(password, "Password ")
+    
+    # UPDATE CHECK AT THE END
+    update_msg = check_for_updates()
+    if update_msg:
+        click.echo(update_msg)
 
 # TRANSLATE COMMAND LINE INTERFACE FUNCTION DEFINITION
 @cli.command()
@@ -145,6 +216,11 @@ def autotranslate(text: str, to: str, from_lang: str, list_languages: bool,
     result = translate_text(text, to_lang=to, from_lang=from_lang, 
                           copy=copy, detect_lang=detect)
     click.echo(result)
+    
+    # UPDATE CHECK AT THE END
+    update_msg = check_for_updates()
+    if update_msg:
+        click.echo(update_msg)
 
 # AUTOIP COMMAND LINE INTERFACE FUNCTION DEFINITION
 @cli.command()
@@ -159,6 +235,11 @@ def autoip(test, speed, monitor, ports, dns, location, no_ip):
     """DISPLAY LOCAL AND PUBLIC IP ADDRESSES"""
     from autotools import autoip
     autoip.run(test, speed, monitor, ports, dns, location, no_ip)
+    update_msg = check_for_updates()
+    
+    # UPDATE CHECK AT THE END
+    if update_msg:
+        click.echo(update_msg)
 
 # AUTOSPELL COMMAND LINE INTERFACE FUNCTION DEFINITION
 @cli.command()
@@ -266,27 +347,11 @@ def autospell(texts: tuple, lang: str, fix: bool, copy: bool, list_languages: bo
                                 if corr['replacements']:
                                     f.write(f"   Suggestions: {', '.join(corr['replacements'][:3])}\n")
 
+    # UPDATE CHECK AT THE END
+    update_msg = check_for_updates()
+    if update_msg:
+        click.echo(update_msg)
+
 # MAIN FUNCTION TO RUN CLI
 if __name__ == '__main__':
     cli()
-
-def download_video(url):
-    try:
-        # CONFIGURE YT-DLP WITH COOKIES AND HEADERS
-        yt_opts = {
-            'cookiefile': '~/cookies.txt',
-            'headers': {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-            }
-        }
-        with yt_dlp.YoutubeDL(yt_opts) as ydl:
-            ydl.download([url])
-        return True
-    except Exception as e:
-        print(f"ERROR: {str(e)}")
-        return False
-
-# REMOVE OR COMMENT OUT THE NEW ARGPARSE-BASED MAIN FUNCTION
-# def main():
-#     parser = argparse.ArgumentParser()
-#     ...

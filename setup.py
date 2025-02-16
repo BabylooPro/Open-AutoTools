@@ -41,6 +41,7 @@ required = [
     "setuptools>=40.8.0",
     "language-tool-python>=2.7.1",
     "spacy>=3.7.2",
+    "packaging>=23.0",
 ]
 
 # SETUP CONFIGURATION FOR PACKAGE DISTRIBUTION
