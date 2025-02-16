@@ -39,6 +39,8 @@ required = [
     "speedtest-cli>=2.1.3",
     "psutil>=5.9.0",
     "setuptools>=40.8.0",
+    "language-tool-python>=2.7.1",
+    "spacy>=3.7.2",
 ]
 
 # SETUP CONFIGURATION FOR PACKAGE DISTRIBUTION
@@ -75,5 +77,6 @@ setup(
         autopassword=autotools.cli:autopassword
         autotranslate=autotools.cli:autotranslate
         autoip=autotools.cli:autoip
+        autospell=autotools.cli:autospell
     ''',
 )
