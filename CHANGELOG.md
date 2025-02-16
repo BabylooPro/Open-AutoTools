@@ -2,6 +2,12 @@
 
 All notable changes to Open-AutoTools will be documented in this file.
 
+## [0.0.3] - Unreleased
+
+### Added
+
+- Added AutoSpell command for spell checking and correction in multiple languages
+
 ## [0.0.2.post2] - 2025-02-16
 
 ### Added
