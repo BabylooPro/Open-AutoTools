@@ -1,5 +1,7 @@
 import socket
 import requests
+import json
+import ipaddress
 import netifaces
 import time
 import speedtest
@@ -125,106 +127,185 @@ def run_speedtest():
         print(f"\nSpeed test failed: {str(e)}")
         return False
 
-def run(test=False, speed=False, monitor=False, interval=1, ports=False, dns=False, location=False, no_ip=False):
-    """MAIN FUNCTION
-    
-    ARGS:
-        test (bool): RUN CONNECTIVITY TESTS
-        speed (bool): RUN SPEED TEST
-        monitor (bool): MONITOR NETWORK TRAFFIC
-        interval (int): MONITORING INTERVAL IN SECONDS
-        ports (bool): CHECK COMMON PORTS
-        dns (bool): SHOW DNS SERVERS
-        location (bool): SHOW LOCATION INFO
-        no_ip (bool): HIDE IP ADDRESSES
-    """
-    # GET LOCAL AND PUBLIC IPS
-    local = get_local_ips()
-    public = get_public_ips()
-    
-    # DISPLAY IPS IF NOT HIDDEN
-    if not no_ip:
-        print("\nLocal IPs:")
-        if local['ipv4']:
-            for ip in local['ipv4']:
-                print(f"IPv4: {ip}")
-        else:
-            print("IPv4: Not available")
-            
-        if local['ipv6']:
-            for ip in local['ipv6']:
-                print(f"IPv6: {ip}")
-        else:
-            print("IPv6: Not available")
+# GET PUBLIC IP ADDRESS USING IPIFY API
+def get_public_ip():
+    """GET PUBLIC IP ADDRESS USING IPIFY API"""
+    try:
+        response = requests.get('https://api.ipify.org')
+        return response.text
+    except requests.RequestException:
+        # FALLBACK TO ANOTHER SERVICE IF IPIFY FAILS
+        try:
+            response = requests.get('https://api.ipapi.com/api/check')
+            return response.json()['ip']
+        except:
+            return None
+
+# GET LOCAL IP ADDRESS
+def get_local_ip():
+    """GET LOCAL IP ADDRESS"""
+    try:
+        # GET DEFAULT INTERFACE
+        gateways = netifaces.gateways()
+        default_interface = gateways['default'][netifaces.AF_INET][1]
         
-        print("\nPublic IPs:")
-        print(f"IPv4: {public['ipv4'] or 'Not available'}")
-        print(f"IPv6: {public['ipv6'] or 'Not available'}")
+        # GET IP FROM DEFAULT INTERFACE
+        addrs = netifaces.ifaddresses(default_interface)
+        return addrs[netifaces.AF_INET][0]['addr']
+    except:
+        # FALLBACK METHOD
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))
+            ip = s.getsockname()[0]
+            s.close()
+            return ip
+        except:
+            return None
+
+# GET IP INFORMATION USING IPAPI.CO
+def get_ip_info(ip=None):
+    """GET IP INFORMATION USING IPAPI.CO
+    
+    Args:
+        ip (str, optional): IP address to get info for. If None, uses current IP.
+        
+    Returns:
+        dict: Dictionary containing IP information
+        
+    Raises:
+        ValueError: If IP is invalid or private
+    """
+    if ip:
+        # VALIDATE IP
+        try:
+            ip_obj = ipaddress.ip_address(ip)
+            if ip_obj.is_private:
+                raise ValueError("Cannot get info for private IP addresses")
+        except ValueError as e:
+            raise ValueError(f"Invalid IP address: {str(e)}")
+    
+    try:
+        # USE IPAPI.CO FOR IP INFO
+        url = f'https://ipapi.co/{ip}/json' if ip else 'https://ipapi.co/json'
+        response = requests.get(url)
+        data = response.json()
+        
+        if 'error' in data:
+            raise ValueError(f"Error getting IP info: {data['error']}")
+            
+        return data
+    except requests.RequestException as e:
+        raise ValueError(f"Error connecting to IP info service: {str(e)}")
+
+# MAIN FUNCTION TO RUN IP TOOLS
+def run(test=False, speed=False, monitor=False, interval=1, ports=False, dns=False, location=False, no_ip=False):
+    """MAIN FUNCTION TO RUN IP TOOLS
+    
+    Args:
+        test (bool): Run connectivity tests
+        speed (bool): Run speed test
+        monitor (bool): Monitor network traffic
+        interval (int): Monitoring interval in seconds
+        ports (bool): Check common ports status
+        dns (bool): Show DNS servers
+        location (bool): Show IP location info
+        no_ip (bool): Hide IP addresses
+    """
+    output = []
+    
+    # GET IP ADDRESSES IF NOT HIDDEN
+    if not no_ip:
+        local_ips = get_local_ips()
+        public_ips = get_public_ips()
+        
+        output.append("\nLocal IPs:")
+        if local_ips['ipv4']:
+            for ip in local_ips['ipv4']:
+                output.append(f"IPv4: {ip}")
+        else:
+            output.append("IPv4: Not available")
+            
+        if local_ips['ipv6']:
+            for ip in local_ips['ipv6']:
+                output.append(f"IPv6: {ip}")
+        else:
+            output.append("IPv6: Not available")
+        
+        output.append("\nPublic IPs:")
+        output.append(f"IPv4: {public_ips['ipv4'] or 'Not available'}")
+        output.append(f"IPv6: {public_ips['ipv6'] or 'Not available'}")
 
     # RUN CONNECTIVITY TESTS IF REQUESTED
     if test:
-        print("\nConnectivity Tests:")
+        output.append("\nConnectivity Tests:")
         results = test_connectivity()
         for name, success, latency in results:
             status = f"✓ {latency}ms" if success else "✗ Failed"
-            print(f"{name:<15} {status}")
+            output.append(f"{name:<15} {status}")
     
     # RUN SPEED TEST IF REQUESTED
     if speed:
-        run_speedtest()
+        output.append("\nRunning speed test...")
+        if run_speedtest():
+            output.append("Speed test completed successfully")
+        else:
+            output.append("Speed test failed")
     
     # DISPLAY LOCATION INFO IF REQUESTED
     if location:
         try:
-            loc = requests.get('https://ipapi.co/json/').json()
-            print("\nLocation Info:")
-            print(f"City: {loc.get('city', 'Unknown')}")
-            print(f"Region: {loc.get('region', 'Unknown')}")
-            print(f"Country: {loc.get('country_name', 'Unknown')}")
-            print(f"ISP: {loc.get('org', 'Unknown')}")
-        except:
-            print("\nLocation lookup failed")
+            loc = get_ip_info()
+            output.append("\nLocation Info:")
+            output.append(f"City: {loc.get('city', 'Unknown')}")
+            output.append(f"Region: {loc.get('region', 'Unknown')}")
+            output.append(f"Country: {loc.get('country', 'Unknown')}")
+            output.append(f"ISP: {loc.get('org', 'Unknown')}")
+        except Exception as e:
+            output.append(f"\nLocation lookup failed: {str(e)}")
 
     # DISPLAY DNS SERVERS IF REQUESTED
     if dns:
-        print("\nDNS Servers:")
+        output.append("\nDNS Servers:")
         try:
             with open('/etc/resolv.conf', 'r') as f:
                 for line in f:
                     if 'nameserver' in line:
-                        print(f"DNS: {line.split()[1]}")
+                        output.append(f"DNS: {line.split()[1]}")
         except:
-            print("Could not read DNS configuration")
+            output.append("Could not read DNS configuration")
 
     # CHECK COMMON PORTS IF REQUESTED
     if ports:
         common_ports = [80, 443, 22, 21, 25, 3306]
-        print("\nCommon Ports Status (localhost):")
+        output.append("\nCommon Ports Status (localhost):")
         for port in common_ports:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             result = sock.connect_ex(('127.0.0.1', port))
             status = "Open" if result == 0 else "Closed"
-            print(f"Port {port}: {status}")
+            output.append(f"Port {port}: {status}")
             sock.close()
 
     # MONITOR NETWORK TRAFFIC IF REQUESTED
     if monitor:
-        print("\nNetwork Monitor (Press Ctrl+C to stop):")
+        output.append("\nNetwork Monitor (Press Ctrl+C to stop):")
         try:
             prev_bytes_sent = psutil.net_io_counters().bytes_sent
             prev_bytes_recv = psutil.net_io_counters().bytes_recv
             while True:
-                time.sleep(interval)  # USING CUSTOM INTERVAL
+                time.sleep(interval)
                 bytes_sent = psutil.net_io_counters().bytes_sent
                 bytes_recv = psutil.net_io_counters().bytes_recv
                 
-                # CALCULATE SPEEDS BASED ON INTERVAL
-                upload_speed = (bytes_sent - prev_bytes_sent) / (1024 * interval)  # KB/s
-                download_speed = (bytes_recv - prev_bytes_recv) / (1024 * interval)  # KB/s
+                # CALCULATE UPLOAD AND DOWNLOAD SPEEDS
+                upload_speed = (bytes_sent - prev_bytes_sent) / (1024 * interval)
+                download_speed = (bytes_recv - prev_bytes_recv) / (1024 * interval)
                 
-                print(f"\rUp: {upload_speed:.2f} KB/s | Down: {download_speed:.2f} KB/s", end='')
+                output.append(f"\rUp: {upload_speed:.2f} KB/s | Down: {download_speed:.2f} KB/s")
                 
                 prev_bytes_sent = bytes_sent
                 prev_bytes_recv = bytes_recv
         except KeyboardInterrupt:
-            print("\nMonitoring stopped") 
+            output.append("\nMonitoring stopped")
+    
+    return "\n".join(output) 
