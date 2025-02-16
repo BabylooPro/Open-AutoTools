@@ -8,10 +8,18 @@ All notable changes to Open-AutoTools will be documented in this file.
 
 - Added AutoSpell command for spell checking and correction in multiple languages
 - Added flag --version to show current version and check for updates
+- Added file output support for autotranslate command
+- Added custom interval support for network monitoring in autoip
+- Added short command options (-f, -q) for autodownload
+- Added short command options (-u, -n, -s, etc.) for autopassword
 
 ### Changed
 
 - Improved all tools flag --help message with better formatting
+- Enhanced command descriptions for autoip, autodownload and autospell
+- Improved network speed calculations with interval-based metrics
+- Updated autotranslate to support file saving with proper encoding
+- Refactored autoip and autotranslate function calls with named parameters
 
 ## [0.0.2.post2] - 2025-02-16
 
