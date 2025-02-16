@@ -107,6 +107,22 @@ These examples demonstrate how the terminal will display the results after execu
   - `--detect`: Show detected source language
   - `--list-languages`: Show all supported language codes and names
 
+### AutoSpell (unreleased)
+
+- **Description:** Checks and corrects spelling in text with multi-language support.
+- **Usage:**
+  ```
+  ~ ❯ autospell "Your text with misspellings"
+  ~ ❯ autospell --lang fr "Votre texte avec des fautes"
+  ~ ❯ autospell --file document.txt
+  ```
+- **Options:**
+  - `--lang`: Language code (default: en)
+  - `--file`: Input from file
+  - `--copy`: Copy corrected text to clipboard
+  - `--suggest`: Show alternative suggestions
+  - `--interactive`: Interactive correction mode
+
 ### AutoDownload
 
 - **Description:** Downloads videos from YouTube and files from other sources.
