@@ -147,9 +147,9 @@ def autolower(text):
 # AUTODOWNLOAD COMMAND LINE INTERFACE FUNCTION DEFINITION
 @cli.command()
 @click.argument('url')
-@click.option('--format', type=click.Choice(['mp4', 'mp3'], case_sensitive=False), 
+@click.option('--format', '-f', type=click.Choice(['mp4', 'mp3'], case_sensitive=False), 
               default='mp4', help='Output file format')
-@click.option('--quality', type=click.Choice(['best', '1440p', '1080p', '720p', '480p', '360p', '240p'], 
+@click.option('--quality', '-q', type=click.Choice(['best', '1440p', '1080p', '720p', '480p', '360p', '240p'], 
               case_sensitive=False), default='best', help='Video quality (mp4 only)')
 def autodownload(url, format, quality):
     """Download videos from YouTube or files from any URL.
@@ -169,14 +169,14 @@ def autodownload(url, format, quality):
 # AUTOPASSWORD COMMAND LINE INTERFACE FUNCTION DEFINITION
 @cli.command()
 @click.option('--length', '-l', default=12, help='Password length (default: 12)')
-@click.option('--no-uppercase', is_flag=True, help='Exclude uppercase letters')
-@click.option('--no-numbers', is_flag=True, help='Exclude numbers')
-@click.option('--no-special', is_flag=True, help='Exclude special characters')
-@click.option('--min-special', default=1, help='Minimum number of special characters')
-@click.option('--min-numbers', default=1, help='Minimum number of numbers')
-@click.option('--analyze', is_flag=True, help='Analyze password strength')
-@click.option('--gen-key', is_flag=True, help='Generate encryption key')
-@click.option('--password-key', help='Generate key from password')
+@click.option('--no-uppercase', '-u', is_flag=True, help='Exclude uppercase letters')
+@click.option('--no-numbers', '-n', is_flag=True, help='Exclude numbers')
+@click.option('--no-special', '-s', is_flag=True, help='Exclude special characters')
+@click.option('--min-special', '-m', default=1, help='Minimum number of special characters')
+@click.option('--min-numbers', '-d', default=1, help='Minimum number of numbers')
+@click.option('--analyze', '-a', is_flag=True, help='Analyze password strength')
+@click.option('--gen-key', '-g', is_flag=True, help='Generate encryption key')
+@click.option('--password-key', '-p', help='Generate key from password')
 def autopassword(length, no_uppercase, no_numbers, no_special, 
                  min_special, min_numbers, analyze, gen_key, password_key):
     """Generate secure passwords and encryption keys."""
@@ -243,9 +243,14 @@ def autopassword(length, no_uppercase, no_numbers, no_special,
 @click.option('--list-languages', is_flag=True, help='List all supported languages')
 @click.option('--copy', is_flag=True, help='Copy translation to clipboard')
 @click.option('--detect', is_flag=True, help='Show detected source language')
+@click.option('--output', '-o', type=click.Path(), help='Save translation to file')
 def autotranslate(text: str, to: str, from_lang: str, list_languages: bool, 
-                  copy: bool, detect: bool):
-    """Translate text to specified language."""
+                  copy: bool, detect: bool, output: str):
+    """Translate text to specified language.
+    
+    Supports automatic language detection, multiple target languages,
+    clipboard operations and file output. Use --list-languages to see
+    all supported language codes."""
     # LIST ALL SUPPORTED LANGUAGES
     if list_languages:
         click.echo("\nSupported Languages:")
@@ -259,7 +264,7 @@ def autotranslate(text: str, to: str, from_lang: str, list_languages: bool,
         return
         
     result = translate_text(text, to_lang=to, from_lang=from_lang, 
-                          copy=copy, detect_lang=detect)
+                          copy=copy, detect_lang=detect, output=output)
     click.echo(result)
     
     # UPDATE CHECK AT THE END
@@ -272,18 +277,20 @@ def autotranslate(text: str, to: str, from_lang: str, list_languages: bool,
 @click.option('--test', '-t', is_flag=True, help='Run connectivity tests')
 @click.option('--speed', '-s', is_flag=True, help='Run internet speed test')
 @click.option('--monitor', '-m', is_flag=True, help='Monitor network traffic')
+@click.option('--interval', '-i', default=1, help='Monitoring interval in seconds (default: 1)')
 @click.option('--ports', '-p', is_flag=True, help='Check common ports status')
 @click.option('--dns', '-d', is_flag=True, help='Show DNS servers')
 @click.option('--location', '-l', is_flag=True, help='Show IP location info')
 @click.option('--no-ip', '-n', is_flag=True, help='Hide IP addresses display')
-def autoip(test, speed, monitor, ports, dns, location, no_ip):
+def autoip(test, speed, monitor, interval, ports, dns, location, no_ip):
     """Display network information and diagnostics.
     
     Shows local and public IP addresses, runs network diagnostics,
-    performs speed tests, monitors traffic, checks ports,
-    displays DNS information and provides geolocation data."""
+    performs speed tests, monitors traffic with custom intervals,
+    checks ports, displays DNS information and provides geolocation data."""
     from autotools import autoip
-    autoip.run(test, speed, monitor, ports, dns, location, no_ip)
+    autoip.run(test=test, speed=speed, monitor=monitor, interval=interval,
+               ports=ports, dns=dns, location=location, no_ip=no_ip)
     update_msg = check_for_updates()
     
     # UPDATE CHECK AT THE END
