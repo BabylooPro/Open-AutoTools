@@ -59,7 +59,7 @@ jobs:
             --log-cli-level=DEBUG \
             --tb=long \
             -s \
-            autotools/autodownload/tests/test_autodownload_core.py -v
+            -v
         timeout-minutes: 10 # TIMEOUT FOR TEST EXECUTION
 
   update-version:
