@@ -12,6 +12,8 @@ All notable changes to Open-AutoTools will be documented in this file.
 - Added custom interval support for network monitoring in autoip
 - Added short command options (-f, -q) for autodownload
 - Added short command options (-u, -n, -s, etc.) for autopassword
+- Added test infrastructure with pytest configuration and base test files
+- Added comprehensive test suite for autocaps, autolower, autoip, autopassword and autodownload with 100% coverage
 
 ### Changed
 
@@ -20,6 +22,7 @@ All notable changes to Open-AutoTools will be documented in this file.
 - Improved network speed calculations with interval-based metrics
 - Updated autotranslate to support file saving with proper encoding
 - Refactored autoip and autotranslate function calls with named parameters
+- Enhanced autoip core functionality with better error handling and documentation
 
 ## [0.0.2.post2] - 2025-02-16
 
