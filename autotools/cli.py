@@ -3,6 +3,7 @@ import click
 import base64
 import json as json_module
 from importlib.metadata import version as get_version, PackageNotFoundError
+from packaging.version import parse as parse_version
 from autotools.autocaps.core import autocaps_transform
 from autotools.autolower.core import autolower_transform
 from autotools.autodownload.core import (
@@ -23,7 +24,6 @@ import argparse
 from autotools.autospell.core import SpellChecker
 from urllib.parse import urlparse
 import requests
-import semantic_version
 from datetime import datetime
 import pytest
 import sys
@@ -32,40 +32,6 @@ from dotenv import load_dotenv
 
 # LOAD ENVIRONMENT VARIABLES FROM .ENV FILE
 load_dotenv()
-
-def normalize_version(version_str):
-    """NORMALIZE VERSION STRING FOR COMPARISON"""
-    # REMOVE V PREFIX IF ANY
-    version_str = version_str.lower().replace('v', '')
-    
-    # SPLIT VERSION AND POST RELEASE
-    version_parts = version_str.split('post')
-    base_version = version_parts[0].rstrip('.')  # REMOVE TRAILING DOTS
-    post_num = 0 if len(version_parts) == 1 else int(version_parts[1])
-    
-    # SPLIT BASE VERSION INTO PARTS AND CONVERT TO INT
-    parts = []
-    for part in base_version.split('.'):
-        if part.strip():  # ONLY ADD NON-EMPTY PARTS
-            parts.append(int(part))
-    
-    # ENSURE AT LEAST 3 PARTS (MAJOR.MINOR.PATCH)
-    while len(parts) < 3:
-        parts.append(0)
-        
-    # ADDING POST VERSION AS FOURTH ELEMENT
-    parts.append(post_num)
-    
-    return parts
-
-# GET GITHUB API HEADERS WITH TOKEN IF AVAILABLE
-def get_github_headers():
-    """GET GITHUB API HEADERS WITH TOKEN IF AVAILABLE"""
-    headers = {'Accept': 'application/vnd.github.v3+json'}
-    token = os.getenv('GIT_PAT')
-    if token:
-        headers['Authorization'] = f'token {token}'
-    return headers
 
 # VERSION CALLBACK
 def print_version(ctx, param, value):
@@ -81,41 +47,51 @@ def print_version(ctx, param, value):
         click.echo(f"Open-AutoTools version {pkg_version}")
 
         try:
-            # CHECK LATEST VERSION FROM GITHUB API
-            headers = get_github_headers()
-            response = requests.get(
-                "https://api.github.com/repos/BabylooPro/Open-AutoTools/releases/latest",
-                headers=headers
-            )
+            # CHECK IF PACKAGE IS FROM TESTPYPI
+            is_testpypi = False
+            try:
+                import pkg_resources
+                dist = pkg_resources.get_distribution('Open-AutoTools')
+                is_testpypi = 'test.pypi.org' in dist.location
+            except:
+                pass
+
+            # DETERMINE PYPI URL BASED ON SOURCE
+            pypi_url = "https://test.pypi.org/pypi/Open-AutoTools/json" if is_testpypi else "https://pypi.org/pypi/Open-AutoTools/json"
+            
+            # CHECK LATEST VERSION FROM PYPI
+            response = requests.get(pypi_url)
             if response.status_code == 200:
                 data = response.json()
-                latest_version = data["tag_name"].replace("v", "")
-                # PARSE AND FORMAT RELEASE DATE
-                published_date = datetime.strptime(data["published_at"], "%Y-%m-%dT%H:%M:%SZ")
-                formatted_date = published_date.strftime("%d %B %Y at %H:%M:%S")
-                click.echo(f"Released: {formatted_date}")
+                latest_version = data["info"]["version"]
+                # GET RELEASE DATE
+                releases = data["releases"]
+                if latest_version in releases and releases[latest_version]:
+                    try:
+                        upload_time = releases[latest_version][0]["upload_time"]
+                        # TRY DIFFERENT DATE FORMATS
+                        try:
+                            published_date = datetime.strptime(upload_time, "%Y-%m-%dT%H:%M:%S")
+                        except ValueError:
+                            try:
+                                published_date = datetime.strptime(upload_time, "%Y-%m-%dT%H:%M:%S.%fZ")
+                            except ValueError:
+                                published_date = datetime.strptime(upload_time, "%Y-%m-%d %H:%M:%S")
+                        formatted_date = published_date.strftime("%d %B %Y at %H:%M:%S")
+                        click.echo(f"Released: {formatted_date}")
+                    except Exception:
+                        # IF DATE PARSING FAILS, SKIP SHOWING THE DATE
+                        pass
                 
-                #! DEBUG OUTPUT
-                # click.echo(f"Current version: {pkg_version}")
-                # click.echo(f"Latest version: {latest_version}")
+                # PARSE VERSIONS FOR COMPARISON
+                current_parsed = parse_version(pkg_version)
+                latest_parsed = parse_version(latest_version)
                 
-                #! DEBUG API RESPONSE
-                # click.echo("\nAPI Response:")
-                # click.echo(f"Status code: {response.status_code}")
-                # click.echo(f"Response data: {json_module.dumps(data, indent=2)}")
-                
-                # COMPARE VERSIONS
-                try:
-                    # NORMALIZE VERSIONS FOR COMPARISON
-                    current_parts = normalize_version(pkg_version)
-                    latest_parts = normalize_version(latest_version)
-                    
-                    # COMPARE VERSIONS AND PRINT UPDATE MESSAGE IF NEEDED
-                    if latest_parts > current_parts:
-                        click.echo(click.style(f"\nUpdate available: v{latest_version}", fg='red', bold=True))
-                        click.echo(click.style("Run 'pip install --upgrade Open-AutoTools' to update", fg='red'))
-                except Exception as e:
-                    click.echo(f"Error comparing versions: {str(e)}")
+                # COMPARE VERSIONS AND PRINT UPDATE MESSAGE IF NEEDED
+                if latest_parsed > current_parsed:
+                    update_cmd = "pip install --upgrade -i https://test.pypi.org/simple/ Open-AutoTools" if is_testpypi else "pip install --upgrade Open-AutoTools"
+                    click.echo(click.style(f"\nUpdate available: v{latest_version}", fg='red', bold=True))
+                    click.echo(click.style(f"Run '{update_cmd}' to update", fg='red'))
         except Exception as e:
             click.echo(f"Error checking updates: {str(e)}")
     except PackageNotFoundError:
@@ -182,28 +158,41 @@ def check_for_updates():
     try:
         current_version = get_version('Open-AutoTools')
         
-        # CHECK FOR UPDATES FROM GITHUB API RELEASES PAGE
-        headers = get_github_headers()
-        response = requests.get(
-            "https://api.github.com/repos/BabylooPro/Open-AutoTools/releases/latest",
-            headers=headers
-        )
+        # CHECK IF PACKAGE IS FROM TESTPYPI
+        is_testpypi = False
+        try:
+            # ATTEMPT TO GET PACKAGE METADATA
+            import pkg_resources
+            dist = pkg_resources.get_distribution('Open-AutoTools')
+            is_testpypi = 'test.pypi.org' in dist.location
+        except:
+            pass
+
+        # DETERMINE PYPI URL BASED ON SOURCE
+        pypi_url = "https://test.pypi.org/pypi/Open-AutoTools/json" if is_testpypi else "https://pypi.org/pypi/Open-AutoTools/json"
+        
+        # CHECK FOR UPDATES FROM PYPI
+        response = requests.get(pypi_url)
         
         # CHECK IF RESPONSE IS SUCCESSFUL
         if response.status_code == 200:
-            latest_version = response.json()["tag_name"].replace("v", "")
+            data = response.json()
+            latest_version = data["info"]["version"]
             
-            # NORMALIZE VERSIONS FOR COMPARISON
-            current_parts = normalize_version(current_version)
-            latest_parts = normalize_version(latest_version)
+            # PARSE VERSIONS FOR COMPARISON
+            current_parsed = parse_version(current_version)
+            latest_parsed = parse_version(latest_version)
             
             # PRINT UPDATE MESSAGE IF NEEDED
-            if latest_parts > current_parts:
+            if latest_parsed > current_parsed:
+                update_cmd = "pip install --upgrade -i https://test.pypi.org/simple/ Open-AutoTools" if is_testpypi else "pip install --upgrade Open-AutoTools"
                 return (
                     click.style(f"\nUpdate available: v{latest_version}", fg='red', bold=True) + "\n" +
-                    click.style("Run 'pip install --upgrade Open-AutoTools' to update", fg='red')
+                    click.style(f"Run '{update_cmd}' to update", fg='red')
                 )
-    except Exception:
+    except Exception as e:
+        # FOR DEBUGGING, LOG ERROR
+        print(f"Error checking updates: {str(e)}")
         pass
     return None
 

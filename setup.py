@@ -18,6 +18,7 @@ required = [
     "joblib==1.3.2",
     "Levenshtein==0.25.0",
     "mutagen==1.47.0",
+    "packaging>=23.0",
     "platformdirs==4.2.0",
     "pycryptodomex==3.20.0",
     "pyperclip==1.8.2",
@@ -26,7 +27,6 @@ required = [
     "rapidfuzz==3.6.1",
     "regex==2023.12.25",
     "requests>=2.32.2",
-    "semantic-version>=2.10.0",
     "textblob==0.18.0.post0",
     "tomli==2.0.1",
     "tqdm==4.66.2",
@@ -44,7 +44,6 @@ required = [
     "setuptools>=40.8.0",
     "language-tool-python>=2.7.1",
     "spacy>=3.7.2",
-    "packaging>=23.0",
     "beautifulsoup4>=4.12.0",
 ]
 
