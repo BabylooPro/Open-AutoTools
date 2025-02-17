@@ -13,7 +13,7 @@ required = [
     "click==8.1.3",
     "cryptography==42.0.2",
     "idna==3.6",
-    "importlib-metadata==7.0.1",
+    "importlib-metadata>=7.0.1",
     "joblib==1.3.2",
     "Levenshtein==0.25.0",
     "mutagen==1.47.0",

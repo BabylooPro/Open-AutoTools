@@ -2,7 +2,7 @@ import os
 import click
 import base64
 import json as json_module
-import pkg_resources
+from importlib.metadata import version, PackageNotFoundError
 from autotools.autocaps.core import autocaps_transform
 from autotools.autolower.core import autolower_transform
 from autotools.autodownload.core import (
@@ -44,31 +44,29 @@ def cli():
 def autotools(version):
     """Display available commands and tool information."""
     if version:
-        import pkg_resources
-        import requests
-        from packaging import version
-        from datetime import datetime
-
-        # GET CURRENT VERSION
-        current_version = pkg_resources.get_distribution('Open-AutoTools').version
-        click.echo(f"Open-AutoTools version {current_version}")
-
         try:
-            # CHECK LATEST VERSION FROM GITHUB API
-            response = requests.get("https://api.github.com/repos/BabylooPro/Open-AutoTools/releases/latest")
-            if response.status_code == 200:
-                data = response.json()
-                latest_version = data["tag_name"].replace("v", "")
-                # PARSE AND FORMAT RELEASE DATE
-                published_date = datetime.strptime(data["published_at"], "%Y-%m-%dT%H:%M:%SZ")
-                formatted_date = published_date.strftime("%B %d, %Y")
-                click.echo(f"Released: {formatted_date}")
-                
-                if version.parse(latest_version) > version.parse(current_version):
-                    click.echo(click.style(f"\nUpdate available: v{latest_version}", fg='red', bold=True))
-                    click.echo(click.style("Run 'pip install --upgrade Open-AutoTools' to update", fg='red'))
-        except Exception:
-            pass  # SILENTLY IGNORE UPDATE CHECK FAILURES
+            # GET CURRENT VERSION
+            current_version = version('Open-AutoTools')
+            click.echo(f"Open-AutoTools version {current_version}")
+
+            try:
+                # CHECK LATEST VERSION FROM GITHUB API
+                response = requests.get("https://api.github.com/repos/BabylooPro/Open-AutoTools/releases/latest")
+                if response.status_code == 200:
+                    data = response.json()
+                    latest_version = data["tag_name"].replace("v", "")
+                    # PARSE AND FORMAT RELEASE DATE
+                    published_date = datetime.strptime(data["published_at"], "%Y-%m-%dT%H:%M:%SZ")
+                    formatted_date = published_date.strftime("%B %d, %Y")
+                    click.echo(f"Released: {formatted_date}")
+                    
+                    if version.parse(latest_version) > version.parse(current_version):
+                        click.echo(click.style(f"\nUpdate available: v{latest_version}", fg='red', bold=True))
+                        click.echo(click.style("Run 'pip install --upgrade Open-AutoTools' to update", fg='red'))
+            except Exception:
+                pass  # SILENTLY IGNORE UPDATE CHECK FAILURES
+        except PackageNotFoundError:
+            click.echo("Open-AutoTools version information not available")
         return
 
     # SHOW COMMANDS LIST WITH BETTER FORMATTING
@@ -111,7 +109,7 @@ def check_for_updates():
     
     # GET CURRENT VERSION
     try:
-        current_version = pkg_resources.get_distribution('Open-AutoTools').version
+        current_version = version('Open-AutoTools')
         
         # CHECK FOR UPDATES FROM GITHUB API RELEASES PAGE
         response = requests.get("https://api.github.com/repos/BabylooPro/Open-AutoTools/releases/latest")
