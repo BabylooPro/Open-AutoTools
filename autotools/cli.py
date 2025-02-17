@@ -41,61 +41,61 @@ def print_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
     
-    # GET CURRENT VERSION
     try:
+        # GET CURRENT VERSION
         pkg_version = get_version('Open-AutoTools')
         click.echo(f"Open-AutoTools version {pkg_version}")
 
-        try:
-            # CHECK IF PACKAGE IS FROM TESTPYPI
-            is_testpypi = False
-            try:
-                import pkg_resources
-                dist = pkg_resources.get_distribution('Open-AutoTools')
-                is_testpypi = 'test.pypi.org' in dist.location
-            except:
-                pass
+        # GET DISTRIBUTION INFO
+        import pkg_resources
+        dist = pkg_resources.get_distribution("Open-AutoTools")
+        current_version = parse_version(dist.version)
 
-            # DETERMINE PYPI URL BASED ON SOURCE
-            pypi_url = "https://test.pypi.org/pypi/Open-AutoTools/json" if is_testpypi else "https://pypi.org/pypi/Open-AutoTools/json"
+        # GET LATEST VERSION FROM PYPI
+        pypi_url = "https://pypi.org/pypi/Open-AutoTools/json"
+        response = requests.get(pypi_url)
+        
+        # CHECK IF RESPONSE IS SUCCESSFUL
+        if response.status_code == 200:
+            data = response.json()
+            latest_version = data["info"]["version"]
+            releases = data["releases"]
             
-            # CHECK LATEST VERSION FROM PYPI
-            response = requests.get(pypi_url)
-            if response.status_code == 200:
-                data = response.json()
-                latest_version = data["info"]["version"]
-                # GET RELEASE DATE
-                releases = data["releases"]
-                if latest_version in releases and releases[latest_version]:
-                    try:
-                        upload_time = releases[latest_version][0]["upload_time"]
-                        # TRY DIFFERENT DATE FORMATS
+            # GET RELEASE DATE
+            if latest_version in releases and releases[latest_version]:
+                try:
+                    upload_time = releases[latest_version][0]["upload_time"]
+                    for date_format in [
+                        "%Y-%m-%dT%H:%M:%S",
+                        "%Y-%m-%dT%H:%M:%S.%fZ",
+                        "%Y-%m-%d %H:%M:%S"
+                    ]:
                         try:
-                            published_date = datetime.strptime(upload_time, "%Y-%m-%dT%H:%M:%S")
+                            published_date = datetime.strptime(upload_time, date_format)
+                            formatted_date = published_date.strftime("%d %B %Y at %H:%M:%S")
+                            click.echo(f"Released: {formatted_date}")
+                            break
                         except ValueError:
-                            try:
-                                published_date = datetime.strptime(upload_time, "%Y-%m-%dT%H:%M:%S.%fZ")
-                            except ValueError:
-                                published_date = datetime.strptime(upload_time, "%Y-%m-%d %H:%M:%S")
-                        formatted_date = published_date.strftime("%d %B %Y at %H:%M:%S")
-                        click.echo(f"Released: {formatted_date}")
-                    except Exception:
-                        # IF DATE PARSING FAILS, SKIP SHOWING THE DATE
-                        pass
-                
-                # PARSE VERSIONS FOR COMPARISON
-                current_parsed = parse_version(pkg_version)
-                latest_parsed = parse_version(latest_version)
-                
-                # COMPARE VERSIONS AND PRINT UPDATE MESSAGE IF NEEDED
-                if latest_parsed > current_parsed:
-                    update_cmd = "pip install --upgrade -i https://test.pypi.org/simple/ Open-AutoTools" if is_testpypi else "pip install --upgrade Open-AutoTools"
-                    click.echo(click.style(f"\nUpdate available: v{latest_version}", fg='red', bold=True))
-                    click.echo(click.style(f"Run '{update_cmd}' to update", fg='red'))
-        except Exception as e:
-            click.echo(f"Error checking updates: {str(e)}")
+                            continue
+                except Exception:
+                    pass  # SKIP DATE IF PARSING FAILS
+            
+            # CHECK FOR UPDATES
+            latest_parsed = parse_version(latest_version)
+
+            # COMPARE VERSIONS AND PRINT UPDATE MESSAGE IF NEEDED
+            if latest_parsed > current_version:
+                update_cmd = "pip install --upgrade Open-AutoTools"
+                click.echo(click.style(f"\nUpdate available: v{latest_version}", fg='red', bold=True))
+                click.echo(click.style(f"Run '{update_cmd}' to update", fg='red'))
+
+    except pkg_resources.DistributionNotFound:
+        click.echo("Package distribution not found")
     except PackageNotFoundError:
         click.echo("Open-AutoTools version information not available")
+    except Exception as e:
+        click.echo(f"Error checking updates: {str(e)}")
+    
     ctx.exit()
 
 # CLI FUNCTION DEFINITION
@@ -156,20 +156,12 @@ def check_for_updates():
     
     # GET CURRENT VERSION
     try:
-        current_version = get_version('Open-AutoTools')
-        
-        # CHECK IF PACKAGE IS FROM TESTPYPI
-        is_testpypi = False
-        try:
-            # ATTEMPT TO GET PACKAGE METADATA
-            import pkg_resources
-            dist = pkg_resources.get_distribution('Open-AutoTools')
-            is_testpypi = 'test.pypi.org' in dist.location
-        except:
-            pass
+        import pkg_resources
+        dist = pkg_resources.get_distribution("Open-AutoTools")
+        current_version = parse_version(dist.version)
 
-        # DETERMINE PYPI URL BASED ON SOURCE
-        pypi_url = "https://test.pypi.org/pypi/Open-AutoTools/json" if is_testpypi else "https://pypi.org/pypi/Open-AutoTools/json"
+        # GET LATEST VERSION FROM PYPI
+        pypi_url = "https://pypi.org/pypi/Open-AutoTools/json"
         
         # CHECK FOR UPDATES FROM PYPI
         response = requests.get(pypi_url)
@@ -180,12 +172,11 @@ def check_for_updates():
             latest_version = data["info"]["version"]
             
             # PARSE VERSIONS FOR COMPARISON
-            current_parsed = parse_version(current_version)
             latest_parsed = parse_version(latest_version)
             
             # PRINT UPDATE MESSAGE IF NEEDED
-            if latest_parsed > current_parsed:
-                update_cmd = "pip install --upgrade -i https://test.pypi.org/simple/ Open-AutoTools" if is_testpypi else "pip install --upgrade Open-AutoTools"
+            if latest_parsed > current_version:
+                update_cmd = "pip install --upgrade Open-AutoTools"
                 return (
                     click.style(f"\nUpdate available: v{latest_version}", fg='red', bold=True) + "\n" +
                     click.style(f"Run '{update_cmd}' to update", fg='red')
@@ -193,7 +184,7 @@ def check_for_updates():
     except Exception as e:
         # FOR DEBUGGING, LOG ERROR
         print(f"Error checking updates: {str(e)}")
-        pass
+    
     return None
 
 # AUTOCAPS COMMAND LINE INTERFACE FUNCTION DEFINITION
