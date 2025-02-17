@@ -102,6 +102,21 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Previous RC Tag
+        run: |
+          CURRENT_TAG="${{ github.ref_name }}"
+          PREVIOUS_TAG=$(git tag --sort=-v:refname | grep -A 1 "^$CURRENT_TAG$" | tail -n 1)
+          echo "PREVIOUS_TAG=$PREVIOUS_TAG" >> $GITHUB_ENV
+
+      - name: Extract Commit Messages
+        run: |
+          COMMIT_MESSAGES=$(git log --pretty=format:"%s" ${{ env.PREVIOUS_TAG }}..${{ github.ref_name }})
+          echo "COMMIT_MESSAGES<<EOF" >> $GITHUB_ENV
+          echo "$COMMIT_MESSAGES" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Create Release ZIP
         run: |
@@ -129,7 +144,11 @@ jobs:
           files: Open-AutoTools-${{ github.ref_name }}.zip
           tag_name: ${{ github.ref_name }}
           name: Pre-Release ${{ github.ref_name }}
-          body: ${{ env.RELEASE_NOTES }}
+          body: |
+            ${{ env.RELEASE_NOTES }}
+
+            ## Commits since ${{ env.PREVIOUS_TAG }}:
+            ${{ env.COMMIT_MESSAGES }}
           draft: false
           prerelease: true
           generate_release_notes: false
