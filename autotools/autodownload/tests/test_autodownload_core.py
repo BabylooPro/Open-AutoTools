@@ -1,0 +1,163 @@
+import pytest
+from unittest.mock import patch, Mock, mock_open
+from pathlib import Path
+import os
+import platform
+import json
+import shutil
+from autotools.autodownload.core import (
+    get_default_download_dir,
+    get_filename_from_url,
+    validate_youtube_url,
+    download_file,
+    get_consent_file_path,
+    load_consent_status,
+    save_consent_status,
+    get_user_consent,
+    download_youtube_video
+)
+
+# FIXTURES
+@pytest.fixture(autouse=True)
+def cleanup_downloads():
+    """CLEANUP DOWNLOADED FILES AFTER EACH TEST"""
+    # SETUP - CREATE TEMP DOWNLOAD DIR
+    test_download_dir = Path.home() / 'Downloads' / 'test_downloads'
+    test_download_dir.mkdir(parents=True, exist_ok=True)
+    
+    # PATCH DEFAULT DOWNLOAD DIR TO USE TEST DIR
+    with patch('autotools.autodownload.core.get_default_download_dir', return_value=test_download_dir):
+        yield test_download_dir
+    
+    # CLEANUP - REMOVE TEST DIR AND ALL ITS CONTENTS
+    if test_download_dir.exists():
+        shutil.rmtree(test_download_dir)
+
+# CONSENT FILE FIXTURE
+@pytest.fixture(autouse=True)
+def cleanup_consent():
+    """CLEANUP CONSENT FILE AFTER EACH TEST"""
+    # SETUP
+    consent_file = get_consent_file_path()
+    consent_dir = consent_file.parent
+    
+    yield
+    
+    # CLEANUP - USE RMTREE INSTEAD OF UNLINK/RMDIR
+    if consent_dir.exists():
+        shutil.rmtree(consent_dir)
+
+# UNIT TESTS
+
+# TEST FOR DEFAULT DOWNLOAD DIRECTORY RETRIEVAL
+def test_get_default_download_dir():
+    """TEST DEFAULT DOWNLOAD DIRECTORY RETRIEVAL"""
+    with patch.dict('os.environ', {'USERPROFILE': '/users/test'} if os.name == 'nt' else {}):
+        download_dir = get_default_download_dir()
+        assert isinstance(download_dir, Path)
+        assert download_dir.name == 'Downloads'
+
+# TEST FOR FILENAME EXTRACTION FROM URL
+def test_get_filename_from_url():
+    """TEST FILENAME EXTRACTION FROM URL"""
+    # TEST WITH FILENAME IN URL
+    url = 'https://example.com/file.pdf'
+    assert get_filename_from_url(url) == 'file.pdf'
+    
+    # TEST WITHOUT FILENAME
+    url = 'https://example.com/'
+    assert get_filename_from_url(url) == 'downloaded_file'
+    
+    # TEST WITHOUT EXTENSION
+    url = 'https://example.com/file'
+    assert get_filename_from_url(url) == 'file.bin'
+
+# TEST FOR YOUTUBE URL VALIDATION
+@patch('yt_dlp.YoutubeDL')
+def test_validate_youtube_url_valid(mock_ytdl):
+    """TEST YOUTUBE URL VALIDATION - VALID URL"""
+    mock_ytdl.return_value.__enter__.return_value.extract_info.return_value = {}
+    assert validate_youtube_url('https://youtube.com/watch?v=valid') is True
+
+# TEST FOR YOUTUBE URL VALIDATION - INVALID URL
+@patch('yt_dlp.YoutubeDL')
+def test_validate_youtube_url_invalid(mock_ytdl):
+    """TEST YOUTUBE URL VALIDATION - INVALID URL"""
+    mock_ytdl.return_value.__enter__.return_value.extract_info.side_effect = Exception('Invalid URL')
+    assert validate_youtube_url('https://youtube.com/invalid') is False
+
+# TEST FOR FILE DOWNLOAD
+@patch('requests.get')
+@patch('builtins.open', new_callable=mock_open)
+def test_download_file(mock_file, mock_get, cleanup_downloads):
+    """TEST FILE DOWNLOAD"""
+    mock_response = Mock()
+    mock_response.headers.get.return_value = '1024'
+    mock_response.iter_content.return_value = [b'data'] * 4
+    mock_get.return_value.__enter__.return_value = mock_response
+    
+    download_file('https://example.com/file.pdf')
+    mock_file.assert_called()
+    mock_response.iter_content.assert_called()
+
+# TEST FOR CONSENT FILE PATH RETRIEVAL
+def test_get_consent_file_path():
+    """TEST CONSENT FILE PATH"""
+    path = get_consent_file_path()
+    assert isinstance(path, Path)
+    assert path.name == 'consent.json'
+    assert '.autotools' in str(path)
+
+# TEST FOR CONSENT STATUS LOADING - TRUE
+@patch('builtins.open', new_callable=mock_open, read_data='{"youtube_consent": true}')
+def test_load_consent_status_true(mock_file):
+    """TEST CONSENT STATUS LOADING - TRUE"""
+    with patch('pathlib.Path.exists', return_value=True):
+        assert load_consent_status() is True
+
+# TEST FOR CONSENT STATUS LOADING - FALSE
+@patch('builtins.open', new_callable=mock_open, read_data='{"youtube_consent": false}')
+def test_load_consent_status_false(mock_file):
+    """TEST CONSENT STATUS LOADING - FALSE"""
+    assert load_consent_status() is False
+
+# TEST FOR CONSENT STATUS SAVING
+@patch('builtins.open', new_callable=mock_open)
+@patch('json.dump')
+def test_save_consent_status(mock_json_dump, mock_file):
+    """TEST CONSENT STATUS SAVING"""
+    # SETUP
+    consent_dir = Path.home() / '.autotools'
+    with patch.object(Path, 'mkdir') as mock_mkdir:
+        # CALL THE FUNCTION
+        save_consent_status(True)
+        
+        # VERIFY CALLS
+        mock_mkdir.assert_called_once_with(exist_ok=True)
+        mock_file.assert_called_once()
+        mock_json_dump.assert_called_once_with({'youtube_consent': True}, mock_file())
+
+# TEST FOR USER CONSENT - YES
+@patch('builtins.input', return_value='yes')
+def test_get_user_consent_yes(mock_input):
+    """TEST USER CONSENT - YES"""
+    with patch('autotools.autodownload.core.save_consent_status') as mock_save:
+        assert get_user_consent() is True
+        mock_save.assert_called_with(True)
+
+# TEST FOR USER CONSENT - NO
+@patch('builtins.input', return_value='no')
+def test_get_user_consent_no(mock_input):
+    """TEST USER CONSENT - NO"""
+    with patch('autotools.autodownload.core.save_consent_status') as mock_save:
+        assert get_user_consent() is False
+        mock_save.assert_called_with(False)
+
+# TEST FOR YOUTUBE VIDEO DOWNLOAD   
+@patch('yt_dlp.YoutubeDL')
+def test_download_youtube_video(mock_ytdl):
+    """TEST YOUTUBE VIDEO DOWNLOAD"""
+    with patch('autotools.autodownload.core.load_consent_status', return_value=True):
+        mock_ytdl.return_value.__enter__.return_value.download.return_value = None
+        assert download_youtube_video('https://youtube.com/watch?v=test') is True
+        mock_ytdl.assert_called() 
