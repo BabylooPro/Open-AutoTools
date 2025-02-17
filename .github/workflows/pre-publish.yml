@@ -13,9 +13,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 30 # EXPLICIT TIMEOUT FOR THE ENTIRE JOB
     strategy:
       matrix:
         python-version: ["3.12"]
+      fail-fast: false # CONTINUE OTHER TESTS IF ONE FAILS
     steps:
       - uses: actions/checkout@v4
 
@@ -35,6 +37,7 @@ jobs:
             portaudio19-dev python3-pyaudio gcc g++ make \
             cmake pkg-config libicu-dev zlib1g-dev libcurl4-openssl-dev \
             openjdk-11-jdk xclip xvfb
+        timeout-minutes: 5 # TIMEOUT FOR SYSTEM DEPS INSTALLATION
 
       - name: Install dependencies
         run: |
@@ -42,13 +45,20 @@ jobs:
           pip install -e .[test]
           pip install pytest pytest-cov pytest-timeout
           python -m spacy download en_core_web_sm
+        timeout-minutes: 10 # TIMEOUT FOR PYTHON DEPS INSTALLATION
 
       - name: Run tests
         run: |
-          xvfb-run pytest -v --cov=autotools --cov-report=term-missing \
+          xvfb-run pytest -vv --cov=autotools --cov-report=term-missing \
             --timeout=120 --timeout-method=thread \
+            --capture=no \
+            --full-trace \
             -vv --durations=0 --showlocals \
-            --log-cli-level=INFO
+            --log-cli-level=DEBUG \
+            --tb=long \
+            -s \
+            autotools/autodownload/tests/test_autodownload_core.py -v
+        timeout-minutes: 10 # TIMEOUT FOR TEST EXECUTION
 
   update-version:
     needs: test
