@@ -2,7 +2,7 @@ import os
 import click
 import base64
 import json as json_module
-from importlib.metadata import version, PackageNotFoundError
+from importlib.metadata import version as get_version, PackageNotFoundError
 from autotools.autocaps.core import autocaps_transform
 from autotools.autolower.core import autolower_transform
 from autotools.autodownload.core import (
@@ -23,15 +23,113 @@ import argparse
 from autotools.autospell.core import SpellChecker
 from urllib.parse import urlparse
 import requests
-from packaging import version
+import semantic_version
 from datetime import datetime
 import pytest
 import sys
 import subprocess
+from dotenv import load_dotenv
+
+# LOAD ENVIRONMENT VARIABLES FROM .ENV FILE
+load_dotenv()
+
+def normalize_version(version_str):
+    """NORMALIZE VERSION STRING FOR COMPARISON"""
+    # REMOVE V PREFIX IF ANY
+    version_str = version_str.lower().replace('v', '')
+    
+    # SPLIT VERSION AND POST RELEASE
+    version_parts = version_str.split('post')
+    base_version = version_parts[0].rstrip('.')  # REMOVE TRAILING DOTS
+    post_num = 0 if len(version_parts) == 1 else int(version_parts[1])
+    
+    # SPLIT BASE VERSION INTO PARTS AND CONVERT TO INT
+    parts = []
+    for part in base_version.split('.'):
+        if part.strip():  # ONLY ADD NON-EMPTY PARTS
+            parts.append(int(part))
+    
+    # ENSURE AT LEAST 3 PARTS (MAJOR.MINOR.PATCH)
+    while len(parts) < 3:
+        parts.append(0)
+        
+    # ADDING POST VERSION AS FOURTH ELEMENT
+    parts.append(post_num)
+    
+    return parts
+
+# GET GITHUB API HEADERS WITH TOKEN IF AVAILABLE
+def get_github_headers():
+    """GET GITHUB API HEADERS WITH TOKEN IF AVAILABLE"""
+    headers = {'Accept': 'application/vnd.github.v3+json'}
+    token = os.getenv('GIT_PAT')
+    if token:
+        headers['Authorization'] = f'token {token}'
+    return headers
+
+# VERSION CALLBACK
+def print_version(ctx, param, value):
+    """PRINT VERSION AND CHECK FOR UPDATES"""
+    
+    # EXIT IF VERSION IS NOT REQUESTED
+    if not value or ctx.resilient_parsing:
+        return
+    
+    # GET CURRENT VERSION
+    try:
+        pkg_version = get_version('Open-AutoTools')
+        click.echo(f"Open-AutoTools version {pkg_version}")
+
+        try:
+            # CHECK LATEST VERSION FROM GITHUB API
+            headers = get_github_headers()
+            response = requests.get(
+                "https://api.github.com/repos/BabylooPro/Open-AutoTools/releases/latest",
+                headers=headers
+            )
+            if response.status_code == 200:
+                data = response.json()
+                latest_version = data["tag_name"].replace("v", "")
+                # PARSE AND FORMAT RELEASE DATE
+                published_date = datetime.strptime(data["published_at"], "%Y-%m-%dT%H:%M:%SZ")
+                formatted_date = published_date.strftime("%d %B %Y at %H:%M:%S")
+                click.echo(f"Released: {formatted_date}")
+                
+                #! DEBUG OUTPUT
+                # click.echo(f"Current version: {pkg_version}")
+                # click.echo(f"Latest version: {latest_version}")
+                
+                #! DEBUG API RESPONSE
+                # click.echo("\nAPI Response:")
+                # click.echo(f"Status code: {response.status_code}")
+                # click.echo(f"Response data: {json_module.dumps(data, indent=2)}")
+                
+                # COMPARE VERSIONS
+                try:
+                    # NORMALIZE VERSIONS FOR COMPARISON
+                    current_parts = normalize_version(pkg_version)
+                    latest_parts = normalize_version(latest_version)
+                    
+                    # COMPARE VERSIONS AND PRINT UPDATE MESSAGE IF NEEDED
+                    if latest_parts > current_parts:
+                        click.echo(click.style(f"\nUpdate available: v{latest_version}", fg='red', bold=True))
+                        click.echo(click.style("Run 'pip install --upgrade Open-AutoTools' to update", fg='red'))
+                except Exception as e:
+                    click.echo(f"Error comparing versions: {str(e)}")
+        except Exception as e:
+            click.echo(f"Error checking updates: {str(e)}")
+    except PackageNotFoundError:
+        click.echo("Open-AutoTools version information not available")
+    ctx.exit()
 
 # CLI FUNCTION DEFINITION
 @click.group()
-@click.version_option(package_name='Open-AutoTools')
+@click.option('--version', '--v', is_flag=True, callback=print_version,
+              expose_value=False, is_eager=True, help='Show version and check for updates')
+@click.option('--help', '-h', is_flag=True, callback=lambda ctx, param, value: 
+              None if not value else (click.echo(ctx.get_help() + '\n' + 
+              (check_for_updates() or '')) or ctx.exit()),
+              is_eager=True, expose_value=False, help='Show this message and exit.')
 def cli():
     """A suite of automated tools for various tasks.
     
@@ -40,35 +138,8 @@ def cli():
 
 # AUTOTOOLS COMMAND LINE INTERFACE FUNCTION DEFINITION FOR SHOW HELP MESSAGE
 @cli.command()
-@click.option('--version', '--v', is_flag=True, help='Show version and check for updates')
-def autotools(version):
+def autotools():
     """Display available commands and tool information."""
-    if version:
-        try:
-            # GET CURRENT VERSION
-            current_version = version('Open-AutoTools')
-            click.echo(f"Open-AutoTools version {current_version}")
-
-            try:
-                # CHECK LATEST VERSION FROM GITHUB API
-                response = requests.get("https://api.github.com/repos/BabylooPro/Open-AutoTools/releases/latest")
-                if response.status_code == 200:
-                    data = response.json()
-                    latest_version = data["tag_name"].replace("v", "")
-                    # PARSE AND FORMAT RELEASE DATE
-                    published_date = datetime.strptime(data["published_at"], "%Y-%m-%dT%H:%M:%SZ")
-                    formatted_date = published_date.strftime("%B %d, %Y")
-                    click.echo(f"Released: {formatted_date}")
-                    
-                    if version.parse(latest_version) > version.parse(current_version):
-                        click.echo(click.style(f"\nUpdate available: v{latest_version}", fg='red', bold=True))
-                        click.echo(click.style("Run 'pip install --upgrade Open-AutoTools' to update", fg='red'))
-            except Exception:
-                pass  # SILENTLY IGNORE UPDATE CHECK FAILURES
-        except PackageNotFoundError:
-            click.echo("Open-AutoTools version information not available")
-        return
-
     # SHOW COMMANDS LIST WITH BETTER FORMATTING
     ctx = click.get_current_context()
     commands = cli.list_commands(ctx)
@@ -109,16 +180,29 @@ def check_for_updates():
     
     # GET CURRENT VERSION
     try:
-        current_version = version('Open-AutoTools')
+        current_version = get_version('Open-AutoTools')
         
         # CHECK FOR UPDATES FROM GITHUB API RELEASES PAGE
-        response = requests.get("https://api.github.com/repos/BabylooPro/Open-AutoTools/releases/latest")
+        headers = get_github_headers()
+        response = requests.get(
+            "https://api.github.com/repos/BabylooPro/Open-AutoTools/releases/latest",
+            headers=headers
+        )
         
         # CHECK IF RESPONSE IS SUCCESSFUL
         if response.status_code == 200:
             latest_version = response.json()["tag_name"].replace("v", "")
-            if version.parse(latest_version) > version.parse(current_version):
-                return f"\nUpdate available: v{latest_version}\nRun 'pip install --upgrade Open-AutoTools' to update"
+            
+            # NORMALIZE VERSIONS FOR COMPARISON
+            current_parts = normalize_version(current_version)
+            latest_parts = normalize_version(latest_version)
+            
+            # PRINT UPDATE MESSAGE IF NEEDED
+            if latest_parts > current_parts:
+                return (
+                    click.style(f"\nUpdate available: v{latest_version}", fg='red', bold=True) + "\n" +
+                    click.style("Run 'pip install --upgrade Open-AutoTools' to update", fg='red')
+                )
     except Exception:
         pass
     return None
