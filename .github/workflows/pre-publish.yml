@@ -48,6 +48,8 @@ jobs:
         timeout-minutes: 10 # TIMEOUT FOR PYTHON DEPS INSTALLATION
 
       - name: Run tests
+        env:
+          CI: true
         run: |
           xvfb-run pytest -vv --cov=autotools --cov-report=term-missing \
             --timeout=120 --timeout-method=thread \
