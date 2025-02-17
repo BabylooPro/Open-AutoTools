@@ -5,7 +5,8 @@ import os
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-# READING REQUIREMENTS FROM FILE
+# FIX: READING REQUIREMENTS FROM FILE IN RELEASED VERSION, CAN BUILD WITHOUT LISTED REQUIREMENTS HERE
+# READING REQUIREMENTS
 required = [
     "Brotli==1.1.0",
     "certifi==2024.2.2",
@@ -44,6 +45,7 @@ required = [
     "language-tool-python>=2.7.1",
     "spacy>=3.7.2",
     "packaging>=23.0",
+    "beautifulsoup4>=4.12.0",
 ]
 
 # SETUP CONFIGURATION FOR PACKAGE DISTRIBUTION
