@@ -62,9 +62,9 @@ def print_version(ctx, param, value):
             releases = data["releases"]
             
             # GET RELEASE DATE
-            if latest_version in releases and releases[latest_version]:
+            if pkg_version in releases and releases[pkg_version]:
                 try:
-                    upload_time = releases[latest_version][0]["upload_time"]
+                    upload_time = releases[pkg_version][0]["upload_time"]
                     for date_format in [
                         "%Y-%m-%dT%H:%M:%S",
                         "%Y-%m-%dT%H:%M:%S.%fZ",
@@ -73,7 +73,11 @@ def print_version(ctx, param, value):
                         try:
                             published_date = datetime.strptime(upload_time, date_format)
                             formatted_date = published_date.strftime("%d %B %Y at %H:%M:%S")
-                            click.echo(f"Released: {formatted_date}")
+                            # CHECK IF VERSION IS RC
+                            if "rc" in pkg_version.lower():
+                                click.echo(f"Pre-Released: {formatted_date}")
+                            else:
+                                click.echo(f"Released: {formatted_date}")
                             break
                         except ValueError:
                             continue
