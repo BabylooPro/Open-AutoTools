@@ -13,7 +13,7 @@ All notable changes to Open-AutoTools will be documented in this file.
 - Added short command options (-f, -q) for autodownload
 - Added short command options (-u, -n, -s, etc.) for autopassword
 - Added test infrastructure with pytest configuration and base test files
-- Added comprehensive test suite for autocaps, autolower, autoip, autopassword and autodownload with 100% coverage
+- Added comprehensive test suite for autocaps, autolower, autoip, autopassword, autodownload and autotranslate tools with 100% coverage
 
 ### Changed
 
