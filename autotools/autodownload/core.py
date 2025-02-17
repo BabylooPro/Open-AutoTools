@@ -26,15 +26,20 @@ def get_filename_from_url(url):
 
 # FUNCTION TO OPEN DOWNLOAD DIRECTORY AFTER DOWNLOAD IS COMPLETE
 def open_download_folder(path):
+    """OPEN THE DOWNLOAD FOLDER IN THE DEFAULT FILE MANAGER"""
+    # SKIP IN CI ENVIRONMENT
+    if os.environ.get('CI'):
+        return
+        
     try:
-        if platform.system() == 'Darwin':  # macOS
-            subprocess.run(['open', '--', path], check=True)
-        elif platform.system() == 'Windows':  # Windows
-            subprocess.run(['explorer', str(path)], check=True)
-        elif platform.system() == 'Linux':  # Linux
+        if platform.system() == 'Darwin':  # MACOS
+            subprocess.run(['open', str(path)], check=True)
+        elif platform.system() == 'Windows':  # WINDOWS
+            os.startfile(str(path))
+        else:  # LINUX
             subprocess.run(['xdg-open', str(path)], check=True)
     except Exception as e:
-        print(f"Could not open the folder: {e}")
+        print(f"Failed to open download folder: {e}")
 
 
 # FUNCTION TO VALIDATE YOUTUBE URL FORMAT
