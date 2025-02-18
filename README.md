@@ -156,7 +156,7 @@ pip install -e .
 
 - **Setup Requirements:**
 
-  - Chrome browser installed and configured:
+  - Chrome browser (or Chromium Browser) installed and configured:
 
     ```bash
     # First time setup:
@@ -194,28 +194,9 @@ pip install -e .
 - **Usage:**
 
   ```bash
-  # Display IP addresses
   ~ ❯ autoip
-
-  # Run speed test
   ~ ❯ autoip --speed
-
-  # Test connectivity
-  ~ ❯ autoip --test
-
-  # Show location info
   ~ ❯ autoip --location
-
-  # Monitor network traffic
-  ~ ❯ autoip --monitor
-
-  # Check common ports
-  ~ ❯ autoip --ports
-
-  # Show DNS servers
-  ~ ❯ autoip --dns
-
-  # Hide IP display and only show tests
   ~ ❯ autoip --no-ip --test --speed
   ```
 
