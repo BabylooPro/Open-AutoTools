@@ -10,8 +10,7 @@ All notable changes to Open-AutoTools will be documented in this file.
 - Added flag --version to show current version and check for updates
 - Added file output support for autotranslate command
 - Added custom interval support for network monitoring in autoip
-- Added short command options (-f, -q) for autodownload
-- Added short command options (-u, -n, -s, etc.) for autopassword
+- Added short option command (-a, -b, -c, -d, etc.) for all tools
 - Added test infrastructure with pytest configuration and base test files
 - Added comprehensive test suite for autocaps, autolower, autoip, autopassword, autodownload, autotranslate and autospell tools with 100% coverage
 
