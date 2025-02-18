@@ -21,6 +21,7 @@ def generate_password(length=12, use_uppercase=True, use_numbers=True, use_speci
     
     # ENSURE MINIMUM REQUIREMENTS
     password = []
+    password.append(secrets.choice(lowercase))
     if use_uppercase:
         password.append(secrets.choice(uppercase))
     if use_numbers:
