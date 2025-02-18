@@ -221,13 +221,14 @@ def autolower(text):
 @cli.command()
 @click.argument('url')
 @click.option('--format', '-f', type=click.Choice(['mp4', 'mp3'], case_sensitive=False), 
-              default='mp4', help='Output file format')
-@click.option('--quality', '-q', type=click.Choice(['best', '1440p', '1080p', '720p', '480p', '360p', '240p'], 
+              default='mp4', help='Output file format (mp4 for video, mp3 for audio)')
+@click.option('--quality', '-q', type=click.Choice(['best', '2160p', '1440p', '1080p', '720p', '480p', '360p', '240p'], 
               case_sensitive=False), default='best', help='Video quality (mp4 only)')
 def autodownload(url, format, quality):
     """Download videos from YouTube or files from any URL.
     
     Supports YouTube video download with quality selection and format conversion (mp4/mp3).
+    
     For non-YouTube URLs, downloads the file directly."""
     if "youtube.com" in url or "youtu.be" in url:
         # VALIDATE YOUTUBE URL FIRST

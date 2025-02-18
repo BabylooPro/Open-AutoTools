@@ -144,12 +144,32 @@ def download_youtube_video(url, format='mp4', quality='best'):
     print(f"\n🎥 Downloading video from: {url}")
     print(f"📋 Format: {format}, Quality: {quality}\n")
 
+    # DETERMINE FORMAT STRING BASED ON QUALITY AND FORMAT
+    if format == 'mp4':
+        if quality == 'best':
+            format_str = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'
+        else:
+            # STRIP 'P' FROM QUALITY AND CONVERT TO INT
+            height = int(quality.lower().replace('p', ''))
+            format_str = f'bestvideo[height<={height}][ext=mp4]+bestaudio[ext=m4a]/best[height<={height}][ext=mp4]/best'
+    else:  # MP3
+        format_str = 'bestaudio[ext=mp3]/bestaudio/best'
+
     ydl_opts = {
-        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best' if format == 'mp4' else 'bestaudio[ext=mp3]/best',
+        'format': format_str,
         'quiet': False,
         'no_warnings': False,
+        'outtmpl': '%(title)s.%(ext)s',
         'cookiesfrombrowser': ('chrome',),
-        'extractor_args': {'youtube': {'player_client': ['android']}},
+        'merge_output_format': 'mp4' if format == 'mp4' else 'mp3',
+        'postprocessors': [{
+            'key': 'FFmpegVideoConvertor',
+            'preferedformat': format,
+        }] if format == 'mp4' else [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
         'http_headers': {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',

@@ -45,6 +45,7 @@ required = [
     "language-tool-python>=2.7.1",
     "spacy>=3.7.2",
     "beautifulsoup4>=4.12.0",
+    "ffmpeg-python>=0.2.0",
 ]
 
 # SETUP CONFIGURATION FOR PACKAGE DISTRIBUTION
