@@ -1,6 +1,6 @@
 # Open-AutoTools
 
-Open-AutoTools is an innovative project developed in Python, specifically designed to offer a suite of automated tools directly accessible via the terminal. This project aims to simplify and automate daily tasks for developers and terminal users. It is designed to be used as a set of CLI commands, making its features directly accessible from the user's terminal.
+Open-AutoTools is a comprehensive Python CLI toolkit that streamlines everyday developer tasks through a collection of powerful command-line utilities. Each tool is designed to enhance productivity directly from your terminal.
 
 https://github.com/BabylooPro/Open-AutoTools/assets/35376790/d57f2b9d-55f8-4368-bb40-c0010eb9d49a
 
@@ -69,16 +69,14 @@ pip install -e .
   ```
 - **Options:**
   - `--length, -l`: Set password length (default: 12)
-  - `--no-uppercase`: Exclude uppercase letters
-  - `--no-numbers`: Exclude numbers
-  - `--no-special`: Exclude special characters
-  - `--min-special`: Minimum number of special characters (default: 1)
-  - `--min-numbers`: Minimum number of numbers (default: 1)
-  - `--gen-key`: Generate a random encryption key
-  - `--password-key`: Generate an encryption key from a password
-  - `--analyze`: Show password strength analysis
-
-These examples demonstrate how the terminal will display the results after executing each command, providing a straightforward way for users to understand the immediate effects of these commands.
+  - `--no-uppercase, -u`: Exclude uppercase letters
+  - `--no-numbers, -n`: Exclude numbers
+  - `--no-special, -s`: Exclude special characters
+  - `--min-special, -m`: Minimum number of special characters (default: 1)
+  - `--min-numbers, -d`: Minimum number of numbers (default: 1)
+  - `--analyze, -a`: Show password strength analysis
+  - `--gen-key, -g`: Generate a random encryption key
+  - `--password-key, -p`: Generate an encryption key from password
 
 ### AutoTranslate
 
@@ -106,6 +104,7 @@ These examples demonstrate how the terminal will display the results after execu
   - `--copy`: Copy translation to clipboard
   - `--detect`: Show detected source language
   - `--list-languages`: Show all supported language codes and names
+  - `--output, -o`: Save translation to file
 
 ### AutoSpell (unreleased)
 
@@ -114,14 +113,17 @@ These examples demonstrate how the terminal will display the results after execu
   ```
   ~ ❯ autospell "Your text with misspellings"
   ~ ❯ autospell --lang fr "Votre texte avec des fautes"
-  ~ ❯ autospell --file document.txt
+  ~ ❯ autospell --fix "Text to autocorrect"
   ```
 - **Options:**
-  - `--lang`: Language code (default: en)
-  - `--file`: Input from file
-  - `--copy`: Copy corrected text to clipboard
-  - `--suggest`: Show alternative suggestions
-  - `--interactive`: Interactive correction mode
+  - `--lang, -l`: Language code (default: auto)
+  - `--fix, -f`: Auto-fix text and copy to clipboard
+  - `--copy, -c`: Copy result to clipboard
+  - `--list-languages`: Show supported languages
+  - `--json, -j`: Output results as JSON
+  - `--ignore, -i`: Error types to ignore (spelling/grammar/style/punctuation)
+  - `--interactive, -n`: Interactive mode - confirm each correction
+  - `--output, -o`: Save corrections to file
 
 ### AutoDownload
 
@@ -139,8 +141,8 @@ These examples demonstrate how the terminal will display the results after execu
 
 - **Options:**
 
-  - `--format`: Choose output format (mp4 or mp3)
-  - `--quality`: Select video quality (best, 1440p, 1080p, 720p, 480p, 360p, 240p)
+  - `--format, -f`: Choose output format (mp4 or mp3)
+  - `--quality, -q`: Select video quality (best, 1440p, 1080p, 720p, 480p, 360p, 240p)
 
 - **Features:**
 
@@ -222,6 +224,7 @@ These examples demonstrate how the terminal will display the results after execu
   - `--test, -t`: Run connectivity tests to popular services
   - `--speed, -s`: Run internet speed test
   - `--monitor, -m`: Monitor real-time network traffic
+  - `--interval, -i`: Monitoring interval in seconds
   - `--ports, -p`: Check status of common ports
   - `--dns, -d`: Show DNS server configuration
   - `--location, -l`: Show IP geolocation information
@@ -231,10 +234,26 @@ These examples demonstrate how the terminal will display the results after execu
   - Local and public IP detection (IPv4 & IPv6)
   - Internet speed testing
   - Network connectivity checks
+  - Monitoring interval (10 seconds)
   - Real-time traffic monitoring
   - Port scanning
   - DNS server information
   - IP geolocation
+
+### Test Suite (DEVELOPMENT ONLY)
+
+- **Description:** Run the test suite for Open-AutoTools
+- **Usage:**
+  ```bash
+  ~ ❯ autotools test
+  ```
+- **Options:**
+
+  - `--unit, -u`: Run only unit tests
+  - `--integration, -i`: Run only integration tests
+  - `--no-cov`: Disable coverage report
+  - `--html`: Generate HTML coverage report
+  - `--module, -m`: Test specific module (e.g., autocaps, autolower)
 
 ## License
 
