@@ -29,9 +29,25 @@ import pytest
 import sys
 import subprocess
 from dotenv import load_dotenv
+from halo import Halo
 
 # LOAD ENVIRONMENT VARIABLES FROM .ENV FILE
 load_dotenv()
+
+class LoadingAnimation:
+    """A CONTEXT MANAGER FOR DISPLAYING A LOADING ANIMATION"""
+    def __init__(self):
+        self._spinner = Halo(spinner={
+            'interval': 200,
+            'frames': ['   ', '.  ', '.. ', '...'],
+        })
+        
+    def __enter__(self):
+        self._spinner.start()
+        return self
+        
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._spinner.stop()
 
 # VERSION CALLBACK
 def print_version(ctx, param, value):
@@ -196,7 +212,8 @@ def check_for_updates():
 @click.argument('text', nargs=-1)
 def autocaps(text):
     """Convert text to UPPERCASE."""
-    result = autocaps_transform(" ".join(text))
+    with LoadingAnimation():
+        result = autocaps_transform(" ".join(text))
     click.echo(result)
     
     # UPDATE CHECK AT THE END
@@ -209,7 +226,8 @@ def autocaps(text):
 @click.argument('text', nargs=-1)
 def autolower(text):
     """Convert text to lowercase."""
-    result = autolower_transform(" ".join(text))
+    with LoadingAnimation():
+        result = autolower_transform(" ".join(text))
     click.echo(result)
     
     # UPDATE CHECK AT THE END
@@ -235,9 +253,30 @@ def autodownload(url, format, quality):
         if not validate_youtube_url(url):
             click.echo("Invalid YouTube URL", err=True)
             sys.exit(1)
-        download_youtube_video(url, format, quality)
+            
+        click.echo("\n⚠️  Important Notice:")
+        click.echo("This tool will:")
+        click.echo("1. Access your Chrome browser cookies")
+        click.echo("2. Use them to authenticate with YouTube")
+        click.echo("3. Download video content to your local machine\n")
+        
+        loading = LoadingAnimation()
+        try:
+            with loading:
+                download_youtube_video(url, format, quality)
+        except Exception as e:
+            loading._spinner.stop()
+            click.echo(f"\n❌ {str(e)}")
+            sys.exit(1)
     else:
-        download_file(url)
+        loading = LoadingAnimation()
+        try:
+            with loading:
+                download_file(url)
+        except Exception as e:
+            loading._spinner.stop()
+            click.echo(f"\n❌ {str(e)}")
+            sys.exit(1)
         
     # UPDATE CHECK AT THE END
     update_msg = check_for_updates()
@@ -263,7 +302,8 @@ def autopassword(length, no_uppercase, no_numbers, no_special,
     def show_analysis(text, prefix=""):
         """Helper function to show password/key analysis"""
         if analyze:
-            analysis = analyze_password_strength(text)
+            with LoadingAnimation():
+                analysis = analyze_password_strength(text)
             click.echo(f"\n{prefix}Strength Analysis:")
             click.echo(f"Strength: {analysis['strength']}")
             click.echo(f"Score: {analysis['score']}/5")
@@ -274,7 +314,8 @@ def autopassword(length, no_uppercase, no_numbers, no_special,
     
     # GENERATE KEY
     if gen_key:
-        key = generate_encryption_key()
+        with LoadingAnimation():
+            key = generate_encryption_key()
         key_str = key.decode()
         click.echo(f"Encryption Key: {key_str}")
         if analyze:
@@ -283,7 +324,8 @@ def autopassword(length, no_uppercase, no_numbers, no_special,
     
     # GENERATE KEY FROM PASSWORD
     if password_key:
-        key, salt = generate_encryption_key(password_key)
+        with LoadingAnimation():
+            key, salt = generate_encryption_key(password_key)
         key_str = key.decode()
         click.echo(f"Derived Key: {key_str}")
         click.echo(f"Salt: {base64.b64encode(salt).decode()}")
@@ -295,14 +337,15 @@ def autopassword(length, no_uppercase, no_numbers, no_special,
         return
     
     # GENERATE PASSWORD
-    password = generate_password(
-        length=length,
-        use_uppercase=not no_uppercase,
-        use_numbers=not no_numbers,
-        use_special=not no_special,
-        min_special=min_special,
-        min_numbers=min_numbers,
-    )
+    with LoadingAnimation():
+        password = generate_password(
+            length=length,
+            use_uppercase=not no_uppercase,
+            use_numbers=not no_numbers,
+            use_special=not no_special,
+            min_special=min_special,
+            min_numbers=min_numbers,
+        )
     
     # SHOW PASSWORD
     click.echo(f"Generated Password: {password}")
@@ -331,9 +374,10 @@ def autotranslate(text: str, to: str, from_lang: str, list_languages: bool,
     all supported language codes."""
     # LIST ALL SUPPORTED LANGUAGES
     if list_languages:
-        click.echo("\nSupported Languages:")
-        for code, name in get_supported_languages().items():
-            click.echo(f"{code:<8} {name}")
+        with LoadingAnimation():
+            click.echo("\nSupported Languages:")
+            for code, name in get_supported_languages().items():
+                click.echo(f"{code:<8} {name}")
         return
     
     # CHECK IF TEXT IS PROVIDED
@@ -341,8 +385,9 @@ def autotranslate(text: str, to: str, from_lang: str, list_languages: bool,
         click.echo("Error: Please provide text to translate")
         return
         
-    result = translate_text(text, to_lang=to, from_lang=from_lang, 
-                          copy=copy, detect_lang=detect, output=output)
+    with LoadingAnimation():
+        result = translate_text(text, to_lang=to, from_lang=from_lang, 
+                              copy=copy, detect_lang=detect, output=output)
     click.echo(result)
     
     # UPDATE CHECK AT THE END
@@ -367,8 +412,9 @@ def autoip(test, speed, monitor, interval, ports, dns, location, no_ip):
     performs speed tests, monitors traffic with custom intervals,
     checks ports, displays DNS information and provides geolocation data."""
     from autotools.autoip.core import run
-    output = run(test=test, speed=speed, monitor=monitor, interval=interval,
-                ports=ports, dns=dns, location=location, no_ip=no_ip)
+    with LoadingAnimation():
+        output = run(test=test, speed=speed, monitor=monitor, interval=interval,
+                    ports=ports, dns=dns, location=location, no_ip=no_ip)
     click.echo(output)
     
     # UPDATE CHECK AT THE END
@@ -402,14 +448,15 @@ def autospell(texts: tuple, lang: str, fix: bool, copy: bool, list_languages: bo
     
     # LIST ALL SUPPORTED LANGUAGES
     if list_languages:
-        languages = checker.get_supported_languages()
-        if json:
-            result = {'languages': languages}
-            click.echo(json_module.dumps(result, indent=2))
-        else:
-            click.echo("\nSupported Languages:")
-            for lang in languages:
-                click.echo(f"{lang['code']:<8} {lang['name']}")
+        with LoadingAnimation():
+            languages = checker.get_supported_languages()
+            if json:
+                result = {'languages': languages}
+                click.echo(json_module.dumps(result, indent=2))
+            else:
+                click.echo("\nSupported Languages:")
+                for lang in languages:
+                    click.echo(f"{lang['code']:<8} {lang['name']}")
         return
         
     # CHECK AND FIX SPELLING/GRAMMAR IN TEXT
@@ -421,16 +468,18 @@ def autospell(texts: tuple, lang: str, fix: bool, copy: bool, list_languages: bo
         # FIX SPELLING/GRAMMAR IN TEXT
         if fix:
             # CORRECT TEXT WITH SPELL CHECKER
-            corrected = checker.fix_text(text, lang, copy_to_clipboard=True, 
-                                       ignore=ignore, interactive=interactive)
-            result = {'corrected_text': corrected} # RESULT TO RETURN
+            with LoadingAnimation():
+                corrected = checker.fix_text(text, lang, copy_to_clipboard=True, 
+                                           ignore=ignore, interactive=interactive)
+                result = {'corrected_text': corrected}
             
             # OUTPUT RESULTS AS JSON
             if json:
                 click.echo(json_module.dumps(result, indent=2))
             else:
                 # LANGUAGE INFORMATION
-                check_result = checker.check_text(text, lang)
+                with LoadingAnimation():
+                    check_result = checker.check_text(text, lang)
                 lang_info = check_result['language']
                 click.echo(f"\nLanguage detected: {lang_info['name']} ({lang_info['code']})")
                 click.echo(f"Confidence: {lang_info['confidence']:.2%}")
@@ -446,7 +495,8 @@ def autospell(texts: tuple, lang: str, fix: bool, copy: bool, list_languages: bo
                         f.write(corrected)
         else:
             # CHECK SPELLING/GRAMMAR IN TEXT
-            check_result = checker.check_text(text, lang)
+            with LoadingAnimation():
+                check_result = checker.check_text(text, lang)
             
             # OUTPUT RESULTS AS JSON
             if json:
@@ -506,12 +556,13 @@ def test(unit, integration, no_cov, html, module):
         import pytest_cov
     except ImportError:
         click.echo(click.style("\n❌ pytest and/or pytest-cov not found. Installing...", fg='yellow', bold=True))
-        try:
-            subprocess.run(['pip', 'install', 'pytest', 'pytest-cov'], check=True)
-            click.echo(click.style("✅ Successfully installed pytest and pytest-cov", fg='green', bold=True))
-        except subprocess.CalledProcessError as e:
-            click.echo(click.style(f"\n❌ Failed to install dependencies: {str(e)}", fg='red', bold=True))
-            sys.exit(1)
+        with LoadingAnimation():
+            try:
+                subprocess.run(['pip', 'install', 'pytest', 'pytest-cov'], check=True)
+                click.echo(click.style("✅ Successfully installed pytest and pytest-cov", fg='green', bold=True))
+            except subprocess.CalledProcessError as e:
+                click.echo(click.style(f"\n❌ Failed to install dependencies: {str(e)}", fg='red', bold=True))
+                sys.exit(1)
     
     cmd = ['python', '-m', 'pytest', '-v'] # BASE COMMAND
     
@@ -540,12 +591,13 @@ def test(unit, integration, no_cov, html, module):
     
     # RUN TESTS
     try:
-        result = subprocess.run(cmd, check=True)
-        if result.returncode == 0:
-            click.echo(click.style("\n✅ All tests passed!", fg='green', bold=True))
-        else:
-            click.echo(click.style("\n❌ Some tests failed!", fg='red', bold=True))
-            sys.exit(1)
+        with LoadingAnimation():
+            result = subprocess.run(cmd, check=True)
+            if result.returncode == 0:
+                click.echo(click.style("\n✅ All tests passed!", fg='green', bold=True))
+            else:
+                click.echo(click.style("\n❌ Some tests failed!", fg='red', bold=True))
+                sys.exit(1)
     except subprocess.CalledProcessError as e:
         click.echo(click.style(f"\n❌ Tests failed with return code {e.returncode}", fg='red', bold=True))
         sys.exit(1)
