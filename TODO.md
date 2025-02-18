@@ -12,4 +12,4 @@
 
 #### DONE
 
--
+- [x] **fix:** YouTube download functionality with proper format and quality handling, including FFmpeg support for reliable format conversion
