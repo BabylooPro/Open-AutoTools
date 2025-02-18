@@ -113,7 +113,8 @@ jobs:
 
       - name: Extract Commit Messages
         run: |
-          COMMIT_MESSAGES=$(git log --pretty=format:"%s" ${{ env.PREVIOUS_TAG }}..${{ github.ref_name }})
+          COMMIT_MESSAGES=$(git log --pretty=format:"%s" ${{ env.PREVIOUS_TAG }}..${{ github.ref_name }} | \
+            grep -iv "README.md\|TODO.md\|LICENSE\|.gitignore\|.*[(]workflow[)].*")
           echo "COMMIT_MESSAGES<<EOF" >> $GITHUB_ENV
           echo "$COMMIT_MESSAGES" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
