@@ -185,6 +185,7 @@ pip install -e .
     - Internet connection
     - Sufficient storage space
     - yt-dlp library (automatically installed)
+    - FFmpeg (required for format conversion)
 
   > **Note:** The tool uses your Chrome browser's cookies to authenticate with YouTube. This is required to bypass YouTube's bot detection and download restrictions.
 
