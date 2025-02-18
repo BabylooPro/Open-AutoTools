@@ -1,4 +1,4 @@
-#### TODO LIST - v0.0.3
+#### TODO LIST
 
 - [ ] **fix:** detect unclosed double quotes in CLI commands and automatically fix them by either adding a closing double quote at the end or switching to single quotes
 - [ ] **add:** automatic clipboard copy for all text output tools
@@ -11,6 +11,6 @@
 
 #### DONE
 
-- [x] **fix:** YouTube download functionality with proper format and quality handling, including FFmpeg support for reliable format conversion
-
-- [x] **add:** loading animation with moving dots (...) during tool operations
+- [x] **fixed:** YouTube download functionality with proper format and quality handling, including FFmpeg support for reliable format conversion
+- [x] **added:** loading animation with moving dots (...) during tool operations
+- [x] **refactored:** CLI module structure and command organization
