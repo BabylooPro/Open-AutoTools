@@ -147,47 +147,24 @@ pip install -e .
 - **Features:**
 
   - Automatic bot detection bypass
-  - Browser cookie integration
-  - Progress tracking
+  - Mobile API integration for better reliability
+  - Progress tracking with detailed status
   - Multiple quality options
   - MP3 audio extraction
   - Downloads to user's Downloads folder
   - Supports both YouTube and general file downloads
+  - File existence checks with user prompts
 
 - **Setup Requirements:**
 
-  - Chrome browser (or Chromium Browser) installed and configured:
-
-    ```bash
-    # First time setup:
-    1. Open Chrome and sign in to YouTube
-    2. Make sure you're logged into your Google account
-    3. Accept YouTube's terms of service in browser
-    ```
-
-  - **Troubleshooting:**
-
-    - If downloads fail with "Sign in to confirm you're not a bot":
-
-      1. Open YouTube in Chrome
-      2. Sign in if not already
-      3. Solve any CAPTCHA if prompted
-      4. Try download again
-
-    - If you get cookie errors:
-      1. Clear Chrome cookies
-      2. Sign in to YouTube again
-      3. Wait a few minutes before downloading
-
+  - No special setup required
   - **Technical Requirements:**
-    - Chrome browser (for cookie and session handling)
-    - Active YouTube/Google account
     - Internet connection
     - Sufficient storage space
     - yt-dlp library (automatically installed)
     - FFmpeg (required for format conversion)
 
-  > **Note:** The tool uses your Chrome browser's cookies to authenticate with YouTube. This is required to bypass YouTube's bot detection and download restrictions.
+  > **Note:** The tool uses YouTube's mobile API for better compatibility and reliability.
 
 ### AutoIP
 
