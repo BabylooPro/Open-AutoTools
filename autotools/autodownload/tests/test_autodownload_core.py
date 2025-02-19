@@ -77,7 +77,20 @@ def test_get_filename_from_url():
 def test_validate_youtube_url_valid(mock_ytdl):
     """TEST YOUTUBE URL VALIDATION - VALID URL"""
     mock_ytdl.return_value.__enter__.return_value.extract_info.return_value = {}
+    # TEST STANDARD FORMATS
     assert validate_youtube_url('https://youtube.com/watch?v=valid') is True
+    assert validate_youtube_url('https://youtu.be/valid') is True
+    # TEST ADDITIONAL FORMATS
+    assert validate_youtube_url('https://youtube.com/watch/valid') is True
+    assert validate_youtube_url('https://youtube.com/shorts/valid') is True
+    assert validate_youtube_url('https://youtube.com/live/valid') is True
+    assert validate_youtube_url('https://music.youtube.com/watch?v=valid') is True
+    assert validate_youtube_url('https://youtube.com/attribution_link?a=xyz&u=/watch?v=valid') is True
+
+# TEST FOR YOUTUBE URL VALIDATION - NON YOUTUBE URL
+def test_validate_youtube_url_non_youtube():
+    """TEST YOUTUBE URL VALIDATION - NON YOUTUBE URL"""
+    assert validate_youtube_url('https://example.com/video') is False
 
 # TEST FOR YOUTUBE URL VALIDATION - INVALID URL
 @patch('yt_dlp.YoutubeDL')
@@ -120,6 +133,7 @@ def test_get_consent_file_path():
 @patch('builtins.open', new_callable=mock_open, read_data='{"youtube_consent": true}')
 def test_load_consent_status_true(mock_file, mock_exists):
     """TEST CONSENT STATUS LOADING - TRUE"""
+    mock_file.return_value.__enter__.return_value.read.return_value = '{"youtube_consent": true}'
     assert load_consent_status() is True
     mock_file.assert_called_once()
 
@@ -128,6 +142,7 @@ def test_load_consent_status_true(mock_file, mock_exists):
 @patch('builtins.open', new_callable=mock_open, read_data='{"youtube_consent": false}')
 def test_load_consent_status_false(mock_file, mock_exists):
     """TEST CONSENT STATUS LOADING - FALSE"""
+    mock_file.return_value.__enter__.return_value.read.return_value = '{"youtube_consent": false}'
     assert load_consent_status() is False
     mock_file.assert_called_once()
 
@@ -139,12 +154,13 @@ def test_load_consent_status_false(mock_file, mock_exists):
 def test_save_consent_status(mock_json_dump, mock_file, mock_mkdir, mock_exists):
     """TEST CONSENT STATUS SAVING"""
     # CALL THE FUNCTION
-    save_consent_status(True)
+    result = save_consent_status(True)
     
     # VERIFY CALLS
     mock_mkdir.assert_called_once_with(exist_ok=True)
     mock_file.assert_called_once()
     mock_json_dump.assert_called_once_with({'youtube_consent': True}, mock_file())
+    assert result is True
 
 # TEST FOR USER CONSENT - YES
 @patch('builtins.input', return_value='yes')
