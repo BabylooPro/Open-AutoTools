@@ -16,34 +16,21 @@ def autodownload(url, format, quality):
     Supports YouTube video download with quality selection and format conversion (mp4/mp3).
     
     For non-YouTube URLs, downloads the file directly."""
+    
+    loading = LoadingAnimation()
+
     if "youtube.com" in url or "youtu.be" in url:
-        if not validate_youtube_url(url):
-            click.echo("Invalid YouTube URL", err=True)
-            sys.exit(1)
-            
-        click.echo("\n⚠️  Important Notice:")
-        click.echo("This tool will:")
-        click.echo("1. Access your Chrome browser cookies")
-        click.echo("2. Use them to authenticate with YouTube")
-        click.echo("3. Download video content to your local machine\n")
+        with loading:
+            if not validate_youtube_url(url):
+                click.echo("Invalid YouTube URL", err=True)
+                sys.exit(1)
         
-        loading = LoadingAnimation()
-        try:
-            with loading:
-                download_youtube_video(url, format, quality)
-        except Exception as e:
-            loading._spinner.stop()
-            click.echo(f"\n❌ {str(e)}")
+        if not download_youtube_video(url, format, quality):
             sys.exit(1)
     else:
-        loading = LoadingAnimation()
-        try:
-            with loading:
-                download_file(url)
-        except Exception as e:
-            loading._spinner.stop()
-            click.echo(f"\n❌ {str(e)}")
-            sys.exit(1)
+        with loading:
+            if not download_file(url):
+                sys.exit(1)
         
     # UPDATE CHECK AT THE END
     update_msg = check_for_updates()
