@@ -8,8 +8,9 @@
 [CHANGELOG_URL]: CHANGELOG.md
 [TODO_BADGE]: https://img.shields.io/badge/TODO-purple.svg
 [TODO_URL]: TODO.md
+[TOTAL_STABILITY]: https://img.shields.io/badge/Total%20Stability-73%25-yellow
 
-[![PyPI][PYPI_BADGE]][PYPI_URL] [![Python][PYTHON_BADGE]][PYTHON_URL] [![CHANGELOG][CHANGELOG_BADGE]][CHANGELOG_URL] [![TODO][TODO_BADGE]][TODO_URL]
+[![PyPI][PYPI_BADGE]][PYPI_URL] [![Python][PYTHON_BADGE]][PYTHON_URL] [![CHANGELOG][CHANGELOG_BADGE]][CHANGELOG_URL] [![TODO][TODO_BADGE]][TODO_URL] ![Total Stability][TOTAL_STABILITY]
 
 Open-AutoTools is a comprehensive Python CLI toolkit that streamlines everyday developer tasks through a collection of powerful command-line utilities. Each tool is designed to enhance productivity directly from your terminal.
 
@@ -44,7 +45,7 @@ pip install -e .
 
 ## Key Features
 
-### AutoCaps
+### AutoCaps ![Stability][AUTOCAPS_EFF]
 
 - **Description:** Converts any text entered by the user to uppercase.
 - **Usage:**
@@ -56,7 +57,7 @@ pip install -e .
   YOUR TEXT HERE.
   ```
 
-### AutoLower
+### AutoLower ![Stability][AUTOLOWER_EFF]
 
 - **Description:** Converts any text entered by the user to lowercase.
 - **Usage:**
@@ -68,7 +69,7 @@ pip install -e .
   your text here.
   ```
 
-### AutoPassword
+### AutoPassword ![Stability][AUTOPASSWORD_EFF]
 
 - **Description:** Generates secure random passwords and encryption keys with customizable options.
 - **Usage:**
@@ -79,6 +80,7 @@ pip install -e .
   ~ ❯ autopassword --password-key "your-password" --analyze
   ```
 - **Options:**
+
   - `--length, -l`: Set password length (default: 12)
   - `--no-uppercase, -u`: Exclude uppercase letters
   - `--no-numbers, -n`: Exclude numbers
@@ -89,54 +91,7 @@ pip install -e .
   - `--gen-key, -g`: Generate a random encryption key
   - `--password-key, -p`: Generate an encryption key from password
 
-### AutoTranslate
-
-- **Description:** Translates text between languages with automatic source language detection.
-- **Usage:**
-
-  ```
-  ~ ❯ autotranslate "Bonjour le monde" --to en
-  Hello world
-
-  ~ ❯ autotranslate "Hello world" --to fr --copy
-  Bonjour le monde
-  // Result also copied to clipboard
-
-  ~ ❯ autotranslate "こんにちは" --to en --detect
-  [Detected: ja] Hello
-
-  ~ ❯ autotranslate --list-languages
-  // Shows all supported languages
-  ```
-
-- **Options:**
-  - `--to`: Target language code (default: en)
-  - `--from`: Source language code (default: auto-detect)
-  - `--copy`: Copy translation to clipboard
-  - `--detect`: Show detected source language
-  - `--list-languages`: Show all supported language codes and names
-  - `--output, -o`: Save translation to file
-
-### AutoSpell (unreleased)
-
-- **Description:** Checks and corrects spelling in text with multi-language support.
-- **Usage:**
-  ```
-  ~ ❯ autospell "Your text with misspellings"
-  ~ ❯ autospell --lang fr "Votre texte avec des fautes"
-  ~ ❯ autospell --fix "Text to autocorrect"
-  ```
-- **Options:**
-  - `--lang, -l`: Language code (default: auto)
-  - `--fix, -f`: Auto-fix text and copy to clipboard
-  - `--copy, -c`: Copy result to clipboard
-  - `--list-languages`: Show supported languages
-  - `--json, -j`: Output results as JSON
-  - `--ignore, -i`: Error types to ignore (spelling/grammar/style/punctuation)
-  - `--interactive, -n`: Interactive mode - confirm each correction
-  - `--output, -o`: Save corrections to file
-
-### AutoDownload
+  ### AutoDownload ![Stability][AUTODOWNLOAD_EFF]
 
 - **Description:** Downloads videos from YouTube and files from other sources.
 - **Usage:**
@@ -158,7 +113,7 @@ pip install -e .
 - **Features:**
 
   - Automatic bot detection bypass
-  - Mobile API integration for better reliability
+  - Mobile API integration for better Stability
   - Progress tracking with detailed status
   - Multiple quality options
   - MP3 audio extraction
@@ -177,7 +132,7 @@ pip install -e .
 
   > **Note:** The tool uses YouTube's mobile API for better compatibility and reliability.
 
-### AutoIP
+### AutoIP ![Stability][AUTOIP_EFF]
 
 - **Description:** Displays network information including IP addresses, connectivity tests, speed tests, and more.
 - **Usage:**
@@ -210,6 +165,53 @@ pip install -e .
   - DNS server information
   - IP geolocation
 
+### AutoTranslate ![Stability][AUTOTRANSLATE_EFF]
+
+- **Description:** Translates text between languages with automatic source language detection.
+- **Usage:**
+
+  ```
+  ~ ❯ autotranslate "Bonjour le monde" --to en
+  Hello world
+
+  ~ ❯ autotranslate "Hello world" --to fr --copy
+  Bonjour le monde
+  // Result also copied to clipboard
+
+  ~ ❯ autotranslate "こんにちは" --to en --detect
+  [Detected: ja] Hello
+
+  ~ ❯ autotranslate --list-languages
+  // Shows all supported languages
+  ```
+
+- **Options:**
+  - `--to`: Target language code (default: en)
+  - `--from`: Source language code (default: auto-detect)
+  - `--copy`: Copy translation to clipboard
+  - `--detect`: Show detected source language
+  - `--list-languages`: Show all supported language codes and names
+  - `--output, -o`: Save translation to file
+
+### AutoSpell (unreleased) ![Stability][AUTOSPELL_EFF]
+
+- **Description:** Checks and corrects spelling in text with multi-language support.
+- **Usage:**
+  ```
+  ~ ❯ autospell "Your text with misspellings"
+  ~ ❯ autospell --lang fr "Votre texte avec des fautes"
+  ~ ❯ autospell --fix "Text to autocorrect"
+  ```
+- **Options:**
+  - `--lang, -l`: Language code (default: auto)
+  - `--fix, -f`: Auto-fix text and copy to clipboard
+  - `--copy, -c`: Copy result to clipboard
+  - `--list-languages`: Show supported languages
+  - `--json, -j`: Output results as JSON
+  - `--ignore, -i`: Error types to ignore (spelling/grammar/style/punctuation)
+  - `--interactive, -n`: Interactive mode - confirm each correction
+  - `--output, -o`: Save corrections to file
+
 ### Test Suite (DEVELOPMENT ONLY)
 
 - **Description:** Run the test suite for Open-AutoTools
@@ -228,3 +230,11 @@ pip install -e .
 ## License
 
 This project is licensed under the MIT License. For more details, see the [LICENSE](LICENSE) file.
+
+[AUTOCAPS_EFF]: https://img.shields.io/badge/Stability-99%25-success
+[AUTOLOWER_EFF]: https://img.shields.io/badge/Stability-99%25-success
+[AUTOPASSWORD_EFF]: https://img.shields.io/badge/Stability-90%25-success
+[AUTOTRANSLATE_EFF]: https://img.shields.io/badge/Stability-25%25-red
+[AUTOSPELL_EFF]: https://img.shields.io/badge/Stability-25%25-red
+[AUTODOWNLOAD_EFF]: https://img.shields.io/badge/Stability-75%25-yellow
+[AUTOIP_EFF]: https://img.shields.io/badge/Stability-95%25-success
