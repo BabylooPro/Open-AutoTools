@@ -1,7 +1,6 @@
 import click
 import subprocess
 import sys
-from ..utils.loading import LoadingAnimation
 from ..utils.updates import check_for_updates
 
 @click.command()
@@ -18,13 +17,12 @@ def test(unit, integration, no_cov, html, module):
         import pytest_cov
     except ImportError:
         click.echo(click.style("\n❌ pytest and/or pytest-cov not found. Installing...", fg='yellow', bold=True))
-        with LoadingAnimation():
-            try:
-                subprocess.run(['pip', 'install', 'pytest', 'pytest-cov'], check=True)
-                click.echo(click.style("✅ Successfully installed pytest and pytest-cov", fg='green', bold=True))
-            except subprocess.CalledProcessError as e:
-                click.echo(click.style(f"\n❌ Failed to install dependencies: {str(e)}", fg='red', bold=True))
-                sys.exit(1)
+        try:
+            subprocess.run(['pip', 'install', 'pytest', 'pytest-cov'], check=True)
+            click.echo(click.style("✅ Successfully installed pytest and pytest-cov", fg='green', bold=True))
+        except subprocess.CalledProcessError as e:
+            click.echo(click.style(f"\n❌ Failed to install dependencies: {str(e)}", fg='red', bold=True))
+            sys.exit(1)
     
     cmd = ['python', '-m', 'pytest', '-v'] # BASE COMMAND
     
@@ -53,13 +51,12 @@ def test(unit, integration, no_cov, html, module):
     
     # RUN TESTS
     try:
-        with LoadingAnimation():
-            result = subprocess.run(cmd, check=True)
-            if result.returncode == 0:
-                click.echo(click.style("\n✅ All tests passed!", fg='green', bold=True))
-            else:
-                click.echo(click.style("\n❌ Some tests failed!", fg='red', bold=True))
-                sys.exit(1)
+        result = subprocess.run(cmd, check=True)
+        if result.returncode == 0:
+            click.echo(click.style("\n✅ All tests passed!", fg='green', bold=True))
+        else:
+            click.echo(click.style("\n❌ Some tests failed!", fg='red', bold=True))
+            sys.exit(1)
     except subprocess.CalledProcessError as e:
         click.echo(click.style(f"\n❌ Tests failed with return code {e.returncode}", fg='red', bold=True))
         sys.exit(1)
