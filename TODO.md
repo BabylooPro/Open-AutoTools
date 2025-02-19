@@ -23,6 +23,11 @@
 
 #### IN PROGRESS
 
+- [ ] **fix:** ![HIGH][high] unable to autodownload MP3 files from YouTube; MP4 files are downloaded instead
+- [ ] **fix:** ![HIGH][high] option quality is not working for autodownload tool, instead the default (1080p) quality is downloaded
+
+#### DONE - v0.0.3-rc.4
+
 -
 
 #### DONE - v0.0.3-rc.3
