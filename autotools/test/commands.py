@@ -1,6 +1,8 @@
 import click
 import subprocess
 import sys
+import os
+import re
 from ..utils.updates import check_for_updates
 
 @click.command()
@@ -24,7 +26,18 @@ def test(unit, integration, no_cov, html, module):
             click.echo(click.style(f"\n❌ Failed to install dependencies: {str(e)}", fg='red', bold=True))
             sys.exit(1)
     
-    cmd = ['python', '-m', 'pytest', '-v'] # BASE COMMAND
+    # BASE COMMAND WITH ENHANCED VERBOSITY
+    cmd = [
+        'python', '-m', 'pytest',    # PYTHON MODULE AND TEST COMMAND
+        '--capture=no',              # SHOW PRINT STATEMENTS AND CAPTURED OUTPUT
+        '--full-trace',              # SHOW FULL TRACEBACK
+        '-vv',                       # VERY VERBOSE OUTPUT
+        '--durations=0',             # SHOW ALL TEST DURATIONS
+        '--showlocals',              # SHOW LOCAL VARIABLES IN TRACEBACKS
+        '--log-cli-level=DEBUG',     # SHOW DEBUG LOGS
+        '--tb=long',                 # LONG TRACEBACK STYLE
+        '-s'                         # SHORTCUT FOR --capture=no
+    ]
     
     # COVERAGE OPTIONS
     if not no_cov:
@@ -51,8 +64,45 @@ def test(unit, integration, no_cov, html, module):
     
     # RUN TESTS
     try:
-        result = subprocess.run(cmd, check=True)
-        if result.returncode == 0:
+        env = dict(os.environ)
+        env['PYTHONPATH'] = os.getcwd()
+        env['FORCE_COLOR'] = '1'  # FORCE COLORS IN OUTPUT
+        
+        process = subprocess.Popen(
+            cmd,
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            universal_newlines=True,
+            bufsize=1
+        )
+        
+        # READ AND PROCESS OUTPUT IN REAL-TIME
+        while True:
+            line = process.stdout.readline()
+            if not line and process.poll() is not None:
+                break
+            if line:
+                # CLEAN THE LINE
+                line = line.strip()
+                if line:  # ONLY PROCESS NON-EMPTY LINES
+                    if '::' in line and 'autotools/' in line:
+                        # REMOVE PARENT DIRECTORY PATHS
+                        line = line.split('autotools/')[-1].replace('/tests/', '/')
+                        # REMOVE MODULE PARENT DIRECTORY
+                        parts = line.split('/')
+                        if len(parts) > 1:
+                            line = parts[-1]
+                    # REMOVE MULTIPLE SPACES AND DOTS
+                    line = re.sub(r'\s+', ' ', line)
+                    line = re.sub(r'\.+', '.', line)
+                    # REMOVE EMPTY LINES WITH JUST DOTS OR SPACES
+                    if line.strip('. '):
+                        sys.stdout.write(line + '\n')
+                        sys.stdout.flush()
+        
+        process.wait()
+        if process.returncode == 0:
             click.echo(click.style("\n✅ All tests passed!", fg='green', bold=True))
         else:
             click.echo(click.style("\n❌ Some tests failed!", fg='red', bold=True))
