@@ -2,9 +2,9 @@
 
 **_Bugs to fix_**
 
-- [ ] **fix:** detect unclosed double quotes in CLI commands and automatically fix them by either adding a closing double quote at the end or switching to single quotes
-- [ ] **fix:** optimize execution performance of all tools features
-- [ ] **fix:** read requirements only from `requirements.txt` in the released version (actually cannot build without the listed requirements in `setup.py`)
+- [ ] **fix:** ![HIGH][high] optimize execution performance of all tools features
+- [ ] **fix:** ![MID][mid] detect unclosed double quotes in CLI commands and automatically fix them by either adding a closing double quote at the end or switching to single quotes
+- [ ] **fix:** ![LOW][low] read requirements only from `requirements.txt` in the released version (actually cannot build without the listed requirements in `setup.py`)
 
 ---
 
@@ -25,7 +25,7 @@
 
 -
 
-#### DONE - v0.0.3
+#### DONE - v0.0.3-rc.3
 
 - [x] **fixed:** YouTube download functionality now using mobile API for better reliability and no browser dependencies
 - [x] **added:** File existence checks with user prompts for overwrites for download tool
@@ -33,3 +33,7 @@
 - [x] **fixed:** YouTube download functionality with proper format and quality handling, including FFmpeg support for reliable format conversion
 - [x] **added:** loading animation with moving dots (...) during tool operations
 - [x] **refactored:** CLI module structure and command organization
+
+[high]: https://img.shields.io/badge/-HIGH-red
+[mid]: https://img.shields.io/badge/-MID-yellow
+[low]: https://img.shields.io/badge/-LOW-green
