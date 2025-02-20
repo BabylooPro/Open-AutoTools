@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 30 # EXPLICIT TIMEOUT FOR THE ENTIRE JOB
     strategy:
       matrix:
-        python-version: ["3.12", "3.11", "3.10"]
+        python-version: ["3.12", "3.11", "3.10"] # WARN: <=3.9 IS NOT SUPPORTED
       fail-fast: false # CONTINUE OTHER TESTS IF ONE FAILS
     steps:
       - uses: actions/checkout@v4
@@ -25,10 +25,24 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "pip"
-          cache-dependency-path: |
-            requirements.txt
-            setup.py
+          allow-prereleases: true
+          check-latest: true
+
+      - name: Get pip cache dir
+        id: pip-cache
+        run: |
+          echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ steps.pip-cache.outputs.dir }}
+            ~/.cache/pip
+          key: ${{ runner.os }}-py${{ matrix.python-version }}-pip-${{ hashFiles('**/requirements.txt', '**/setup.py') }}
+          restore-keys: |
+            ${{ runner.os }}-py${{ matrix.python-version }}-pip-
+            ${{ runner.os }}-py${{ matrix.python-version }}-
 
       - name: Install system dependencies
         run: |
