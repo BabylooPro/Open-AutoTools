@@ -41,6 +41,10 @@ pip install -r requirements.txt
 
 # For development, install in editable mode
 pip install -e .
+
+# INFO: if you want to run tests and some errors occur before see test executable
+# install test dependencies directly (optional)
+pip install -e ".[test]"
 ```
 
 ## Key Features
