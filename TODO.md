@@ -24,19 +24,26 @@
 
 #### IN PROGRESS
 
+- [ ] **fix:** ![HIGH][high] windows pre-release download issue with HTTP 403 errors
+  - _**info:** download works in dev mode but fails in pre-release with "HTTP Error 403: Forbidden"_
+  - _**info:** issue specific to Windows, works fine on MacOS (pre-release or dev mode)_
+  - _**info:** affects all video qualities (1440p, 1080p, 720p, 480p, 360p)_
+
+#### DONE - v0.0.3-rc.6
+
 -
 
-#### DONE - v0.0.3-rc.5
+#### DONE - v0.0.3-rc.5 ✓
 
 - [x] **fixed:** pytest command compatibility issues on Windows systems by improving argument handling and using system Python executable
 - [x] **fixed:** Windows compatibility by enhanced YouTube download reliability with mobile API prioritization and adding emoji fallback system
 
-#### DONE - v0.0.3-rc.4
+#### DONE - v0.0.3-rc.4 ✓
 
 - [x] **fixed:** unable to autodownload MP3 files from YouTube; MP4 files are downloaded instead
 - [x] **fixed:** option quality is not working for autodownload tool, instead the default (1080p) quality is downloaded
 
-#### DONE - v0.0.3-rc.3
+#### DONE - v0.0.3-rc.3 ✓
 
 - [x] **fixed:** YouTube download functionality now using mobile API for better reliability and no browser dependencies
 - [x] **added:** File existence checks with user prompts for overwrites for download tool
