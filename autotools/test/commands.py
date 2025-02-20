@@ -28,34 +28,32 @@ def test(unit, integration, no_cov, html, module):
     
     # BASE COMMAND WITH ENHANCED VERBOSITY
     cmd = [
-        'python', '-m', 'pytest',    # PYTHON MODULE AND TEST COMMAND
-        '--capture=no',              # SHOW PRINT STATEMENTS AND CAPTURED OUTPUT
-        '--full-trace',              # SHOW FULL TRACEBACK
-        '-vv',                       # VERY VERBOSE OUTPUT
-        '--durations=0',             # SHOW ALL TEST DURATIONS
-        '--showlocals',              # SHOW LOCAL VARIABLES IN TRACEBACKS
-        '--log-cli-level=DEBUG',     # SHOW DEBUG LOGS
-        '--tb=long',                 # LONG TRACEBACK STYLE
-        '-s'                         # SHORTCUT FOR --capture=no
+        sys.executable,             # USE SYSTEM PYTHON EXECUTABLE
+        '-m', 'pytest',            # RUN PYTEST AS MODULE
+        '-vv',                     # VERY VERBOSE OUTPUT
+        '--capture=no',            # SHOW PRINT STATEMENTS
+        '--showlocals',            # SHOW LOCAL VARIABLES IN TRACEBACKS
+        '--log-cli-level=DEBUG',   # SHOW DEBUG LOGS
+        '-s',                      # DISABLE CAPTURE
     ]
     
     # COVERAGE OPTIONS
     if not no_cov:
-        cmd.extend(['--cov=autotools'])
         if html:
-            cmd.extend(['--cov-report=html'])
+            cmd.extend(['--cov-report=html', '--cov=autotools'])
         else:
-            cmd.extend(['--cov-report=term-missing'])
+            cmd.extend(['--cov-report=term-missing', '--cov=autotools'])
     
     # TEST SELECTION
-    test_path = 'autotools'
     if module:
+        test_path = f'autotools/{module}/tests'
         if unit and not integration:
-            cmd.append(f'autotools/{module}/tests/test_{module}_core.py')
+            test_path = f'{test_path}/unit'
         elif integration and not unit:
-            cmd.append(f'autotools/{module}/tests/test_{module}_integration.py')
-        else:
-            cmd.append(f'autotools/{module}/tests')
+            test_path = f'{test_path}/integration'
+        cmd.append(test_path)
+    else:
+        cmd.append('autotools')
     
     # SHOW COMMAND BEING RUN
     click.echo(click.style("\nRunning tests with command:", fg='blue', bold=True))

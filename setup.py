@@ -91,6 +91,9 @@ setup(
         'test': [
             'pytest>=7.4.0',
             'pytest-cov>=4.1.0',
+            'pytest-sugar>=1.0.0',
+            'pytest-xdist>=3.5.0',
+            'pytest-timeout>=2.2.0',
         ],
     },
 )
