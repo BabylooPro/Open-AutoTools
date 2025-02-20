@@ -129,10 +129,26 @@ def save_consent_status(status):
         # IF SAVING FAILS, RETURN FALSE TO FORCE NEW CONSENT NEXT TIME
         return False
 
+# FUNCTION TO SAFELY PRINT WITH EMOJI FALLBACK
+def safe_print(text):
+    """PRINT TEXT WITH EMOJI FALLBACK FOR WINDOWS"""
+    try:
+        print(text)
+    except UnicodeEncodeError:
+        # REPLACE EMOJIS WITH ASCII ALTERNATIVES
+        text = (text.replace('⚠️', '!')
+                   .replace('🔍', '*')
+                   .replace('🎥', '>')
+                   .replace('📋', '+')
+                   .replace('❌', 'X')
+                   .replace('✅', 'V')
+                   .replace('↓', 'v'))
+        print(text)
+
 # FUNCTION TO GET USER CONSENT WITH INTERACTIVE PROMPT
 def get_user_consent():
     """GET USER CONSENT WITH INTERACTIVE PROMPT"""
-    print("\n⚠️  Important Notice:")
+    safe_print("\n!  Important Notice:")
     print("This tool will:")
     print("1. Download video content from YouTube")
     print("2. Save files to your local machine")
@@ -178,12 +194,12 @@ def download_youtube_video(url, format='mp4', quality='best'):
     """DOWNLOAD VIDEO WITH CONSENT CHECK"""
     # VALIDATE URL FIRST
     if not validate_youtube_url(url):
-        print("\n❌ Invalid YouTube URL")
+        safe_print("\nX Invalid YouTube URL")
         return False
 
     # CHECK FOR SAVED CONSENT FIRST AND GET NEW CONSENT IF NEEDED
     if not load_consent_status() and not get_user_consent():
-        print("\n❌ Download cancelled by user")
+        safe_print("\nX Download cancelled by user")
         return False
     
     # FIRST CHECK VIDEO INFO AND EXISTENCE
@@ -199,7 +215,7 @@ def download_youtube_video(url, format='mp4', quality='best'):
             info = ydl.extract_info(url, download=False)
             formats = info.get('formats', [])
             if not formats:
-                print("\n❌ No formats available for this video")
+                safe_print("\nX No formats available for this video")
                 return False
             
             # FIND BEST AVAILABLE QUALITY
@@ -218,7 +234,7 @@ def download_youtube_video(url, format='mp4', quality='best'):
                 height = best_height
                 # ASK FOR CONFIRMATION IF 4K OR HIGHER (ONLY FOR MP4)
                 if format == 'mp4' and height >= 2160:
-                    print(f"\n⚠️  This video is available in {height}p quality!")
+                    safe_print(f"\n! This video is available in {height}p quality!")
                     while True:
                         response = input(f"Do you want to download in {height}p quality? (yes/no): ").lower()
                         if response in ['no', 'n']:
@@ -238,7 +254,7 @@ def download_youtube_video(url, format='mp4', quality='best'):
             # CHECK IF FILE EXISTS AND GET REPLACEMENT CONSENT
             force_download = check_existing_video(info, format)
             if not force_download:
-                print("\n❌ Download cancelled - file already exists")
+                safe_print("\nX Download cancelled - file already exists")
                 return False
                 
             # OPEN DOWNLOADS FOLDER IF STARTING NEW DOWNLOAD OR REPLACING
@@ -246,7 +262,7 @@ def download_youtube_video(url, format='mp4', quality='best'):
             open_download_folder(download_dir)
 
     except Exception as e:
-        print(f"\n❌ Error checking video: {str(e)}")
+        safe_print(f"\nX Error checking video: {str(e)}")
         return False
     
     loading = LoadingAnimation()
@@ -254,17 +270,22 @@ def download_youtube_video(url, format='mp4', quality='best'):
     # START LOADING FOR DOWNLOAD PROCESS
     with loading:
         loading._spinner.start()
-        print("\n🔍 Starting download...")
+        safe_print("\n* Starting download...")
     
-    print(f"\n🎥 Downloading video from: {url}")
+    safe_print(f"\n> Downloading video from: {url}")
     if format == 'mp3':
-        print(f"📋 Format: {format}\n")
+        safe_print(f"+ Format: {format}\n")
     else:
-        print(f"📋 Format: {format}, Quality: {height}p\n")
+        safe_print(f"+ Format: {format}, Quality: {height}p\n")
 
     # YT-DLP PERMISSION OPTIONS FOR DOWNLOADING YOUTUBE VIDEOS
     ydl_opts = {
-        'format': f'bestvideo[height={height}][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<={height}][ext=mp4]+bestaudio[ext=m4a]/best[height<={height}][ext=mp4]/best[ext=mp4]/best' if format == 'mp4' else 'bestaudio/best',
+        'format': (
+            f'bestvideo[height<={height}][ext=mp4]+bestaudio[ext=m4a]/'  # TRY EXACT HEIGHT MATCH FIRST
+            f'bestvideo[height<={height}][ext=webm]+bestaudio[ext=webm]/'  # TRY WEBM AS FALLBACK
+            f'best[height<={height}]/'  # TRY COMBINED FORMATS
+            'best'  # FALLBACK TO BEST AVAILABLE
+        ) if format == 'mp4' else 'bestaudio/best',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
@@ -276,13 +297,13 @@ def download_youtube_video(url, format='mp4', quality='best'):
         'progress_hooks': [lambda d: update_progress(d)],
         'extractor_args': {
             'youtube': {
-                'player_client': ['web', 'android'],  # USE WEB CLIENT FIRST
+                'player_client': ['android', 'web'], # USE ANDROID FIRST AND WEB PLAYER CLIENTS IF ANDROID FAILS
                 'formats': ['missing_pot'],  # ALLOW FORMATS WITHOUT PO TOKEN
                 'player_skip': ['configs', 'webpage']  # SKIP UNNECESSARY CONFIGS
             }
         },
         'http_headers': {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             'Accept-Language': 'en-us,en;q=0.5',
             'Sec-Fetch-Mode': 'navigate'
@@ -290,15 +311,42 @@ def download_youtube_video(url, format='mp4', quality='best'):
         'outtmpl': str(download_dir / '%(title)s.%(ext)s'),  # SET OUTPUT TEMPLATE
         'overwrites': True,  # FORCE OVERWRITE IF USER CONSENTED
         'no_check_certificates': True,  # SKIP CERTIFICATE VALIDATION
-        'cookiesfrombrowser': ('chrome',),  # USE CHROME COOKIES IF AVAILABLE
+        'ignoreerrors': False,  # CATCH ERRORS PROPERLY
+        'cookiesfrombrowser': None, # DISABLE COOKIE FILE
+        'cookiefile': None, # DISABLE COOKIE FILE
     }
 
     try:
         # THEN DOWNLOAD
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([url])
-        print("\n✅ Download completed successfully!")
-        return True
+            try:
+                ydl.download([url])
+                safe_print("\nV Download completed successfully!")
+                return True
+            except Exception as e:
+                if "HTTP Error 403" in str(e):
+                    safe_print("\n! Access denied for requested quality. Trying lower quality...")
+                    # TRY DOWNLOADING WITH LOWER QUALITY
+                    if height > 720:
+                        new_height = min(height - 360, 1080)  # STEP DOWN QUALITY
+                        safe_print(f"v Falling back to {new_height}p")
+                        ydl_opts['format'] = (
+                            f'bestvideo[height<={new_height}][ext=mp4]+bestaudio[ext=m4a]/'
+                            f'bestvideo[height<={new_height}][ext=webm]+bestaudio[ext=webm]/'
+                            f'best[height<={new_height}]/'
+                            'best'
+                        )
+                        with yt_dlp.YoutubeDL(ydl_opts) as ydl2:
+                            ydl2.download([url])
+                        safe_print("\nV Download completed successfully!")
+                        return True
+                    else:
+                        safe_print("\nX Failed to download video at any quality")
+                        return False
+                else:
+                    raise e
+                
+    # CATCH ANY EXCEPTIONS AND HANDLE THEM
     except Exception as e:
         error_msg = str(e)
         if "Requested format is not available" in error_msg:
@@ -371,3 +419,15 @@ def download_file_with_tqdm(url):
         open_download_folder(download_dir)
     except requests.exceptions.RequestException as e:
         print(f"Error during file download: {e}")
+
+
+# FUNCTION TO GET BROWSER COOKIES
+def get_browser_cookies():
+    """GET BROWSER COOKIES WITH FALLBACK OPTIONS"""
+    try:
+        return ('chrome',)  # TRY CHROME FIRST
+    except Exception:
+        try:
+            return ('firefox',)  # TRY FIREFOX IF CHROME FAILS
+        except Exception:
+            return None  # RETURN NONE IF BOTH FAIL

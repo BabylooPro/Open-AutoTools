@@ -165,7 +165,8 @@ def test_save_consent_status(mock_json_dump, mock_file, mock_mkdir, mock_exists)
 # TEST FOR USER CONSENT - YES
 @patch('builtins.input', return_value='yes')
 @patch('autotools.autodownload.core.save_consent_status')
-def test_get_user_consent_yes(mock_save, mock_input):
+@patch('autotools.autodownload.core.safe_print')
+def test_get_user_consent_yes(mock_safe_print, mock_save, mock_input):
     """TEST USER CONSENT - YES"""
     assert get_user_consent() is True
     mock_save.assert_called_with(True)
@@ -174,7 +175,8 @@ def test_get_user_consent_yes(mock_save, mock_input):
 # TEST FOR USER CONSENT - NO
 @patch('builtins.input', return_value='no')
 @patch('autotools.autodownload.core.save_consent_status')
-def test_get_user_consent_no(mock_save, mock_input):
+@patch('autotools.autodownload.core.safe_print')
+def test_get_user_consent_no(mock_safe_print, mock_save, mock_input):
     """TEST USER CONSENT - NO"""
     assert get_user_consent() is False
     mock_save.assert_called_with(False)
@@ -183,7 +185,8 @@ def test_get_user_consent_no(mock_save, mock_input):
 # TEST FOR YOUTUBE VIDEO DOWNLOAD   
 @patch('yt_dlp.YoutubeDL')
 @patch('autotools.autodownload.core.load_consent_status', return_value=True)
-def test_download_youtube_video(mock_consent, mock_ytdl):
+@patch('autotools.autodownload.core.safe_print')
+def test_download_youtube_video(mock_safe_print, mock_consent, mock_ytdl):
     """TEST YOUTUBE VIDEO DOWNLOAD"""
     # MOCK VIDEO INFO EXTRACTION
     mock_info = {
