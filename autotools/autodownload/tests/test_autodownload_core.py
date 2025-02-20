@@ -185,11 +185,21 @@ def test_get_user_consent_no(mock_save, mock_input):
 @patch('autotools.autodownload.core.load_consent_status', return_value=True)
 def test_download_youtube_video(mock_consent, mock_ytdl):
     """TEST YOUTUBE VIDEO DOWNLOAD"""
+    # MOCK VIDEO INFO EXTRACTION
+    mock_info = {
+        'formats': [
+            {'height': 720, 'ext': 'mp4'},
+            {'height': 1080, 'ext': 'mp4'}
+        ]
+    }
     mock_ytdl_instance = Mock()
     mock_ytdl.return_value.__enter__.return_value = mock_ytdl_instance
+    mock_ytdl_instance.extract_info.return_value = mock_info
     mock_ytdl_instance.download.return_value = 0
     
-    assert download_youtube_video('https://youtube.com/watch?v=test') is True
-    mock_ytdl.assert_called()
-    mock_consent.assert_called_once()
-    mock_ytdl_instance.download.assert_called_once() 
+    # MOCK FILE CHECK TO RETURN TRUE (NO EXISTING FILE)
+    with patch('autotools.autodownload.core.check_existing_video', return_value=True):
+        assert download_youtube_video('https://youtube.com/watch?v=test') is True
+        mock_ytdl.assert_called()
+        mock_consent.assert_called_once()
+        mock_ytdl_instance.download.assert_called_once() 
