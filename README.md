@@ -136,6 +136,12 @@ pip install -e ".[test]"
 
   > **Note:** The tool uses YouTube's mobile API for better compatibility and reliability.
 
+- **Compatibility:**
+
+  - Windows 10/11 ✗
+  - macOS 15+ ✓
+  - Linux ✗
+
 ### AutoIP ![Stability][AUTOIP_EFF]
 
 - **Description:** Displays network information including IP addresses, connectivity tests, speed tests, and more.
@@ -160,6 +166,7 @@ pip install -e ".[test]"
   - `--no-ip, -n`: Hide IP addresses display
 
 - **Features:**
+
   - Local and public IP detection (IPv4 & IPv6)
   - Internet speed testing
   - Network connectivity checks
@@ -168,6 +175,12 @@ pip install -e ".[test]"
   - Port scanning
   - DNS server information
   - IP geolocation
+
+  - **Compatibility:**
+
+  - Windows 10/11 ✓
+  - macOS 15+ ✓
+  - Linux ✗
 
 ### AutoTranslate ![Stability][AUTOTRANSLATE_EFF]
 
