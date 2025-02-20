@@ -31,7 +31,7 @@
 
 #### DONE - v0.0.3-rc.6
 
--
+- [x] **fixed:** warning cache issues with Python setup in workflow CI for all available python versions
 
 #### DONE - v0.0.3-rc.5 ✓
 
