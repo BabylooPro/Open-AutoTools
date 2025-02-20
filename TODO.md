@@ -26,6 +26,11 @@
 
 -
 
+#### DONE - v0.0.3-rc.5
+
+- [x] **fixed:** pytest command compatibility issues on Windows systems by improving argument handling and using system Python executable
+- [x] **fixed:** Windows compatibility by enhanced YouTube download reliability with mobile API prioritization and adding emoji fallback system
+
 #### DONE - v0.0.3-rc.4
 
 - [x] **fixed:** unable to autodownload MP3 files from YouTube; MP4 files are downloaded instead
