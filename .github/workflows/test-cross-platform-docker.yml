@@ -48,21 +48,21 @@ jobs:
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
 
-      - name: Build and test ${{ matrix.platform }}
+      - name: Build ${{ matrix.platform }}
         run: |
-          # Build the image
           docker compose build ${{ matrix.platform }}
 
-          # Verify package installation
+      - name: Verify package installation for ${{ matrix.platform }}
+        run: |
           docker compose run --rm ${{ matrix.platform }} pip list | grep Open-AutoTools || {
             echo "ERROR: Open-AutoTools package not found. Reinstalling..."
             docker compose run --rm ${{ matrix.platform }} pip install -e .
           }
 
-          # Run tests
-          docker compose run --rm ${{ matrix.platform }}
+      - name: Run tests for ${{ matrix.platform }}
+        run: docker compose run --rm ${{ matrix.platform }}
 
-      - name: Upload test artifacts
+      - name: Upload test artifacts for ${{ matrix.platform }}
         if: always()
         uses: actions/upload-artifact@v4
         with:
