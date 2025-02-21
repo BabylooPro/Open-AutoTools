@@ -1,0 +1,59 @@
+# INFO: THIS WORKFLOW USES TMATE FOR SSH DEBUGGING WHEN DEBUG_ENABLED IS TRUE
+# WHEN DEBUG IS ENABLED, JOB PAUSES AT TMATE STEP AND PROVIDES:
+#   - SSH CONNECTION STRING
+#   - WEB URL FOR DIRECT CONNECTION
+
+# INFO: SESSION STAYS ACTIVE FOR MAX 30MIN OR UNTIL MANUALLY CLOSED
+# USEFUL FOR:
+#  - EXPLORING RUNNER ENVIRONMENT
+#  - MANUAL COMMAND TESTING
+#  - BUILD/TEST DEBUGGING
+
+# WARN: NEVER ENABLE DEBUG MODE ON EXTERNAL PRs - SECURITY RISK
+# WARN: ONLY USE DEBUG MODE ON YOUR OWN BRANCHES
+
+# INFO: THIS WORKFLOW TESTS DOCKER BUILD AND RUN FOR MULTIPLE PLATFORMS
+# INFO: IT IS INTENDED TO BE RUN MANUALLY
+
+name: Test Cross-Platform Docker
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: "Run the build with tmate debugging enabled"
+        required: false
+        default: false
+
+jobs:
+  docker-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu, macos, windows]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+
+      - name: Build and test ${{ matrix.platform }}
+        run: |
+          docker compose build ${{ matrix.platform }}
+          docker compose run --rm ${{ matrix.platform }}
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.platform }}
+          path: data/
+          retention-days: 7
