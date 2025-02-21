@@ -1,6 +1,9 @@
 # INFO: USE THIS COMMAND TO CREATE A NEW PRE-RELEASE:
 # git tag v1.0.0-rc.1
 # git push origin v1.0.0-rc.1
+# OR FOR BETA:
+# git tag v1.0.0b1
+# git push origin v1.0.0b1
 
 name: Pre-Publish to PyPI
 run-name: "Pre-Release ${{ github.ref_name }}"
@@ -8,7 +11,8 @@ run-name: "Pre-Release ${{ github.ref_name }}"
 on:
   push:
     tags:
-      - "v[0-9]+.[0-9]+.[0-9]+-rc*"
+      - "v[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+[^.]" # MATCH RC TAG BUT NOT IF FOLLOWED BY .dev
+      - "v[0-9]+.[0-9]+.[0-9]+b[0-9]+[^.]" # MATCH BETA TAG BUT NOT IF FOLLOWED BY .dev
 
 jobs:
   test:
