@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y \
     xclip \
     xsel \
     openjdk-17-jre \
+    bc \
     && rm -rf /var/lib/apt/lists/*
 
 # SET WORKING DIRECTORY
@@ -70,6 +71,7 @@ RUN apt-get update && apt-get install -y \
     xclip \
     xsel \
     openjdk-17-jre \
+    bc \
     && rm -rf /var/lib/apt/lists/*
 
 # COPY VIRTUAL ENV FROM BUILDER
@@ -105,6 +107,7 @@ RUN apt-get update && apt-get install -y \
     git \
     build-essential \
     python3-dev \
+    bc \
     && rm -rf /var/lib/apt/lists/*
 
 # SET WORKING DIRECTORY
@@ -158,6 +161,7 @@ RUN apt-get update && apt-get install -y \
     git \
     ffmpeg \
     default-jre \
+    bc \
     && rm -rf /var/lib/apt/lists/*
 
 # SET WORKING DIRECTORY

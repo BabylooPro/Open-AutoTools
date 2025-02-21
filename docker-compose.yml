@@ -9,6 +9,8 @@ services:
       - ./data:/data
     environment:
       - PYTHONUNBUFFERED=1
+      - PLATFORM=Ubuntu
+      - VERBOSE=1
 
   macos:
     container_name: autotools-macos
@@ -20,6 +22,8 @@ services:
       - ./data:/data
     environment:
       - PYTHONUNBUFFERED=1
+      - PLATFORM=macOS
+      - VERBOSE=1
 
   windows:
     container_name: autotools-windows
@@ -31,3 +35,5 @@ services:
       - ./data:/data
     environment:
       - PYTHONUNBUFFERED=1
+      - PLATFORM=Windows
+      - VERBOSE=1
