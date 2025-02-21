@@ -218,7 +218,20 @@ def download_youtube_video(url, format='mp4', quality='best'):
             'quiet': False,  # ENABLE OUTPUT
             'verbose': True,  # ENABLE VERBOSE MODE
             'no_warnings': False,  # SHOW WARNINGS
-            'rm_cachedir': True  # CLEAR CACHE
+            'rm_cachedir': True,  # CLEAR CACHE
+            'cookiesfrombrowser': ('chrome', 'firefox'),  # TRY BOTH BROWSERS
+            'extractor_args': {
+                'youtube': {
+                    'player_client': ['android', 'web'],
+                    'player_skip': ['js', 'configs', 'webpage']
+                }
+            },
+            'http_headers': {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Language': 'en-us,en;q=0.5',
+                'Sec-Fetch-Mode': 'navigate'
+            }
         }) as ydl:
             info = ydl.extract_info(url, download=False)
             formats = info.get('formats', [])
@@ -306,7 +319,20 @@ def download_youtube_video(url, format='mp4', quality='best'):
         'outtmpl': str(download_dir / '%(title)s.%(ext)s'),  # SET OUTPUT TEMPLATE
         'overwrites': True,  # FORCE OVERWRITE IF USER CONSENTED
         'retries': 10,  # INCREASE RETRIES
-        'fragment_retries': 10  # INCREASE FRAGMENT RETRIES
+        'fragment_retries': 10,  # INCREASE FRAGMENT RETRIES
+        'cookiesfrombrowser': ('chrome', 'firefox'),  # TRY BOTH BROWSERS
+        'extractor_args': {
+            'youtube': {
+                'player_client': ['android', 'web'],
+                'player_skip': ['js', 'configs', 'webpage']
+            }
+        },
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en-us,en;q=0.5',
+            'Sec-Fetch-Mode': 'navigate'
+        }
     }
 
     try:
