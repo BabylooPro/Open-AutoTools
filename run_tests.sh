@@ -204,34 +204,35 @@ else
     track_test "autopassword" "encryption" "✗"
 fi
 
-echo -e "\n=== Testing autoip ==="
+# TODO FIX: ENSURE NO IP ADDRESSES OR SENSITIVE INFORMATION ARE EXPOSED IN WORKFLOW LOGS
+# echo -e "\n=== Testing autoip ==="
 # BASIC NETWORK INFO
-if run_test "autotools autoip --no-ip"; then
-    track_test "autoip" "basic" "✓"
-else
-    track_test "autoip" "basic" "✗"
-fi
+# if run_test "autotools autoip --no-ip"; then
+#     track_test "autoip" "basic" "✓"
+# else
+#     track_test "autoip" "basic" "✗"
+# fi
 
-# BASIC TESTS
-if run_test "autotools autoip --test"; then
-    track_test "autoip" "connectivity" "✓"
-else
-    track_test "autoip" "connectivity" "✗"
-fi
+# # BASIC TESTS
+# if run_test "autotools autoip --test"; then
+#     track_test "autoip" "connectivity" "✓"
+# else
+#     track_test "autoip" "connectivity" "✗"
+# fi
 
-# DNS INFO
-if run_test "autotools autoip --dns"; then
-    track_test "autoip" "dns" "✓"
-else
-    track_test "autoip" "dns" "✗"
-fi
+# # DNS INFO
+# if run_test "autotools autoip --dns"; then
+#     track_test "autoip" "dns" "✓"
+# else
+#     track_test "autoip" "dns" "✗"
+# fi
 
 # PORT CHECK
-if run_test "autotools autoip --ports"; then
-    track_test "autoip" "ports" "✓"
-else
-    track_test "autoip" "ports" "✗"
-fi
+# if run_test "autotools autoip --ports"; then
+#     track_test "autoip" "ports" "✓"
+# else
+#     track_test "autoip" "ports" "✗"
+# fi
 
 echo -e "\n=== Testing autotranslate ==="
 # BASIC TRANSLATION WITH DETECTION
