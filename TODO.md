@@ -31,6 +31,8 @@
 
 #### DONE - v0.0.3-rc.6
 
+- [x] **added:** docker support for cross-platform testing all tools command (ubuntu, macos, windows)
+- [x] **fixed:** handle pyperclip clipboard errors in headless environments
 - [x] **fixed:** warning cache issues with Python setup in workflow CI for all available python versions
 
 #### DONE - v0.0.3-rc.5 ✓
