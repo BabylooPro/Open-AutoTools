@@ -45,6 +45,16 @@ pip install -e .
 # INFO: if you want to run tests and some errors occur before see test executable
 # install test dependencies directly (optional)
 pip install -e ".[test]"
+
+# INFO: if you want to build the package locally and install it to test your new features
+# Build the package locally
+python -m build  # Creates dist/Open_AutoTools-X.X.X-py3-none-any.whl
+
+# Install from local wheel file
+pip install dist/Open_AutoTools-X.X.X-py3-none-any.whl
+
+# Check installation and development mode
+autotools --version  # Should show "Development mode: enabled" when using pip install -e .
 ```
 
 ## Key Features
