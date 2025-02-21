@@ -1,9 +1,11 @@
 import click
-from importlib.metadata import version as get_version, PackageNotFoundError
+from importlib.metadata import version as get_version, PackageNotFoundError, distribution
 import pkg_resources
 import requests
 from packaging.version import parse as parse_version
 from datetime import datetime
+import os
+import sys
 
 # VERSION CALLBACK
 def print_version(ctx, param, value):
@@ -16,9 +18,13 @@ def print_version(ctx, param, value):
         pkg_version = get_version('Open-AutoTools')
         click.echo(f"Open-AutoTools version {pkg_version}")
 
+        # CHECK IF IN DEVELOPMENT MODE
+        module = sys.modules.get('autotools')
+        if module and 'site-packages' not in getattr(module, '__file__', '').lower():
+            click.echo(click.style("Development mode: enabled", fg='yellow', bold=True))
+
         # GET DISTRIBUTION INFO
-        dist = pkg_resources.get_distribution("Open-AutoTools")
-        current_version = parse_version(dist.version)
+        current_version = parse_version(pkg_version)
 
         # GET LATEST VERSION FROM PYPI
         pypi_url = "https://pypi.org/pypi/Open-AutoTools/json"
