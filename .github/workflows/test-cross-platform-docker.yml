@@ -38,6 +38,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Create data directory
+        run: mkdir -p data
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -47,7 +50,16 @@ jobs:
 
       - name: Build and test ${{ matrix.platform }}
         run: |
+          # Build the image
           docker compose build ${{ matrix.platform }}
+
+          # Verify package installation
+          docker compose run --rm ${{ matrix.platform }} pip list | grep Open-AutoTools || {
+            echo "ERROR: Open-AutoTools package not found. Reinstalling..."
+            docker compose run --rm ${{ matrix.platform }} pip install -e .
+          }
+
+          # Run tests
           docker compose run --rm ${{ matrix.platform }}
 
       - name: Upload test artifacts
