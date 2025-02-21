@@ -9,6 +9,7 @@ import subprocess
 import json
 from rich.progress import Progress
 from ..utils.loading import LoadingAnimation
+from yt_dlp.cookies import extract_cookies_from_browser
 
 
 # FUNCTION TO GET DEFAULT DOWNLOAD DIRECTORY
@@ -202,15 +203,22 @@ def download_youtube_video(url, format='mp4', quality='best'):
         safe_print("\nX Download cancelled by user")
         return False
     
+    # UPDATE YT-DLP FIRST
+    try:
+        yt_dlp.utils.std_headers.clear()
+        yt_dlp.update.__version__ = yt_dlp.version.__version__
+        yt_dlp.update.update()
+    except Exception:
+        pass  # IGNORE UPDATE ERRORS
+    
     # FIRST CHECK VIDEO INFO AND EXISTENCE
     try:
+        #!DEBUGGING
         with yt_dlp.YoutubeDL({
-            'quiet': True,
-            'no_warnings': True,
-            'extractor_args': {'youtube': {
-                'player_client': ['web', 'android'],
-                'formats': ['missing_pot']  # ALLOW FORMATS WITHOUT PO TOKEN
-            }}
+            'quiet': False,  # ENABLE OUTPUT
+            'verbose': True,  # ENABLE VERBOSE MODE
+            'no_warnings': False,  # SHOW WARNINGS
+            'rm_cachedir': True  # CLEAR CACHE
         }) as ydl:
             info = ydl.extract_info(url, download=False)
             formats = info.get('formats', [])
@@ -281,9 +289,7 @@ def download_youtube_video(url, format='mp4', quality='best'):
     # YT-DLP PERMISSION OPTIONS FOR DOWNLOADING YOUTUBE VIDEOS
     ydl_opts = {
         'format': (
-            f'bestvideo[height<={height}][ext=mp4]+bestaudio[ext=m4a]/'  # TRY EXACT HEIGHT MATCH FIRST
-            f'bestvideo[height<={height}][ext=webm]+bestaudio[ext=webm]/'  # TRY WEBM AS FALLBACK
-            f'best[height<={height}]/'  # TRY COMBINED FORMATS
+            f'bestvideo[height<={height}][ext=mp4]+bestaudio[ext=m4a]/'
             'best'  # FALLBACK TO BEST AVAILABLE
         ) if format == 'mp4' else 'bestaudio/best',
         'postprocessors': [{
@@ -291,29 +297,16 @@ def download_youtube_video(url, format='mp4', quality='best'):
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }] if format == 'mp3' else [],
-        'quiet': True,
-        'no_warnings': True,
+        'quiet': False,  # ENABLE OUTPUT
+        'verbose': True,  # ENABLE VERBOSE MODE
+        'no_warnings': False,  # SHOW WARNINGS
         'progress': True,
         'progress_hooks': [lambda d: update_progress(d)],
-        'extractor_args': {
-            'youtube': {
-                'player_client': ['android', 'web'], # USE ANDROID FIRST AND WEB PLAYER CLIENTS IF ANDROID FAILS
-                'formats': ['missing_pot'],  # ALLOW FORMATS WITHOUT PO TOKEN
-                'player_skip': ['configs', 'webpage']  # SKIP UNNECESSARY CONFIGS
-            }
-        },
-        'http_headers': {
-            'User-Agent': 'Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-            'Accept-Language': 'en-us,en;q=0.5',
-            'Sec-Fetch-Mode': 'navigate'
-        },
+        'rm_cachedir': True,  # CLEAR CACHE
         'outtmpl': str(download_dir / '%(title)s.%(ext)s'),  # SET OUTPUT TEMPLATE
         'overwrites': True,  # FORCE OVERWRITE IF USER CONSENTED
-        'no_check_certificates': True,  # SKIP CERTIFICATE VALIDATION
-        'ignoreerrors': False,  # CATCH ERRORS PROPERLY
-        'cookiesfrombrowser': None, # DISABLE COOKIE FILE
-        'cookiefile': None, # DISABLE COOKIE FILE
+        'retries': 10,  # INCREASE RETRIES
+        'fragment_retries': 10  # INCREASE FRAGMENT RETRIES
     }
 
     try:
@@ -425,9 +418,20 @@ def download_file_with_tqdm(url):
 def get_browser_cookies():
     """GET BROWSER COOKIES WITH FALLBACK OPTIONS"""
     try:
-        return ('chrome',)  # TRY CHROME FIRST
+        # TRY CHROME FIRST
+        cookies = extract_cookies_from_browser('chrome')
+        if cookies:
+            return ('chrome',)
     except Exception:
-        try:
-            return ('firefox',)  # TRY FIREFOX IF CHROME FAILS
-        except Exception:
-            return None  # RETURN NONE IF BOTH FAIL
+        pass
+        
+    try:
+        # TRY FIREFOX IF CHROME FAILS
+        cookies = extract_cookies_from_browser('firefox')
+        if cookies:
+            return ('firefox',)
+    except Exception:
+        pass
+        
+    # IF ALL FAILS, RETURN NONE AND CONTINUE WITHOUT COOKIES
+    return None
