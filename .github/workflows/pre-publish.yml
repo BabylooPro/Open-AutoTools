@@ -11,8 +11,10 @@ run-name: "Pre-Release ${{ github.ref_name }}"
 on:
   push:
     tags:
-      - 'v[0-9]+\.[0-9]+\.[0-9]+-rc\.[0-9]+[^.]*' # MATCH RC TAG BUT NOT IF FOLLOWED BY .dev
-      - 'v[0-9]+\.[0-9]+\.[0-9]+b[0-9]+[^.]*' # MATCH BETA TAG BUT NOT IF FOLLOWED BY .dev
+      - "v[0-9].[0-9].[0-9]-rc.[0-9]" # MATCH: v1.0.0-rc.2
+      - "v[0-9].[0-9].[0-9]-rc.[0-9][0-9]" # MATCH: v1.0.0-rc.10
+      - "v[0-9].[0-9].[0-9]b[0-9]" # MATCH: v3.1.5b4
+      - "v[0-9].[0-9].[0-9]b[0-9][0-9]" # MATCH: v3.1.5b10
 
 jobs:
   test:
