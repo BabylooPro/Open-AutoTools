@@ -2,6 +2,7 @@
 
 **_Bugs to fix_**
 
+- [ ] **fix:** ![HIGH][high] ensure no IP addresses or sensitive information are exposed in workflow logs with autoip tools
 - [ ] **fix:** ![HIGH][high] optimize execution performance of all tools features
 - [ ] **fix:** ![MID][mid] detect unclosed double quotes in CLI commands and automatically fix them by either adding a closing double quote at the end or switching to single quotes
 - [ ] **fix:** ![MID][mid] multiple warning in unit/integration tests
@@ -24,7 +25,7 @@
 
 #### IN PROGRESS
 
-- [ ] **fix:** ![HIGH][high] windows pre-release download issue with HTTP 403 errors
+- [ ] **fixing:** ![HIGH][high] windows pre-release download issue with HTTP 403 errors
   - _**info:** download works in dev mode but fails in pre-release with "HTTP Error 403: Forbidden"_
   - _**info:** issue specific to Windows, works fine on MacOS (pre-release or dev mode)_
   - _**info:** affects all video qualities (1440p, 1080p, 720p, 480p, 360p)_
