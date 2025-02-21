@@ -210,16 +210,46 @@ def download_youtube_video(url, format='mp4', quality='best'):
         yt_dlp.update.update()
     except Exception:
         pass  # IGNORE UPDATE ERRORS
+
+    # SETUP CUSTOM HEADERS AND COOKIES
+    custom_headers = {
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0',
+        'Accept': '*/*',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Origin': 'https://www.youtube.com',
+        'Referer': 'https://www.youtube.com/',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin',
+        'Connection': 'keep-alive',
+        'Cookie': '',
+        'TE': 'trailers'
+    }
     
     # FIRST CHECK VIDEO INFO AND EXISTENCE
     try:
-        #!DEBUGGING
-        with yt_dlp.YoutubeDL({
+        ydl_opts = {
             'quiet': False,  # ENABLE OUTPUT
             'verbose': True,  # ENABLE VERBOSE MODE
             'no_warnings': False,  # SHOW WARNINGS
-            'rm_cachedir': True  # CLEAR CACHE
-        }) as ydl:
+            'rm_cachedir': True,  # CLEAR CACHE
+            'http_headers': custom_headers,
+            'cookiesfrombrowser': get_browser_cookies(),  # TRY TO GET COOKIES FROM BROWSER
+            'format_sort': ['res:2160', 'res:1440', 'res:1080', 'ext:mp4:m4a'],  # FORCE HIGH QUALITY
+            'extractor_args': {
+                'youtube': {
+                    'player_client': ['web', 'web_embedded'],
+                    'player_skip': [],
+                    'formats': 'all'
+                }
+            },
+            'socket_timeout': 30,  # INCREASE TIMEOUT
+            'nocheckcertificate': True,  # SKIP CERTIFICATE VALIDATION
+            'ignoreerrors': True  # CONTINUE ON ERRORS
+        }
+
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
             formats = info.get('formats', [])
             if not formats:
@@ -290,6 +320,7 @@ def download_youtube_video(url, format='mp4', quality='best'):
     ydl_opts = {
         'format': (
             f'bestvideo[height<={height}][ext=mp4]+bestaudio[ext=m4a]/'
+            f'bestvideo[height<={height}]+bestaudio/'
             'best'  # FALLBACK TO BEST AVAILABLE
         ) if format == 'mp4' else 'bestaudio/best',
         'postprocessors': [{
@@ -306,7 +337,20 @@ def download_youtube_video(url, format='mp4', quality='best'):
         'outtmpl': str(download_dir / '%(title)s.%(ext)s'),  # SET OUTPUT TEMPLATE
         'overwrites': True,  # FORCE OVERWRITE IF USER CONSENTED
         'retries': 10,  # INCREASE RETRIES
-        'fragment_retries': 10  # INCREASE FRAGMENT RETRIES
+        'fragment_retries': 10,  # INCREASE FRAGMENT RETRIES
+        'http_headers': custom_headers,  # ADD CUSTOM HEADERS
+        'cookiesfrombrowser': get_browser_cookies(),  # TRY TO GET COOKIES FROM BROWSER
+        'format_sort': ['res:2160', 'res:1440', 'res:1080', 'ext:mp4:m4a'],  # FORCE HIGH QUALITY
+        'extractor_args': {
+            'youtube': {
+                'player_client': ['web', 'web_embedded'],
+                'player_skip': [],
+                'formats': 'all'
+            }
+        },
+        'socket_timeout': 30,  # INCREASE TIMEOUT
+        'nocheckcertificate': True,  # SKIP CERTIFICATE VALIDATION
+        'ignoreerrors': True  # CONTINUE ON ERRORS
     }
 
     try:
