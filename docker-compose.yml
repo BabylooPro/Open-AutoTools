@@ -1,0 +1,33 @@
+services:
+  ubuntu:
+    container_name: autotools-ubuntu
+    build:
+      context: .
+      target: ubuntu
+    volumes:
+      - .:/app
+      - ./data:/data
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  macos:
+    container_name: autotools-macos
+    build:
+      context: .
+      target: macos
+    volumes:
+      - .:/app
+      - ./data:/data
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  windows:
+    container_name: autotools-windows
+    build:
+      context: .
+      target: windows
+    volumes:
+      - .:/app
+      - ./data:/data
+    environment:
+      - PYTHONUNBUFFERED=1
