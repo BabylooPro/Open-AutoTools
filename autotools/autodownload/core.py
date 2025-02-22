@@ -353,7 +353,13 @@ def download_youtube_video(url, format='mp4', quality='best'):
         'ignoreerrors': True,  # CONTINUE ON ERRORS
         'noresizebuffer': True,  # DISABLE RESIZE BUFFER TO PREVENT RESUME
         'nopart': True,  # DISABLE TEMP FILES
-        'continuedl': False  # DISABLE DOWNLOAD RESUME
+        'continuedl': False,  # DISABLE DOWNLOAD RESUME
+        'max_sleep_interval': 5,  # REDUCE SLEEP TIME BETWEEN RETRIES
+        'sleep_interval': 1,  # MINIMUM SLEEP TIME
+        'max_retries': 20,  # MAXIMUM NUMBER OF RETRIES
+        'file_access_retries': 10,  # FILE ACCESS RETRY COUNT
+        'buffersize': 1024,  # REDUCE BUFFER SIZE
+        'http_chunk_size': 10485760  # REDUCE CHUNK SIZE TO 10MB
     }
 
     try:
