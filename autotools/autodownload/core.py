@@ -239,9 +239,9 @@ def download_youtube_video(url, format='mp4', quality='best'):
             'format_sort': ['res:2160', 'res:1440', 'res:1080', 'ext:mp4:m4a'],  # FORCE HIGH QUALITY
             'extractor_args': {
                 'youtube': {
-                    'player_client': ['web', 'web_embedded'],
-                    'player_skip': [],
-                    'formats': 'all'
+                    'player_client': ['ios'],
+                    'formats': 'all',
+                    'format': '313+251/271+251/137+251'  # 4K+AUDIO / 1440p+AUDIO / 1080p+AUDIO
                 }
             },
             'socket_timeout': 30,  # INCREASE TIMEOUT
@@ -318,48 +318,57 @@ def download_youtube_video(url, format='mp4', quality='best'):
 
     # YT-DLP PERMISSION OPTIONS FOR DOWNLOADING YOUTUBE VIDEOS
     ydl_opts = {
-        'format': (
-            f'bestvideo[height<={height}][ext=mp4]+bestaudio[ext=m4a]/'
-            f'bestvideo[height<={height}]+bestaudio/'
-            'best'  # FALLBACK TO BEST AVAILABLE
-        ) if format == 'mp4' else 'bestaudio/best',
+        'format': 'bestvideo[height>=2160][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height>=2160][ext=webm]+bestaudio[ext=webm]/bestvideo[height>=2160]+bestaudio/best',
+        'format_sort': ['res:2160', 'res:1440', 'res:1080', 'ext:mp4:m4a'],
+        'format_sort_force': True,
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }] if format == 'mp3' else [],
-        'quiet': False,  # ENABLE OUTPUT
-        'verbose': True,  # ENABLE VERBOSE MODE
-        'no_warnings': False,  # SHOW WARNINGS
+        'quiet': True,  # HIDE MOST OUTPUT
+        'verbose': False,  # DISABLE VERBOSE MODE
+        'no_warnings': True,  # HIDE WARNINGS
         'progress': True,
         'progress_hooks': [lambda d: update_progress(d)],
-        'rm_cachedir': True,  # CLEAR CACHE
-        'outtmpl': str(download_dir / '%(title)s.%(ext)s'),  # SET OUTPUT TEMPLATE
-        'overwrites': True,  # FORCE OVERWRITE IF USER CONSENTED
-        'retries': 10,  # INCREASE RETRIES
-        'fragment_retries': 10,  # INCREASE FRAGMENT RETRIES
-        'http_headers': custom_headers,  # ADD CUSTOM HEADERS
-        'cookiesfrombrowser': get_browser_cookies(),  # TRY TO GET COOKIES FROM BROWSER
-        'format_sort': ['res:2160', 'res:1440', 'res:1080', 'ext:mp4:m4a'],  # FORCE HIGH QUALITY
+        'outtmpl': str(download_dir / '%(title)s.%(ext)s'),
+        'overwrites': True,
+        'retries': 10,
+        'fragment_retries': 10,
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            'Accept': '*/*',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Origin': 'https://www.youtube.com',
+            'Referer': 'https://www.youtube.com/',
+            'Connection': 'keep-alive'
+        },
         'extractor_args': {
             'youtube': {
-                'player_client': ['web', 'web_embedded'],
-                'player_skip': [],
-                'formats': 'all'
+                'player_client': ['ios'],
+                'formats': 'all',
+                'format': '313+251/271+251/137+251'  # 4K+AUDIO / 1440p+AUDIO / 1080p+AUDIO
             }
         },
-        'socket_timeout': 30,  # INCREASE TIMEOUT
-        'nocheckcertificate': True,  # SKIP CERTIFICATE VALIDATION
-        'ignoreerrors': True,  # CONTINUE ON ERRORS
-        'noresizebuffer': True,  # DISABLE RESIZE BUFFER TO PREVENT RESUME
-        'nopart': True,  # DISABLE TEMP FILES
-        'continuedl': False,  # DISABLE DOWNLOAD RESUME
-        'max_sleep_interval': 5,  # REDUCE SLEEP TIME BETWEEN RETRIES
-        'sleep_interval': 1,  # MINIMUM SLEEP TIME
-        'max_retries': 20,  # MAXIMUM NUMBER OF RETRIES
-        'file_access_retries': 10,  # FILE ACCESS RETRY COUNT
-        'buffersize': 1024,  # REDUCE BUFFER SIZE
-        'http_chunk_size': 10485760  # REDUCE CHUNK SIZE TO 10MB
+        'socket_timeout': 30,
+        'nocheckcertificate': True,
+        'ignoreerrors': True,
+        'noresizebuffer': True,
+        'nopart': True,
+        'continuedl': False,
+        'allow_unplayable_formats': False,
+        'no_check_formats': False,
+        'prefer_free_formats': False,
+        'hls_prefer_native': True,
+        'hls_use_mpegts': False,
+        'concurrent_fragment_downloads': 1,
+        'external_downloader': 'native',
+        'no_color': True,  # DISABLE COLORED OUTPUT
+        'logtostderr': False,  # DISABLE STDERR LOGGING
+        'consoletitle': False,  # DISABLE CONSOLE TITLE
+        'prefer_insecure': True,  # IGNORE SSL ERRORS
+        'no_call_home': True  # DISABLE ANALYTICS
     }
 
     try:
