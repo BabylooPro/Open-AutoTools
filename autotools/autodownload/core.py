@@ -350,7 +350,10 @@ def download_youtube_video(url, format='mp4', quality='best'):
         },
         'socket_timeout': 30,  # INCREASE TIMEOUT
         'nocheckcertificate': True,  # SKIP CERTIFICATE VALIDATION
-        'ignoreerrors': True  # CONTINUE ON ERRORS
+        'ignoreerrors': True,  # CONTINUE ON ERRORS
+        'noresizebuffer': True,  # DISABLE RESIZE BUFFER TO PREVENT RESUME
+        'nopart': True,  # DISABLE TEMP FILES
+        'continuedl': False  # DISABLE DOWNLOAD RESUME
     }
 
     try:
