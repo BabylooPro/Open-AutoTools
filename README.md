@@ -105,53 +105,6 @@ autotools --version  # Should show "Development mode: enabled" when using pip in
   - `--gen-key, -g`: Generate a random encryption key
   - `--password-key, -p`: Generate an encryption key from password
 
-  ### AutoDownload ![Stability][AUTODOWNLOAD_EFF]
-
-- **Description:** Downloads videos from YouTube and files from other sources.
-- **Usage:**
-
-  ```bash
-  # Download YouTube video in MP4 format
-  ~ ❯ autodownload https://youtube.com/watch?v=example
-
-  # Download with specific format and quality
-  ~ ❯ autodownload https://youtube.com/watch?v=example --format mp3
-  ~ ❯ autodownload https://youtube.com/watch?v=example --quality 1080p
-  ```
-
-- **Options:**
-
-  - `--format, -f`: Choose output format (mp4 or mp3)
-  - `--quality, -q`: Select video quality (best, 1440p, 1080p, 720p, 480p, 360p, 240p)
-
-- **Features:**
-
-  - Automatic bot detection bypass
-  - Mobile API integration for better Stability
-  - Progress tracking with detailed status
-  - Multiple quality options
-  - MP3 audio extraction
-  - Downloads to user's Downloads folder
-  - Supports both YouTube and general file downloads
-  - File existence checks with user prompts
-
-- **Setup Requirements:**
-
-  - No special setup required
-  - **Technical Requirements:**
-    - Internet connection
-    - Sufficient storage space
-    - yt-dlp library (automatically installed)
-    - FFmpeg (required for format conversion)
-
-  > **Note:** The tool uses YouTube's mobile API for better compatibility and reliability.
-
-- **Compatibility:**
-
-  - Windows 10/11 ✗
-  - macOS 15+ ✓
-  - Linux ✗
-
 ### AutoIP ![Stability][AUTOIP_EFF]
 
 - **Description:** Displays network information including IP addresses, connectivity tests, speed tests, and more.
@@ -191,53 +144,6 @@ autotools --version  # Should show "Development mode: enabled" when using pip in
   - Windows 10/11 ✓
   - macOS 15+ ✓
   - Linux ✗
-
-### AutoTranslate ![Stability][AUTOTRANSLATE_EFF]
-
-- **Description:** Translates text between languages with automatic source language detection.
-- **Usage:**
-
-  ```
-  ~ ❯ autotranslate "Bonjour le monde" --to en
-  Hello world
-
-  ~ ❯ autotranslate "Hello world" --to fr --copy
-  Bonjour le monde
-  // Result also copied to clipboard
-
-  ~ ❯ autotranslate "こんにちは" --to en --detect
-  [Detected: ja] Hello
-
-  ~ ❯ autotranslate --list-languages
-  // Shows all supported languages
-  ```
-
-- **Options:**
-  - `--to`: Target language code (default: en)
-  - `--from`: Source language code (default: auto-detect)
-  - `--copy`: Copy translation to clipboard
-  - `--detect`: Show detected source language
-  - `--list-languages`: Show all supported language codes and names
-  - `--output, -o`: Save translation to file
-
-### AutoSpell (unreleased) ![Stability][AUTOSPELL_EFF]
-
-- **Description:** Checks and corrects spelling in text with multi-language support.
-- **Usage:**
-  ```
-  ~ ❯ autospell "Your text with misspellings"
-  ~ ❯ autospell --lang fr "Votre texte avec des fautes"
-  ~ ❯ autospell --fix "Text to autocorrect"
-  ```
-- **Options:**
-  - `--lang, -l`: Language code (default: auto)
-  - `--fix, -f`: Auto-fix text and copy to clipboard
-  - `--copy, -c`: Copy result to clipboard
-  - `--list-languages`: Show supported languages
-  - `--json, -j`: Output results as JSON
-  - `--ignore, -i`: Error types to ignore (spelling/grammar/style/punctuation)
-  - `--interactive, -n`: Interactive mode - confirm each correction
-  - `--output, -o`: Save corrections to file
 
 ### Test Suite (DEVELOPMENT ONLY)
 
@@ -288,7 +194,4 @@ This project is licensed under the MIT License. For more details, see the [LICEN
 [AUTOCAPS_EFF]: https://img.shields.io/badge/Stability-99%25-success
 [AUTOLOWER_EFF]: https://img.shields.io/badge/Stability-99%25-success
 [AUTOPASSWORD_EFF]: https://img.shields.io/badge/Stability-90%25-success
-[AUTOTRANSLATE_EFF]: https://img.shields.io/badge/Stability-25%25-red
-[AUTOSPELL_EFF]: https://img.shields.io/badge/Stability-25%25-red
-[AUTODOWNLOAD_EFF]: https://img.shields.io/badge/Stability-75%25-yellow
 [AUTOIP_EFF]: https://img.shields.io/badge/Stability-95%25-success

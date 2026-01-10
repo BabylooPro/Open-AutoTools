@@ -7,19 +7,14 @@ from dotenv import load_dotenv
 from datetime import datetime
 import base64
 import json as json_module
-from translate import Translator
-import yt_dlp
 import argparse
 from urllib.parse import urlparse
 
 # IMPORT COMMANDS FROM EACH MODULE
 from .autocaps.commands import autocaps
 from .autolower.commands import autolower
-from .autodownload.commands import autodownload
 from .autopassword.commands import autopassword
-from .autotranslate.commands import autotranslate
 from .autoip.commands import autoip
-from .autospell.commands import autospell
 from .test.commands import test
 from .utils.updates import check_for_updates
 from .utils.version import print_version
@@ -44,11 +39,8 @@ def cli():
 # REGISTER COMMANDS
 cli.add_command(autocaps)
 cli.add_command(autolower)
-cli.add_command(autodownload)
 cli.add_command(autopassword)
-cli.add_command(autotranslate)
 cli.add_command(autoip)
-cli.add_command(autospell)
 cli.add_command(test)
 
 # MAIN COMMAND DEFINITION

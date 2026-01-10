@@ -46,7 +46,7 @@ display_results_table() {
     echo "├────────────────┼──────────────────┼──────────────┼────────┤"
     
     # CATEGORIES
-    local categories=("Text" "Security" "Network" "Language" "Download")
+    local categories=("Text" "Security" "Network")
     local current_category=""
     
     for category in "${categories[@]}"; do
@@ -59,8 +59,6 @@ display_results_table() {
                 "autocaps"|"autolower") tool_category="Text" ;;
                 "autopassword") tool_category="Security" ;;
                 "autoip") tool_category="Network" ;;
-                "autospell"|"translate") tool_category="Language" ;;
-                "download") tool_category="Download" ;;
             esac
             
             if [ "$tool_category" = "$category" ]; then
@@ -233,82 +231,6 @@ fi
 # else
 #     track_test "autoip" "ports" "✗"
 # fi
-
-echo -e "\n=== Testing autotranslate ==="
-# BASIC TRANSLATION WITH DETECTION
-if run_test "autotools autotranslate 'Hello world' --to fr --detect"; then
-    track_test "translate" "detection" "✓"
-else
-    track_test "translate" "detection" "✗"
-fi
-
-# SIMPLE TRANSLATION
-if run_test "autotools autotranslate 'Bonjour le monde' --to en"; then
-    track_test "translate" "basic" "✓"
-else
-    track_test "translate" "basic" "✗"
-fi
-
-# MULTI-LANGUAGE
-if run_test "autotools autotranslate 'I love programming' --from en --to fr" && \
-   run_test "autotools autotranslate 'I love programming' --from en --to es" && \
-   run_test "autotools autotranslate 'I love programming' --from en --to de"; then
-    track_test "translate" "multi-lang" "✓"
-else
-    track_test "translate" "multi-lang" "✗"
-fi
-
-echo -e "\n=== Testing autospell ==="
-# BASIC SPELL CHECK
-if run_test "autotools autospell 'This is a test with misspellings'"; then
-    track_test "autospell" "basic" "✓"
-else
-    track_test "autospell" "basic" "✗"
-fi
-
-# MULTI-LANGUAGE SPELL CHECK
-if run_test "autotools autospell --lang fr 'Ceci est un teste avec des fautes'"; then
-    track_test "autospell" "multi-lang" "✓"
-else
-    track_test "autospell" "multi-lang" "✗"
-fi
-
-# JSON OUTPUT
-if run_test "autotools autospell 'This is a test' --json"; then
-    track_test "autospell" "json" "✓"
-else
-    track_test "autospell" "json" "✗"
-fi
-
-echo -e "\n=== Testing autodownload ==="
-cd /data/downloads
-
-# YOUTUBE VIDEO DOWNLOAD
-if simulate_input | run_test "autotools autodownload 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' --format mp4 --quality 720p"; then
-    track_test "download" "video-720p" "✓"
-else
-    track_test "download" "video-720p" "✗"
-fi
-
-if simulate_input | run_test "autotools autodownload 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' --format mp4 --quality 1080p"; then
-    track_test "download" "video-1080p" "✓"
-else
-    track_test "download" "video-1080p" "✗"
-fi
-
-# AUDIO DOWNLOAD
-if simulate_input | run_test "autotools autodownload 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' --format mp3"; then
-    track_test "download" "audio" "✓"
-else
-    track_test "download" "audio" "✗"
-fi
-
-# DIRECT FILE DOWNLOAD
-if run_test "autotools autodownload 'https://www.gnu.org/licenses/gpl-3.0.txt'"; then
-    track_test "download" "direct" "✓"
-else
-    track_test "download" "direct" "✗"
-fi
 
 # DISPLAY FINAL RESULTS TABLE
 display_results_table

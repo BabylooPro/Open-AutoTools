@@ -15,44 +15,29 @@ required = [
     "cryptography==42.0.2",
     "idna==3.6",
     "importlib-metadata>=7.0.1",
-    "joblib==1.3.2",
-    "Levenshtein==0.25.0",
-    "mutagen==1.47.0",
     "packaging>=23.0",
     "platformdirs==4.2.0",
     "pycryptodomex==3.20.0",
     "pyperclip==1.8.2",
-    "python-Levenshtein==0.25.0",
     "python-dotenv>=1.0.0",
-    "rapidfuzz==3.6.1",
-    "regex==2023.12.25",
     "requests>=2.32.2",
-    "textblob==0.18.0.post0",
     "tomli==2.0.1",
     "tqdm==4.66.2",
     "urllib3==2.2.1",
     "websockets==13.0.1",
     "yapf==0.40.2",
-    "yt-dlp>=2024.3.10",
     "zipp==3.17.0",
-    "translate==3.6.1",
-    "langdetect==1.0.9",
-    "deep-translator==1.11.4",
     "netifaces>=0.11.0",
     "speedtest-cli>=2.1.3",
     "psutil>=5.9.0",
     "setuptools>=40.8.0",
-    "language-tool-python>=2.7.1",
-    "spacy>=3.7.2",
-    "beautifulsoup4>=4.12.0",
     "halo>=0.0.31",
-    "ffmpeg-python>=0.2.0",
 ]
 
 # SETUP CONFIGURATION FOR PACKAGE DISTRIBUTION
 setup(
     name='Open-AutoTools',
-    version='0.0.3-rc.6.dev6',
+    version='0.0.4',
     packages=find_packages(),
     include_package_data=True,
     install_requires=required,
@@ -82,11 +67,8 @@ setup(
         autotools=autotools.cli:cli
         autocaps=autotools.cli:autocaps
         autolower=autotools.cli:autolower
-        autodownload=autotools.cli:autodownload
         autopassword=autotools.cli:autopassword
-        autotranslate=autotools.cli:autotranslate
         autoip=autotools.cli:autoip
-        autospell=autotools.cli:autospell
     ''',
     
     # TEST REQUIREMENTS
