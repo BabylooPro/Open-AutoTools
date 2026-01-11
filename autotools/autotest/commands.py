@@ -49,12 +49,12 @@ def _build_test_command(unit, integration, no_cov, html, module):
         else: cmd.extend(['--cov-report=term-missing', '--cov=autotools'])
     
     if module:
-        test_path = f'autotools/{module}/tests'
+        test_path = f'tests/autotools/{module}'
         if unit and not integration: test_path = f'{test_path}/unit'
         elif integration and not unit: test_path = f'{test_path}/integration'
         cmd.append(test_path)
     else:
-        cmd.append('autotools')
+        cmd.append('tests')
     
     return cmd
 

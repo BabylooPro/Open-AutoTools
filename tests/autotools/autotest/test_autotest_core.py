@@ -112,7 +112,7 @@ def test_build_test_command_default():
     assert 'pytest' in cmd
     assert '--cov-report=term-missing' in cmd
     assert '--cov=autotools' in cmd
-    assert 'autotools' in cmd
+    assert 'tests' in cmd
 
 # NO COVERAGE
 def test_build_test_command_no_cov():
@@ -128,10 +128,10 @@ def test_build_test_command_html():
 
 # WITH MODULE
 @pytest.mark.parametrize('unit,integration,module,expected_path,should_not_contain', [
-    (True, False, 'autocaps', 'autotools/autocaps/tests/unit', []),
-    (False, True, 'autocaps', 'autotools/autocaps/tests/integration', []),
-    (False, False, 'autolower', 'autotools/autolower/tests', []),
-    (True, True, 'autocaps', 'autotools/autocaps/tests', ['/unit', '/integration']),
+    (True, False, 'autocaps', 'tests/autotools/autocaps/unit', []),
+    (False, True, 'autocaps', 'tests/autotools/autocaps/integration', []),
+    (False, False, 'autolower', 'tests/autotools/autolower', []),
+    (True, True, 'autocaps', 'tests/autotools/autocaps', ['/unit', '/integration']),
 ])
 def test_build_test_command_with_module(unit, integration, module, expected_path, should_not_contain):
     cmd = _build_test_command(unit, integration, False, False, module)
@@ -142,7 +142,7 @@ def test_build_test_command_with_module(unit, integration, module, expected_path
 def test_build_test_command_module_no_cov_html():
     cmd = _build_test_command(False, False, True, True, 'autolower')
     assert '--cov-report' not in ' '.join(cmd)
-    assert 'autotools/autolower/tests' in cmd[-1]
+    assert 'tests/autotools/autolower' in cmd[-1]
 
 # TESTS FOR PROCESS TEST OUTPUT LINE
 # EMPTY LINE
