@@ -5,14 +5,11 @@
 -   [ ] **fix:** ![HIGH][high] ensure no IP addresses or sensitive information are exposed in workflow logs with autoip tools
 -   [ ] **fix:** ![HIGH][high] optimize execution performance of all tools features
 -   [ ] **fix:** ![MID][mid] detect unclosed double quotes in CLI commands and automatically fix them by either adding a closing double quote at the end or switching to single quotes
--   [ ] **fix:** ![MID][mid] multiple warning in unit/integration tests
--   [ ] **fix:** ![LOW][low] read requirements only from `requirements.txt` in the released version (actually cannot build without the listed requirements in `setup.py`)
 
 ---
 
 **_New features to add_**
 
--   [ ] **add:** automatic clipboard copy for all text output tools
 -   [ ] **add:** AutoZip: Compresses files and directories into various archive formats (e.g., zip, tar.gz)
 -   [ ] **add:** AutoNote: Takes quick notes and saves them to a text file
 -   [ ] **add:** AutoTodo: Manages a simple task list in a text file
@@ -22,6 +19,11 @@
 -   [ ] **add:** AutoSearch: Searches for files and content in specified directories with an fast and intelligent search
 -   [ ] **add:** AutoColor: Converts color codes between different formats (hex, RGB, HSL)
 -   [ ] **add:** AutoConvert: Converts text, images, audio, and video between different formats
+
+#### DONE - v0.0.4
+
+-   [x] **fixed:** multiple warning in unit/integration tests
+-   [x] **fixed:** read requirements only from `requirements.txt` in the released version (actually cannot build without the listed requirements in `setup.py`)
 
 #### DONE - v0.0.3-rc.6
 
