@@ -1,11 +1,11 @@
 import click
 import requests
+import pkg_resources
 from importlib.metadata import version as get_version
 from packaging.version import parse as parse_version
-import pkg_resources
 
+# CHECKS PYPI FOR AVAILABLE UPDATES TO THE PACKAGE
 def check_for_updates():
-    """CHECK IF AN UPDATE IS AVAILABLE AND RETURN UPDATE MESSAGE IF NEEDED"""
     try:
         dist = pkg_resources.get_distribution("Open-AutoTools")
         current_version = parse_version(dist.version)
@@ -26,5 +26,5 @@ def check_for_updates():
                 )
     except Exception as e:
         print(f"Error checking updates: {str(e)}")
-    
+
     return None 

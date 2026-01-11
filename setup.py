@@ -1,9 +1,8 @@
-from setuptools import setup, find_packages
 import os
+from setuptools import setup, find_packages
 
 # READING README.MD FOR LONG DESCRIPTION
-with open("README.md", "r", encoding="utf-8") as fh:
-    long_description = fh.read()
+with open("README.md", "r", encoding="utf-8") as fh: long_description = fh.read()
 
 # FIX: READING REQUIREMENTS FROM FILE IN RELEASED VERSION, CAN BUILD WITHOUT LISTED REQUIREMENTS HERE
 # READING REQUIREMENTS
@@ -42,6 +41,16 @@ setup(
     include_package_data=True,
     install_requires=required,
     
+    # ENTRY POINTS FOR CLI COMMANDS
+    entry_points='''
+        [console_scripts]
+        autotools=autotools.cli:cli
+        autocaps=autotools.cli:autocaps
+        autolower=autotools.cli:autolower
+        autopassword=autotools.cli:autopassword
+        autoip=autotools.cli:autoip
+    ''',
+    
     # METADATA FOR PYPI
     author="BabylooPro",
     author_email="maxremy.dev@gmail.com",
@@ -60,16 +69,6 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.10",
-
-    # ENTRY POINTS FOR CLI COMMANDS
-    entry_points='''
-        [console_scripts]
-        autotools=autotools.cli:cli
-        autocaps=autotools.cli:autocaps
-        autolower=autotools.cli:autolower
-        autopassword=autotools.cli:autopassword
-        autoip=autotools.cli:autoip
-    ''',
     
     # TEST REQUIREMENTS
     extras_require={

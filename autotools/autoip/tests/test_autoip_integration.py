@@ -20,16 +20,8 @@ MOCK_IP_INFO = {
 @patch('autotools.autoip.core.get_local_ips')
 @patch('autotools.autoip.core.get_public_ips')
 def test_autoip_cli_basic(mock_public_ips, mock_local_ips):
-    """TEST BASIC CLI FUNCTIONALITY"""
-    mock_local_ips.return_value = {
-        'ipv4': ['192.168.1.100'],
-        'ipv6': ['fe80::1']
-    }
-    mock_public_ips.return_value = {
-        'ipv4': '1.2.3.4',
-        'ipv6': None
-    }
-    
+    mock_local_ips.return_value = {'ipv4': ['192.168.1.100'], 'ipv6': ['fe80::1']}
+    mock_public_ips.return_value = {'ipv4': '1.2.3.4', 'ipv6': None}
     runner = CliRunner()
     result = runner.invoke(autoip)
     assert result.exit_code == 0
@@ -40,12 +32,7 @@ def test_autoip_cli_basic(mock_public_ips, mock_local_ips):
 # TEST FOR CONNECTIVITY TEST
 @patch('autotools.autoip.core.test_connectivity')
 def test_autoip_cli_test(mock_test):
-    """TEST CONNECTIVITY TEST"""
-    mock_test.return_value = [
-        ('Google DNS', True, 20),
-        ('CloudFlare', False, None)
-    ]
-    
+    mock_test.return_value = [('Google DNS', True, 20), ('CloudFlare', False, None)]
     runner = CliRunner()
     result = runner.invoke(autoip, ['--test'])
     assert result.exit_code == 0
@@ -57,9 +44,7 @@ def test_autoip_cli_test(mock_test):
 # TEST FOR SPEED TEST
 @patch('autotools.autoip.core.run_speedtest')
 def test_autoip_cli_speed(mock_speed):
-    """TEST SPEED TEST"""
     mock_speed.return_value = True
-    
     runner = CliRunner()
     result = runner.invoke(autoip, ['--speed'])
     assert result.exit_code == 0
@@ -69,9 +54,7 @@ def test_autoip_cli_speed(mock_speed):
 # TEST FOR LOCATION INFO DISPLAY
 @patch('autotools.autoip.core.get_ip_info')
 def test_autoip_cli_location(mock_get_info):
-    """TEST LOCATION INFO DISPLAY"""
     mock_get_info.return_value = MOCK_IP_INFO
-    
     runner = CliRunner()
     result = runner.invoke(autoip, ['--location'])
     assert result.exit_code == 0
@@ -81,7 +64,6 @@ def test_autoip_cli_location(mock_get_info):
 
 # TEST FOR HELP DISPLAY
 def test_autoip_cli_help():
-    """TEST HELP DISPLAY"""
     runner = CliRunner()
     result = runner.invoke(autoip, ['--help'])
     assert result.exit_code == 0

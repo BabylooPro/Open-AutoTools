@@ -6,7 +6,6 @@ from autotools.cli import autopassword
 
 # TEST FOR DEFAULT PASSWORD GENERATION
 def test_autopassword_cli_default():
-    """TEST DEFAULT PASSWORD GENERATION"""
     runner = CliRunner()
     result = runner.invoke(autopassword)
     assert result.exit_code == 0
@@ -15,7 +14,6 @@ def test_autopassword_cli_default():
 
 # TEST FOR PASSWORD GENERATION WITH CUSTOM LENGTH
 def test_autopassword_cli_custom_length():
-    """TEST PASSWORD GENERATION WITH CUSTOM LENGTH"""
     runner = CliRunner()
     result = runner.invoke(autopassword, ["--length", "16"])
     assert result.exit_code == 0
@@ -23,7 +21,6 @@ def test_autopassword_cli_custom_length():
 
 # TEST FOR PASSWORD GENERATION WITHOUT SPECIAL CHARACTERS
 def test_autopassword_cli_no_special():
-    """TEST PASSWORD GENERATION WITHOUT SPECIAL CHARACTERS"""
     runner = CliRunner()
     result = runner.invoke(autopassword, ["--no-special"])
     assert result.exit_code == 0
@@ -32,7 +29,6 @@ def test_autopassword_cli_no_special():
 
 # TEST FOR PASSWORD STRENGTH ANALYSIS
 def test_autopassword_cli_analyze():
-    """TEST PASSWORD STRENGTH ANALYSIS"""
     runner = CliRunner()
     result = runner.invoke(autopassword, ["--analyze"])
     assert result.exit_code == 0
@@ -42,17 +38,15 @@ def test_autopassword_cli_analyze():
 
 # TEST FOR ENCRYPTION KEY GENERATION
 def test_autopassword_cli_gen_key():
-    """TEST ENCRYPTION KEY GENERATION"""
     runner = CliRunner()
     result = runner.invoke(autopassword, ["--gen-key"])
     assert result.exit_code == 0
     assert "Encryption Key:" in result.output
     key = result.output.split("Encryption Key:")[1].strip()
-    assert len(key) == 44  # BASE64 ENCODED 32-BYTE KEY
+    assert len(key) == 44
 
 # TEST FOR KEY GENERATION FROM PASSWORD
 def test_autopassword_cli_password_key():
-    """TEST KEY GENERATION FROM PASSWORD"""
     runner = CliRunner()
     result = runner.invoke(autopassword, ["--password-key", "testpassword123"])
     assert result.exit_code == 0
@@ -61,7 +55,6 @@ def test_autopassword_cli_password_key():
 
 # TEST FOR HELP DISPLAY
 def test_autopassword_cli_help():
-    """TEST HELP DISPLAY"""
     runner = CliRunner()
     result = runner.invoke(autopassword, ["--help"])
     assert result.exit_code == 0
