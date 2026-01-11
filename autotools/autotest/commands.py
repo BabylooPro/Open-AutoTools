@@ -12,7 +12,7 @@ from ..utils.updates import check_for_updates
 @click.option('--no-cov', is_flag=True, help='Disable coverage report')
 @click.option('--html', is_flag=True, help='Generate HTML coverage report')
 @click.option('--module', '-m', help='Test specific module (e.g., autocaps, autolower)')
-def test(unit, integration, no_cov, html, module):
+def autotest(unit, integration, no_cov, html, module):
     _install_test_dependencies()
     
     cmd = _build_test_command(unit, integration, no_cov, html, module)

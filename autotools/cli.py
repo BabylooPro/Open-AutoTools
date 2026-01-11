@@ -14,7 +14,7 @@ from .autocaps.commands import autocaps
 from .autolower.commands import autolower
 from .autopassword.commands import autopassword
 from .autoip.commands import autoip
-from .test.commands import test
+from .autotest.commands import autotest
 from .utils.updates import check_for_updates
 from .utils.version import print_version
 
@@ -45,7 +45,7 @@ cli.add_command(autocaps)
 cli.add_command(autolower)
 cli.add_command(autopassword)
 cli.add_command(autoip)
-cli.add_command(test)
+cli.add_command(autotest, name='test')
 
 # DISPLAYS COMMAND OPTIONS
 def _display_command_options(cmd_obj):
