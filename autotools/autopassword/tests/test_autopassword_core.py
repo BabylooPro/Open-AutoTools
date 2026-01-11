@@ -68,4 +68,10 @@ def test_analyze_password_strength_all_types():
     result = analyze_password_strength("TestPass123!@#")
     assert result['score'] == 6
     assert result['strength'] == "Very Strong"
-    assert len(result['suggestions']) == 0 
+    assert len(result['suggestions']) == 0
+
+# TEST FOR PASSWORD STRENGTH ANALYSIS - NO LOWERCASE
+def test_analyze_password_strength_no_lowercase():
+    result = analyze_password_strength("TEST123!@#")
+    assert result['score'] >= 3
+    assert "Add lowercase letters" in result['suggestions'] 

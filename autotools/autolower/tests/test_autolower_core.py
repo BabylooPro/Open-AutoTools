@@ -36,3 +36,11 @@ def test_autolower_transform_numbers():
 def test_autolower_transform_unicode():
     assert autolower_transform("HÉLLO WÖRLD") == "héllo wörld"
     assert autolower_transform("こんにちは") == "こんにちは"
+
+# TEST FOR PYPERCLIP EXCEPTION HANDLING
+def test_autolower_transform_pyperclip_exception(monkeypatch):
+    import pyperclip
+    def mock_copy_fail(text): raise pyperclip.PyperclipException("Clipboard error")
+    monkeypatch.setattr(pyperclip, "copy", mock_copy_fail)
+    result = autolower_transform("HELLO")
+    assert result == "hello"

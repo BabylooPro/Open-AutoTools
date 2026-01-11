@@ -47,7 +47,8 @@ def _fetch_pypi_version_info(pkg_version):
     try:
         req = urllib.request.Request(pypi_url)
         with urllib.request.urlopen(req, timeout=5) as response:
-            if response.status != 200: return
+            if response.status != 200:
+                return
             
             data = json.loads(response.read().decode())
             latest_version = data["info"]["version"]

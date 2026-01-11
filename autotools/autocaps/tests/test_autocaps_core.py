@@ -36,3 +36,11 @@ def test_autocaps_transform_numbers():
 def test_autocaps_transform_unicode():
     assert autocaps_transform("héllo wörld") == "HÉLLO WÖRLD"
     assert autocaps_transform("こんにちは") == "こんにちは"
+
+# TEST FOR PYPERCLIP EXCEPTION HANDLING
+def test_autocaps_transform_pyperclip_exception(monkeypatch):
+    import pyperclip
+    def mock_copy_fail(text): raise pyperclip.PyperclipException("Clipboard error")
+    monkeypatch.setattr(pyperclip, "copy", mock_copy_fail)
+    result = autocaps_transform("hello")
+    assert result == "HELLO"

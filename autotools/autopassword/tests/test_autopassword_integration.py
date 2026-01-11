@@ -62,4 +62,21 @@ def test_autopassword_cli_help():
     assert "Options:" in result.output
     assert "--length" in result.output
     assert "--analyze" in result.output
-    assert "--gen-key" in result.output 
+    assert "--gen-key" in result.output
+
+# TEST FOR PASSWORD KEY WITH ANALYZE AND SUGGESTIONS
+def test_autopassword_cli_password_key_with_analyze():
+    runner = CliRunner()
+    result = runner.invoke(autopassword, ["--password-key", "weak", "--analyze"])
+    assert result.exit_code == 0
+    assert "Derived Key:" in result.output
+    assert "Analyzing source password:" in result.output
+    assert "Analyzing generated key:" in result.output
+    assert "Suggestions for improvement:" in result.output or "Strength Analysis:" in result.output
+
+# TEST FOR PASSWORD GENERATION WITH SUGGESTIONS
+def test_autopassword_cli_with_suggestions():
+    runner = CliRunner()
+    result = runner.invoke(autopassword, ["--length", "6", "--analyze"])
+    assert result.exit_code == 0
+    assert "Strength Analysis:" in result.output 

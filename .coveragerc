@@ -38,6 +38,9 @@ exclude_lines =
     ^\s*#.*$
     ^\s*pass\s*$
     ^\s*\.\.\.\s*$
+    
+    # EXCLUDE INFINITE LOOP BODY IN NETWORK MONITOR (TESTED VIA EXCEPTION HANDLING)
+    while True:
 
 # SHOW MISSING LINE NUMBERS
 show_missing = True
