@@ -68,7 +68,8 @@ def print_version(ctx, value):
         click.echo(f"Open-AutoTools version {pkg_version}")
 
         module = sys.modules.get('autotools')
-        if module and 'site-packages' not in getattr(module, '__file__', '').lower():
+        module_file = getattr(module, '__file__', '') or ''
+        if module and 'site-packages' not in module_file.lower():
             click.echo(click.style("Development mode: enabled", fg='yellow', bold=True))
 
         _fetch_pypi_version_info(pkg_version)
