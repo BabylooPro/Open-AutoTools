@@ -18,16 +18,16 @@ from .core import generate_password, generate_encryption_key, analyze_password_s
 def autopassword(length, no_uppercase, no_numbers, no_special, min_special, min_numbers, analyze, gen_key, password_key):    
     # DISPLAYS PASSWORD STRENGTH ANALYSIS RESULTS
     def show_analysis(text, prefix=""):
-        if analyze:
-            with LoadingAnimation(): analysis = analyze_password_strength(text)
+        if not analyze: return
+        with LoadingAnimation(): analysis = analyze_password_strength(text)
 
-            click.echo(f"\n{prefix}Strength Analysis:")
-            click.echo(f"Strength: {analysis['strength']}")
-            click.echo(f"Score: {analysis['score']}/5")
+        click.echo(f"\n{prefix}Strength Analysis:")
+        click.echo(f"Strength: {analysis['strength']}")
+        click.echo(f"Score: {analysis['score']}/5")
 
-            if analysis['suggestions']:
-                click.echo("\nSuggestions for improvement:")
-                for suggestion in analysis['suggestions']: click.echo(f"- {suggestion}")
+        if analysis['suggestions']:
+            click.echo("\nSuggestions for improvement:")
+            for suggestion in analysis['suggestions']: click.echo(f"- {suggestion}")
 
     # GENERATES ENCRYPTION KEY IF GEN_KEY FLAG IS SET
     if gen_key:
@@ -49,6 +49,7 @@ def autopassword(length, no_uppercase, no_numbers, no_special, min_special, min_
             show_analysis(password_key, "Password ")
             click.echo("\nAnalyzing generated key:")
             show_analysis(key_str, "Key ")
+
         return
 
     # GENERATES PASSWORD IF NO OTHER OPTIONS ARE SET
@@ -66,4 +67,4 @@ def autopassword(length, no_uppercase, no_numbers, no_special, min_special, min_
     show_analysis(password, "Password ")
 
     update_msg = check_for_updates()
-    if update_msg: click.echo(update_msg) 
+    if update_msg: click.echo(update_msg)

@@ -23,7 +23,7 @@ load_dotenv()
 
 # MAIN CLI ENTRY POINT - REGISTERS ALL COMMANDS AND HANDLES GLOBAL OPTIONS
 @click.group()
-@click.option('--version', '--v', is_flag=True, callback=print_version,
+@click.option('--version', '--v', is_flag=True, callback=lambda ctx, param, value: print_version(ctx, value),
               expose_value=False, is_eager=True, help='Show version and check for updates')
 @click.option('--help', '-h', is_flag=True, callback=lambda ctx, param, value: 
               None if not value else (click.echo(ctx.get_help() + '\n' + 
@@ -48,38 +48,45 @@ cli.add_command(autopassword)
 cli.add_command(autoip)
 cli.add_command(test)
 
-# DISPLAYS ALL AVAILABLE COMMANDS WITH THEIR OPTIONS AND USAGE EXAMPLES
-@cli.command()
-def autotools():
-    ctx = click.get_current_context()
-    commands = cli.list_commands(ctx)
+# DISPLAYS COMMAND OPTIONS
+def _display_command_options(cmd_obj):
+    if not hasattr(cmd_obj, 'params'): return
+    click.echo(click.style("\n  Options:", fg='yellow'))
+    for param in cmd_obj.params:
+        if isinstance(param, click.Option):
+            opts = '/'.join(param.opts)
+            help_text = param.help or ''
+            click.echo(f"    {click.style(opts, fg='yellow')}")
+            click.echo(f"      {help_text}")
 
-    # DISPLAYS ALL AVAILABLE COMMANDS
+# DISPLAYS ALL AVAILABLE COMMANDS
+def _display_commands(ctx, commands):
     click.echo(click.style("\nOpen-AutoTools Commands:", fg='blue', bold=True))
     for cmd in sorted(commands):
-        if cmd != 'autotools':
-            cmd_obj = cli.get_command(ctx, cmd)
-            help_text = cmd_obj.help or cmd_obj.short_help or ''
-            click.echo(f"\n{click.style(cmd, fg='green', bold=True)}")
-            click.echo(f"  {help_text}")
-            
-            if hasattr(cmd_obj, 'params'):
-                click.echo(click.style("\n  Options:", fg='yellow'))
-                for param in cmd_obj.params:
-                    if isinstance(param, click.Option):
-                        opts = '/'.join(param.opts)
-                        help_text = param.help or ''
-                        click.echo(f"    {click.style(opts, fg='yellow')}")
-                        click.echo(f"      {help_text}")
+        if cmd == 'autotools': continue
+        cmd_obj = cli.get_command(ctx, cmd)
+        help_text = cmd_obj.help or cmd_obj.short_help or ''
+        click.echo(f"\n{click.style(cmd, fg='green', bold=True)}")
+        click.echo(f"  {help_text}")
+        _display_command_options(cmd_obj)
 
-    # DISPLAYS USAGE EXAMPLES
+# DISPLAYS USAGE EXAMPLES
+def _display_usage_examples():
     click.echo(click.style("\nUsage Examples:", fg='blue', bold=True))
     click.echo("  autotools --help         Show this help message")
     click.echo("  autotools --version      Show version information")
     click.echo("  autotools COMMAND        Run a specific command")
     click.echo("  autotools COMMAND --help Show help for a specific command")
 
-    # CHECKS FOR UPDATES AND DISPLAYS UPDATE MESSAGE IF AVAILABLE
+# DISPLAYS ALL AVAILABLE COMMANDS WITH THEIR OPTIONS AND USAGE EXAMPLES
+@cli.command()
+def autotools():
+    ctx = click.get_current_context()
+    commands = cli.list_commands(ctx)
+
+    _display_commands(ctx, commands)
+    _display_usage_examples()
+
     update_msg = check_for_updates()
     if update_msg:
         click.echo(click.style("\nUpdate Available:", fg='red', bold=True))
