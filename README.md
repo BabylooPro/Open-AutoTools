@@ -61,104 +61,113 @@ autotools --version  # Should show "Development mode: enabled" when using pip in
 
 ### AutoCaps ![Stability][AUTOCAPS_EFF]
 
-- **Description:** Converts any text entered by the user to uppercase.
-- **Usage:**
-  ```
-  ~ ❯ autocaps "Your text here."
-  ```
-- **Output:**
-  ```
-  YOUR TEXT HERE.
-  ```
+-   **Description:** Converts any text entered by the user to uppercase.
+-   **Usage:**
+    ```
+    ~ ❯ autocaps "Your text here."
+    ```
+-   **Output:**
+    ```
+    YOUR TEXT HERE.
+    ```
 
 ### AutoLower ![Stability][AUTOLOWER_EFF]
 
-- **Description:** Converts any text entered by the user to lowercase.
-- **Usage:**
-  ```
-  ~ ❯ autolower "Your text here."
-  ```
-- **Output:**
-  ```
-  your text here.
-  ```
+-   **Description:** Converts any text entered by the user to lowercase.
+-   **Usage:**
+    ```
+    ~ ❯ autolower "Your text here."
+    ```
+-   **Output:**
+    ```
+    your text here.
+    ```
 
 ### AutoPassword ![Stability][AUTOPASSWORD_EFF]
 
-- **Description:** Generates secure random passwords and encryption keys with customizable options.
-- **Usage:**
-  ```
-  ~ ❯ autopassword --length 16
-  ~ ❯ autopassword --no-special --length 8
-  ~ ❯ autopassword --gen-key
-  ~ ❯ autopassword --password-key "your-password" --analyze
-  ```
-- **Options:**
+-   **Description:** Generates secure random passwords and encryption keys with customizable options.
+-   **Usage:**
+    ```
+    ~ ❯ autopassword --length 16
+    ~ ❯ autopassword --no-special --length 8
+    ~ ❯ autopassword --gen-key
+    ~ ❯ autopassword --password-key "your-password" --analyze
+    ```
+-   **Options:**
 
-  - `--length, -l`: Set password length (default: 12)
-  - `--no-uppercase, -u`: Exclude uppercase letters
-  - `--no-numbers, -n`: Exclude numbers
-  - `--no-special, -s`: Exclude special characters
-  - `--min-special, -m`: Minimum number of special characters (default: 1)
-  - `--min-numbers, -d`: Minimum number of numbers (default: 1)
-  - `--analyze, -a`: Show password strength analysis
-  - `--gen-key, -g`: Generate a random encryption key
-  - `--password-key, -p`: Generate an encryption key from password
+    -   `--length, -l`: Set password length (default: 12)
+    -   `--no-uppercase, -u`: Exclude uppercase letters
+    -   `--no-numbers, -n`: Exclude numbers
+    -   `--no-special, -s`: Exclude special characters
+    -   `--min-special, -m`: Minimum number of special characters (default: 1)
+    -   `--min-numbers, -d`: Minimum number of numbers (default: 1)
+    -   `--analyze, -a`: Show password strength analysis
+    -   `--gen-key, -g`: Generate a random encryption key
+    -   `--password-key, -p`: Generate an encryption key from password
 
 ### AutoIP ![Stability][AUTOIP_EFF]
 
-- **Description:** Displays network information including IP addresses, connectivity tests, speed tests, and more.
-- **Usage:**
+-   **Description:** Displays network information including IP addresses, connectivity tests, speed tests, and more.
+-   **Usage:**
 
-  ```bash
-  ~ ❯ autoip
-  ~ ❯ autoip --speed
-  ~ ❯ autoip --location
-  ~ ❯ autoip --no-ip --test --speed
-  ```
+    ```bash
+    ~ ❯ autoip
+    ~ ❯ autoip --speed
+    ~ ❯ autoip --location
+    ~ ❯ autoip --no-ip --test --speed
+    ```
 
-- **Options:**
+-   **Options:**
 
-  - `--test, -t`: Run connectivity tests to popular services
-  - `--speed, -s`: Run internet speed test
-  - `--monitor, -m`: Monitor real-time network traffic
-  - `--interval, -i`: Monitoring interval in seconds
-  - `--ports, -p`: Check status of common ports
-  - `--dns, -d`: Show DNS server configuration
-  - `--location, -l`: Show IP geolocation information
-  - `--no-ip, -n`: Hide IP addresses display
+    -   `--test, -t`: Run connectivity tests to popular services
+    -   `--speed, -s`: Run internet speed test
+    -   `--monitor, -m`: Monitor real-time network traffic
+    -   `--interval, -i`: Monitoring interval in seconds
+    -   `--ports, -p`: Check status of common ports
+    -   `--dns, -d`: Show DNS server configuration
+    -   `--location, -l`: Show IP geolocation information
+    -   `--no-ip, -n`: Hide IP addresses display
 
-- **Features:**
+-   **Features:**
 
-  - Local and public IP detection (IPv4 & IPv6)
-  - Internet speed testing
-  - Network connectivity checks
-  - Monitoring interval (10 seconds)
-  - Real-time traffic monitoring
-  - Port scanning
-  - DNS server information
-  - IP geolocation
+    -   Local and public IP detection (IPv4 & IPv6)
+    -   Internet speed testing
+    -   Network connectivity checks
+    -   Monitoring interval (10 seconds)
+    -   Real-time traffic monitoring
+    -   Port scanning
+    -   DNS server information
+    -   IP geolocation
 
-  - **Compatibility:**
+    -   **Compatibility:**
 
-  - Windows 10/11 ✓
-  - macOS 15+ ✓
-  - Linux ✗
+    -   Windows 10/11 ✓
+    -   macOS 15+ ✓
+    -   Linux ✗
 
 ### Test Suite (DEVELOPMENT ONLY)
 
-- **Description:** Run the test suite for Open-AutoTools
-- **Usage:**
-  ```bash
-  ~ ❯ autotools test
-  ```
-- **Options:**
+-   **Description:** Run the test suite for Open-AutoTools
+-   **Usage:**
+    ```bash
+    ~ ❯ autotools test
+    ```
+-   **Options:**
 
-  - `--unit, -u`: Run only unit tests
-  - `--integration, -i`: Run only integration tests
-  - `--no-cov`: Disable coverage report
-  - `--html`: Generate HTML coverage report
-  - `--module, -m`: Test specific module (e.g., autocaps, autolower)
+    -   `--unit, -u`: Run only unit tests
+    -   `--integration, -i`: Run only integration tests
+    -   `--no-cov`: Disable coverage report
+    -   `--html`: Generate HTML coverage report (saved in `htmlcov/`)
+    -   `--module, -m`: Test specific module (e.g., autocaps, autolower)
+
+-   **Coverage Configuration:**
+
+    Coverage settings are configured in `.coveragerc`. The default configuration includes:
+
+    -   Branch coverage
+    -   Exclusion of test files and virtual environments
+    -   HTML reports in `htmlcov/` directory
+    -   XML reports in `coverage.xml`
 
 ## Docker Support
 
@@ -180,10 +189,10 @@ docker-compose down --remove-orphans
 
 Each platform-specific container includes:
 
-- Python 3.11/3.12 environment
-- All required dependencies (FFmpeg, Java, etc.)
-- Automated test suite
-- Volume mapping for persistent data
+-   Python 3.11/3.12 environment
+-   All required dependencies (FFmpeg, Java, etc.)
+-   Automated test suite
+-   Volume mapping for persistent data
 
 > **Note:** The Docker setup is primarily for testing and development. For regular use, install via pip as described above.
 

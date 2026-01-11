@@ -76,40 +76,130 @@ def _process_test_output_line(line):
 
     return None
 
-# RUNS THE TEST PROCESS AND HANDLES OUTPUT BY PROCESSING THE OUTPUT LINE BY LINE
+# EXTRACTS COVERAGE DATA FROM TOTAL LINE
+def _parse_coverage_line(line):
+    parts = line.split()
+    try:
+        if len(parts) >= 4:
+            stmts = int(parts[1])
+            missed = int(parts[2])
+            
+            # CHECK IF BRANCHES ARE PRESENT
+            if len(parts) >= 6 and parts[3].isdigit() and parts[4].isdigit():
+                branches = int(parts[3])
+                branch_partial = int(parts[4])
+                coverage_pct = float(parts[5].rstrip('%'))
+                return {
+                    'statements': stmts,
+                    'missed': missed,
+                    'branches': branches,
+                    'branch_partial': branch_partial,
+                    'coverage': coverage_pct
+                }
+
+            coverage_pct = float(parts[3].rstrip('%'))
+            return {'statements': stmts, 'missed': missed, 'coverage': coverage_pct}
+    except (ValueError, IndexError):
+        match = re.search(r'(\d+\.\d+)%', line)
+        if match: return {'coverage': float(match.group(1))}
+    return {}
+
+# DETERMINES COLOR BASED ON COVERAGE PERCENTAGE
+def _get_coverage_color(percentage):
+    if percentage >= 80: return 'green'
+    if percentage >= 60: return 'yellow'
+    return 'red'
+
+# DISPLAYS COVERAGE METRICS
+def _display_coverage_metrics(coverage_data):
+    if not coverage_data: return
+
+    click.echo()
+    click.echo(click.style("COVERAGE METRICS", fg='blue', bold=True))
+
+    # STATEMENTS COVERAGE
+    if 'statements' in coverage_data and 'missed' in coverage_data:
+        stmts = coverage_data['statements']
+        missed = coverage_data['missed']
+        covered = stmts - missed
+        stmts_pct = (covered / stmts * 100) if stmts > 0 else 0
+        color = _get_coverage_color(stmts_pct)
+        click.echo(click.style(f"Statements: {covered}/{stmts} ({stmts_pct:.2f}%)", fg=color, bold=True))
+
+    # BRANCHES COVERAGE
+    if 'branches' in coverage_data and coverage_data['branches'] > 0:
+        branches = coverage_data['branches']
+        branch_partial = coverage_data.get('branch_partial', 0)
+        branch_covered = branches - branch_partial
+        branch_pct = (branch_covered / branches * 100) if branches > 0 else 0
+        color = _get_coverage_color(branch_pct)
+        click.echo(click.style(f"Branches: {branch_covered}/{branches} ({branch_pct:.2f}%)", fg=color, bold=True))
+
+    # OVERALL COVERAGE
+    if 'coverage' in coverage_data:
+        overall = coverage_data['coverage']
+        color = _get_coverage_color(overall)
+        click.echo(click.style(f"Overall: {overall:.2f}%", fg=color, bold=True))
+
+# RUNS THE TEST PROCESS AND CAPTURES OUTPUT
 def _run_test_process(cmd):
     try:
-        env = dict(os.environ)
-        env['PYTHONPATH'] = os.getcwd()
-        env['FORCE_COLOR'] = '1'
-        
-        process = subprocess.Popen(
-            cmd,
-            env=env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            universal_newlines=True,
-            bufsize=1
-        )
-        
-        while True:
-            line = process.stdout.readline()
-            if not line and process.poll() is not None: break
-            processed_line = _process_test_output_line(line)
-            if processed_line:
-                sys.stdout.write(processed_line + '\n')
-                sys.stdout.flush()
-        
-        process.wait()
-
-        if process.returncode == 0:
-            click.echo(click.style("\n✅ All tests passed!", fg='green', bold=True))
-        else:
-            click.echo(click.style("\n❌ Some tests failed!", fg='red', bold=True))
-            sys.exit(1)
+        env = _prepare_test_environment()
+        process = _start_test_process(cmd, env)
+        coverage_data = _process_test_output(process)
+        _handle_test_result(process, coverage_data)
     except subprocess.CalledProcessError as e:
-        click.echo(click.style(f"\n❌ Tests failed with return code {e.returncode}", fg='red', bold=True))
+        click.echo(click.style(f"\n❌ TESTS FAILED WITH RETURN CODE {e.returncode}", fg='red', bold=True))
         sys.exit(1)
     except Exception as e:
-        click.echo(click.style(f"\n❌ Error running tests: {str(e)}", fg='red', bold=True))
+        click.echo(click.style(f"\n❌ ERROR RUNNING TESTS: {str(e)}", fg='red', bold=True))
+        sys.exit(1)
+
+# PREPARES ENVIRONMENT FOR TEST PROCESS
+def _prepare_test_environment():
+    env = dict(os.environ)
+    env['PYTHONPATH'] = os.getcwd()
+    env['FORCE_COLOR'] = '1'
+    return env
+
+# STARTS THE TEST PROCESS
+def _start_test_process(cmd, env):
+    return subprocess.Popen(
+        cmd,
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        universal_newlines=True,
+        bufsize=1
+    )
+
+# PROCESSES TEST OUTPUT AND EXTRACTS COVERAGE DATA
+def _process_test_output(process):
+    coverage_data = {}
+    
+    while True:
+        line = process.stdout.readline()
+        if not line and process.poll() is not None: break
+        
+        if 'TOTAL' in line and '%' in line:
+            coverage_data = _parse_coverage_line(line)
+            sys.stdout.write(line)
+            sys.stdout.flush()
+            continue
+        
+        processed_line = _process_test_output_line(line)
+        if processed_line:
+            sys.stdout.write(processed_line + '\n')
+            sys.stdout.flush()
+    
+    process.wait()
+    return coverage_data
+
+# HANDLES TEST RESULT AND DISPLAYS COVERAGE
+def _handle_test_result(process, coverage_data):
+    if process.returncode == 0:
+        click.echo(click.style("\n✅ ALL TESTS PASSED !", fg='green', bold=True))
+        _display_coverage_metrics(coverage_data)
+    else:
+        click.echo(click.style("\n❌ SOME TESTS FAILED!", fg='red', bold=True))
         sys.exit(1) 

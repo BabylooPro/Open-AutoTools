@@ -1,0 +1,64 @@
+[run]
+source = autotools
+branch = True
+omit =
+    */tests/*
+    */test/*
+    */__pycache__/*
+    */venv/*
+    */env/*
+    setup.py
+    */site-packages/*
+
+[report]
+# REGEXES FOR LINES TO EXCLUDE FROM CONSIDERATION
+exclude_lines =
+    # HAVE TO RE-ENABLE THE STANDARD PRAGMA
+    pragma: no cover
+    
+    # DON'T COMPLAIN ABOUT MISSING DEBUG-ONLY CODE
+    def __repr__
+    if self\.debug
+    
+    # DON'T COMPLAIN IF TESTS DON'T HIT DEFENSIVE ASSERTION CODE
+    raise AssertionError
+    raise NotImplementedError
+    if 0:
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    @abstractmethod
+    
+    # DON'T COMPLAIN IF NON-RUNNABLE CODE ISN'T RUN
+    if False:
+    class .*\bProtocol\):
+    @(abc\.)?abstractmethod
+    
+    # IGNORE EMPTY LINES
+    ^\s*$
+    ^\s*#.*$
+    ^\s*pass\s*$
+    ^\s*\.\.\.\s*$
+
+# SHOW MISSING LINE NUMBERS
+show_missing = True
+
+# PRECISION FOR PERCENTAGES
+precision = 2
+
+# SKIP EMPTY FILES
+skip_empty = True
+
+# SKIP COVERED FILES
+skip_covered = False
+
+[html]
+directory = htmlcov
+title = Open-AutoTools Coverage Report
+
+[xml]
+output = coverage.xml
+
+[paths]
+source =
+    autotools
+    */autotools
