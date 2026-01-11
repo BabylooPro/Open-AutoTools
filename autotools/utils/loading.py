@@ -1,4 +1,12 @@
+import threading
 from halo import Halo
+
+# PATCHES THREAD SET DAEMON METHOD TO PREVENT WARNINGS
+def _patched_set_daemon(self, daemon):
+    self.daemon = daemon
+
+_original_set_daemon = threading.Thread.setDaemon
+threading.Thread.setDaemon = _patched_set_daemon
 
 # CONTEXT MANAGER FOR DISPLAYING LOADING ANIMATION
 class LoadingAnimation:
@@ -13,4 +21,4 @@ class LoadingAnimation:
         
     # STOPS THE LOADING ANIMATION
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self._spinner.stop() 
+        self._spinner.stop()

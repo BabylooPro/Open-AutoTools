@@ -1,5 +1,4 @@
 import click
-import pkg_resources
 import requests
 import base64
 import argparse

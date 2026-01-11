@@ -1,11 +1,12 @@
 import os
 import sys
+import json
 import click
-import pkg_resources
-import requests
+import urllib.request
+import urllib.error
 from datetime import datetime
 from packaging.version import parse as parse_version
-from importlib.metadata import version as get_version, PackageNotFoundError, distribution
+from importlib.metadata import version as get_version, PackageNotFoundError
 
 # FORMATS AND DISPLAYS RELEASE DATE
 def _format_release_date(upload_time, pkg_version):
@@ -43,16 +44,19 @@ def _check_for_updates(current_version, latest_version):
 # FETCHES AND PROCESSES PYPI VERSION INFORMATION
 def _fetch_pypi_version_info(pkg_version):
     pypi_url = "https://pypi.org/pypi/Open-AutoTools/json"
-    response = requests.get(pypi_url)
-    
-    if response.status_code != 200: return
-
-    data = response.json()
-    latest_version = data["info"]["version"]
-    current_version = parse_version(pkg_version)
-    
-    _display_release_info(data, pkg_version)
-    _check_for_updates(current_version, latest_version)
+    try:
+        req = urllib.request.Request(pypi_url)
+        with urllib.request.urlopen(req, timeout=5) as response:
+            if response.status != 200: return
+            
+            data = json.loads(response.read().decode())
+            latest_version = data["info"]["version"]
+            current_version = parse_version(pkg_version)
+            
+            _display_release_info(data, pkg_version)
+            _check_for_updates(current_version, latest_version)
+    except urllib.error.URLError:
+        pass
 
 # PRINTS VERSION INFORMATION AND CHECKS FOR UPDATES
 def print_version(ctx, value):
@@ -68,7 +72,6 @@ def print_version(ctx, value):
 
         _fetch_pypi_version_info(pkg_version)
 
-    except pkg_resources.DistributionNotFound: click.echo("Package distribution not found")
     except PackageNotFoundError: click.echo("Open-AutoTools version information not available")
     except Exception as e: click.echo(f"Error checking updates: {str(e)}")
     
