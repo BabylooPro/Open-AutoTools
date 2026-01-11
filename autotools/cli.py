@@ -10,13 +10,9 @@ from urllib.parse import urlparse
 from packaging.version import parse as parse_version
 from importlib.metadata import version as get_version, PackageNotFoundError
 
-from .autocaps.commands import autocaps
-from .autolower.commands import autolower
-from .autopassword.commands import autopassword
-from .autoip.commands import autoip
-from .autotest.commands import autotest
-from .utils.updates import check_for_updates
 from .utils.version import print_version
+from .utils.updates import check_for_updates
+from .utils.commands import autocaps, autolower, autopassword, autoip, autotest
 
 load_dotenv()
 
