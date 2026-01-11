@@ -35,6 +35,7 @@ See [Installation Guide](docs/installation.md) for more details.
 
 -   [Installation](docs/installation.md)
 -   [Development](docs/development.md)
+-   [Performance](docs/performance.md)
 -   [Docker Support](docs/docker.md)
 
 ## License
