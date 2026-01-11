@@ -18,54 +18,54 @@
 name: Test Cross-Platform Docker
 
 on:
-  workflow_dispatch:
-    inputs:
-      debug_enabled:
-        type: boolean
-        description: "Run the build with tmate debugging enabled"
-        required: false
-        default: false
+    workflow_dispatch:
+        inputs:
+            debug_enabled:
+                type: boolean
+                description: "Run the build with tmate debugging enabled"
+                required: false
+                default: false
 
 jobs:
-  docker-test:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        platform: [ubuntu, macos, windows]
+    docker-test:
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                platform: [ubuntu, macos, windows]
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
 
-      - name: Create data directory
-        run: mkdir -p data
+            - name: Create data directory
+              run: mkdir -p docker/data
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+            - name: Setup tmate session
+              uses: mxschmitt/action-tmate@v3
+              if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
 
-      - name: Build ${{ matrix.platform }}
-        run: |
-          docker compose build ${{ matrix.platform }}
+            - name: Build ${{ matrix.platform }}
+              run: |
+                  docker compose -f docker/docker-compose.yml build ${{ matrix.platform }}
 
-      - name: Verify package installation for ${{ matrix.platform }}
-        run: |
-          docker compose run --rm ${{ matrix.platform }} pip list | grep Open-AutoTools || {
-            echo "ERROR: Open-AutoTools package not found. Reinstalling..."
-            docker compose run --rm ${{ matrix.platform }} pip install -e .
-          }
+            - name: Verify package installation for ${{ matrix.platform }}
+              run: |
+                  docker compose -f docker/docker-compose.yml run --rm ${{ matrix.platform }} pip list | grep Open-AutoTools || {
+                    echo "ERROR: Open-AutoTools package not found. Reinstalling..."
+                    docker compose -f docker/docker-compose.yml run --rm ${{ matrix.platform }} pip install -e .
+                  }
 
-      - name: Run tests for ${{ matrix.platform }}
-        run: docker compose run --rm ${{ matrix.platform }}
+            - name: Run tests for ${{ matrix.platform }}
+              run: docker compose -f docker/docker-compose.yml run --rm ${{ matrix.platform }}
 
-      - name: Upload test artifacts for ${{ matrix.platform }}
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-${{ matrix.platform }}
-          path: data/
-          retention-days: 7
+            - name: Upload test artifacts for ${{ matrix.platform }}
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: test-results-${{ matrix.platform }}
+                  path: docker/data/
+                  retention-days: 7

@@ -2,11 +2,12 @@ services:
   ubuntu:
     container_name: autotools-ubuntu
     build:
-      context: .
+      context: ..
+      dockerfile: docker/Dockerfile
       target: ubuntu
     volumes:
-      - .:/app
-      - ./data:/data
+      - ../:/app
+      - ../docker/data:/data
     environment:
       - PYTHONUNBUFFERED=1
       - PLATFORM=Ubuntu
@@ -15,11 +16,12 @@ services:
   macos:
     container_name: autotools-macos
     build:
-      context: .
+      context: ..
+      dockerfile: docker/Dockerfile
       target: macos
     volumes:
-      - .:/app
-      - ./data:/data
+      - ../:/app
+      - ../docker/data:/data
     environment:
       - PYTHONUNBUFFERED=1
       - PLATFORM=macOS
@@ -28,11 +30,12 @@ services:
   windows:
     container_name: autotools-windows
     build:
-      context: .
+      context: ..
+      dockerfile: docker/Dockerfile
       target: windows
     volumes:
-      - .:/app
-      - ./data:/data
+      - ../:/app
+      - ../docker/data:/data
     environment:
       - PYTHONUNBUFFERED=1
       - PLATFORM=Windows

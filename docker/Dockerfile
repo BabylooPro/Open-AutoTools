@@ -36,17 +36,13 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # UPGRADE PIP AND INSTALL BUILD DEPENDENCIES
 RUN pip install --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir numpy cython rich>=13.7.0
-
-# PRE-INSTALL PROBLEMATIC DEPENDENCIES
-RUN pip install --no-cache-dir \
+    pip install --no-cache-dir numpy cython rich>=13.7.0 && \
+    pip install --no-cache-dir \
     psutil \
     netifaces \
     spacy==3.7.2 --no-deps && \
-    pip install --no-cache-dir spacy[all]==3.7.2
-
-# DOWNLOAD SPACY MODEL
-RUN python -m spacy download en_core_web_sm
+    pip install --no-cache-dir spacy[all]==3.7.2 && \
+    python -m spacy download en_core_web_sm
 
 # COPY PROJECT FILES
 COPY . .
@@ -86,7 +82,7 @@ WORKDIR /app
 COPY --from=builder /app /app
 
 # COPY AND MAKE TEST SCRIPT EXECUTABLE
-COPY run_tests.sh /app/run_tests.sh
+COPY docker/run_tests.sh /app/run_tests.sh
 RUN chmod +x /app/run_tests.sh
 
 # SET ENTRYPOINT TO TEST SCRIPT
@@ -120,16 +116,12 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # UPGRADE PIP AND INSTALL BUILD DEPENDENCIES
 RUN pip install --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir numpy cython rich>=13.7.0
-
-# PRE-INSTALL PROBLEMATIC DEPENDENCIES
-RUN pip install --no-cache-dir \
+    pip install --no-cache-dir numpy cython rich>=13.7.0 && \
+    pip install --no-cache-dir \
     psutil \
     netifaces \
-    spacy[all]==3.7.2
-
-# DOWNLOAD SPACY MODEL
-RUN python -m spacy download en_core_web_sm
+    spacy[all]==3.7.2 && \
+    python -m spacy download en_core_web_sm
 
 # COPY PROJECT FILES
 COPY . .
@@ -138,7 +130,7 @@ COPY . .
 RUN pip install -e .
 
 # COPY AND MAKE TEST SCRIPT EXECUTABLE
-COPY run_tests.sh /app/run_tests.sh
+COPY docker/run_tests.sh /app/run_tests.sh
 RUN chmod +x /app/run_tests.sh
 
 # SET ENTRYPOINT TO TEST SCRIPT
@@ -174,16 +166,12 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # INSTALL BUILD DEPENDENCIES
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir numpy cython rich>=13.7.0
-
-# PRE-INSTALL PROBLEMATIC DEPENDENCIES
-RUN pip install --no-cache-dir \
+    pip install --no-cache-dir numpy cython rich>=13.7.0 && \
+    pip install --no-cache-dir \
     psutil \
     netifaces \
-    spacy[all]==3.7.2
-
-# DOWNLOAD SPACY MODEL
-RUN python -m spacy download en_core_web_sm
+    spacy[all]==3.7.2 && \
+    python -m spacy download en_core_web_sm
 
 # COPY PROJECT FILES
 COPY . .
