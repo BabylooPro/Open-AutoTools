@@ -23,7 +23,7 @@ required = read_requirements()
 setup(
     name='Open-AutoTools',
     version='0.0.4',
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests", "tests.*"]),
     include_package_data=True,
     install_requires=required,
     
@@ -47,11 +47,11 @@ setup(
     project_urls={
         "Bug Tracker": "https://github.com/BabylooPro/Open-AutoTools/issues",
     },
+    license="MIT",
     classifiers=[
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
-        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.10",
