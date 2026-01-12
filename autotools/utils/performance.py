@@ -18,6 +18,9 @@ except ImportError:
 ENABLE_PERFORMANCE_METRICS = False
 if os.getenv('AUTOTOOLS_DISABLE_PERF', '').lower() in ('1', 'true', 'yes'): ENABLE_PERFORMANCE_METRICS = False
 
+# FLAG TO ENABLE/DISABLE TRACEMALLOC (CAN BE SLOW IN PRODUCTION)
+ENABLE_TRACEMALLOC = os.getenv('AUTOTOOLS_ENABLE_TRACEMALLOC', '').lower() in ('1', 'true', 'yes')
+
 # PERFORMANCE METRICS COLLECTOR
 class PerformanceMetrics:
     def __init__(self):
@@ -77,10 +80,10 @@ class PerformanceMetrics:
     # STARTS STARTUP PHASE TRACKING
     def start_startup(self):
         self.startup_start = time.perf_counter()
-        if not self.tracemalloc_started:
-            tracemalloc.start()
+        if ENABLE_TRACEMALLOC and not self.tracemalloc_started:
+            tracemalloc.start(1)
             self.tracemalloc_started = True
-        self.alloc_start = tracemalloc.take_snapshot()
+        if self.tracemalloc_started: self.alloc_start = tracemalloc.take_snapshot()
         self.gc_start_stats = self._get_gc_stats()
         
     # ENDS STARTUP PHASE TRACKING
@@ -103,6 +106,7 @@ class PerformanceMetrics:
         self._record_fs_end()
         if self.tracemalloc_started: 
             self.alloc_end = tracemalloc.take_snapshot()
+            tracemalloc.stop()
         self.gc_end_stats = self._get_gc_stats()
 
     # STARTS TRACKING A NAMED STEP
