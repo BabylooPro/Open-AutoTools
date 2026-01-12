@@ -740,6 +740,15 @@ def test_start_startup_tracemalloc_already_started():
     assert metrics.startup_start is not None
     assert metrics.alloc_start is not None
 
+# TEST FOR START STARTUP WITH TRACEMALLOC STARTED BUT NOT TRACING
+def test_start_startup_tracemalloc_started_but_not_tracing():
+    metrics = PerformanceMetrics()
+    if tracemalloc.is_tracing(): tracemalloc.stop()
+    metrics.tracemalloc_started = True
+    metrics.start_startup()
+    assert metrics.startup_start is not None
+    assert metrics.alloc_start is None
+
 # TEST FOR CALCULATE GC STATS WITH NEGATIVE VALUES
 def test_calculate_gc_stats_negative_values():
     metrics = PerformanceMetrics()

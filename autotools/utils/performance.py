@@ -19,7 +19,10 @@ ENABLE_PERFORMANCE_METRICS = False
 if os.getenv('AUTOTOOLS_DISABLE_PERF', '').lower() in ('1', 'true', 'yes'): ENABLE_PERFORMANCE_METRICS = False
 
 # FLAG TO ENABLE/DISABLE TRACEMALLOC (CAN BE SLOW IN PRODUCTION)
-ENABLE_TRACEMALLOC = os.getenv('AUTOTOOLS_ENABLE_TRACEMALLOC', '').lower() in ('1', 'true', 'yes')
+# ENABLE BY DEFAULT IN TEST ENVIRONMENTS (DETECTED BY PRESENCE OF PYTEST OR TEST IN SYS.ARGV)
+_ENV_TRACEMALLOC = os.getenv('AUTOTOOLS_ENABLE_TRACEMALLOC', '').lower() in ('1', 'true', 'yes')
+_IS_TEST_ENV = 'pytest' in sys.modules or any('test' in arg.lower() or 'pytest' in arg.lower() for arg in sys.argv)
+ENABLE_TRACEMALLOC = _ENV_TRACEMALLOC or _IS_TEST_ENV
 
 # PERFORMANCE METRICS COLLECTOR
 class PerformanceMetrics:
@@ -80,10 +83,14 @@ class PerformanceMetrics:
     # STARTS STARTUP PHASE TRACKING
     def start_startup(self):
         self.startup_start = time.perf_counter()
-        if ENABLE_TRACEMALLOC and not self.tracemalloc_started:
+        if tracemalloc.is_tracing() and not self.tracemalloc_started:
+            self.tracemalloc_started = True
+        elif ENABLE_TRACEMALLOC and not self.tracemalloc_started:
             tracemalloc.start(1)
             self.tracemalloc_started = True
-        if self.tracemalloc_started: self.alloc_start = tracemalloc.take_snapshot()
+
+        if self.tracemalloc_started and tracemalloc.is_tracing():
+            self.alloc_start = tracemalloc.take_snapshot()
         self.gc_start_stats = self._get_gc_stats()
         
     # ENDS STARTUP PHASE TRACKING
@@ -104,7 +111,7 @@ class PerformanceMetrics:
         self._record_cpu_end()
         self._record_rss_end()
         self._record_fs_end()
-        if self.tracemalloc_started: 
+        if self.tracemalloc_started and tracemalloc.is_tracing():
             self.alloc_end = tracemalloc.take_snapshot()
             tracemalloc.stop()
         self.gc_end_stats = self._get_gc_stats()
