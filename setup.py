@@ -22,7 +22,7 @@ required = read_requirements()
 # SETUP CONFIGURATION FOR PACKAGE DISTRIBUTION
 setup(
     name='Open-AutoTools',
-    version='0.0.4',
+    version='0.0.4-rc.1',
     packages=find_packages(exclude=["tests", "tests.*"]),
     include_package_data=True,
     install_requires=required,
