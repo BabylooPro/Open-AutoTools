@@ -183,7 +183,7 @@ def _display_connectivity_tests(output):
     output.append("\nConnectivity Tests:")
     results = test_connectivity()
     for name, success, latency in results:
-        status = f"✓ {latency}ms" if success else "✗ Failed"
+        status = f"OK {latency}ms" if success else "X Failed"
         output.append(f"{name:<15} {status}")
 
 # DISPLAYS LOCATION INFORMATION

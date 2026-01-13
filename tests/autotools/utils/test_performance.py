@@ -46,9 +46,11 @@ def sample_metrics_dict():
 # HELPER TO CAPTURE DISPLAY_METRICS OUTPUT
 def get_display_output(metrics_dict):
     runner = CliRunner()
-    with runner.isolation() as (out, err):
+    with runner.isolation() as isolation:
+        out = isolation[0] if isinstance(isolation, tuple) else isolation
         display_metrics(metrics_dict)
-        output = out.getvalue().decode('utf-8') if isinstance(out.getvalue(), bytes) else out.getvalue()
+        output = out.getvalue()
+        output = output.decode('utf-8') if isinstance(output, bytes) else output
         return output
 
 # HELPER TO CREATE A MOCK PSUTIL PROCESS
@@ -165,6 +167,31 @@ def test_record_cpu_start():
     assert metrics.cpu_user_start is not None
     assert metrics.cpu_sys_start is not None
 
+# TEST FOR RECORD CPU START WITH RESOURCE (NO PSUTIL)
+@patch('autotools.utils.performance.PSUTIL_AVAILABLE', False)
+def test_record_cpu_start_with_resource():
+    mock_resource = MagicMock()
+    mock_resource.RUSAGE_SELF = 0
+    mock_usage = MagicMock()
+    mock_usage.ru_utime = 1.5
+    mock_usage.ru_stime = 0.5
+    mock_resource.getrusage.return_value = mock_usage
+    
+    metrics = PerformanceMetrics()
+    with patch('autotools.utils.performance.RESOURCE_AVAILABLE', True), patch('autotools.utils.performance.resource', mock_resource):
+        metrics._record_cpu_start()
+        assert metrics.cpu_user_start == pytest.approx(1.5)
+        assert metrics.cpu_sys_start == pytest.approx(0.5)
+
+# TEST FOR RECORD CPU START WITHOUT PSUTIL OR RESOURCE
+@patch('autotools.utils.performance.PSUTIL_AVAILABLE', False)
+@patch('autotools.utils.performance.RESOURCE_AVAILABLE', False)
+def test_record_cpu_start_fallback():
+    metrics = PerformanceMetrics()
+    metrics._record_cpu_start()
+    assert metrics.cpu_user_start is not None
+    assert metrics.cpu_sys_start == pytest.approx(0.0)
+
 # TEST FOR RECORD CPU END
 def test_record_cpu_end():
     metrics = PerformanceMetrics()
@@ -172,6 +199,33 @@ def test_record_cpu_end():
     metrics._record_cpu_end()
     assert metrics.cpu_user_end is not None
     assert metrics.cpu_sys_end is not None
+
+# TEST FOR RECORD CPU END WITH RESOURCE (NO PSUTIL)
+@patch('autotools.utils.performance.PSUTIL_AVAILABLE', False)
+def test_record_cpu_end_with_resource():
+    mock_resource = MagicMock()
+    mock_resource.RUSAGE_SELF = 0
+    mock_usage = MagicMock()
+    mock_usage.ru_utime = 2.5
+    mock_usage.ru_stime = 1.0
+    mock_resource.getrusage.return_value = mock_usage
+    
+    metrics = PerformanceMetrics()
+    metrics._record_cpu_start()
+    with patch('autotools.utils.performance.RESOURCE_AVAILABLE', True), patch('autotools.utils.performance.resource', mock_resource):
+        metrics._record_cpu_end()
+        assert metrics.cpu_user_end == pytest.approx(2.5)
+        assert metrics.cpu_sys_end == pytest.approx(1.0)
+
+# TEST FOR RECORD CPU END WITHOUT PSUTIL OR RESOURCE
+@patch('autotools.utils.performance.PSUTIL_AVAILABLE', False)
+@patch('autotools.utils.performance.RESOURCE_AVAILABLE', False)
+def test_record_cpu_end_fallback():
+    metrics = PerformanceMetrics()
+    metrics._record_cpu_start()
+    metrics._record_cpu_end()
+    assert metrics.cpu_user_end is not None
+    assert metrics.cpu_sys_end == pytest.approx(0.0)
 
 # TEST FOR RECORD RSS START WITH PSUTIL
 @patch('autotools.utils.performance.PSUTIL_AVAILABLE', True)
@@ -185,22 +239,24 @@ def test_record_rss_start_with_psutil(mock_process_class):
 
 # TEST FOR RECORD RSS START WITHOUT PSUTIL
 @patch('autotools.utils.performance.PSUTIL_AVAILABLE', False)
-@patch('autotools.utils.performance.resource.getrusage')
-def test_record_rss_start_without_psutil(mock_getrusage):
+def test_record_rss_start_without_psutil():
+    mock_resource = MagicMock()
+    mock_resource.RUSAGE_SELF = 0
     mock_usage = MagicMock()
-    mock_getrusage.return_value = mock_usage
+    mock_resource.getrusage.return_value = mock_usage
     
     metrics = PerformanceMetrics()
-    with patch('sys.platform', 'linux'):
-        mock_usage.ru_maxrss = 100 * 1024
-        metrics._record_rss_start()
-        assert abs(metrics.rss_start - 100.0) < 0.01
+    with patch('autotools.utils.performance.RESOURCE_AVAILABLE', True), patch('autotools.utils.performance.resource', mock_resource):
+        with patch('sys.platform', 'linux'):
+            mock_usage.ru_maxrss = 100 * 1024
+            metrics._record_rss_start()
+            assert abs(metrics.rss_start - 100.0) < 0.01
 
-    metrics2 = PerformanceMetrics()
-    with patch('sys.platform', 'darwin'):
-        mock_usage.ru_maxrss = 100 * 1024 * 1024
-        metrics2._record_rss_start()
-        assert abs(metrics2.rss_start - 100.0) < 0.01
+        metrics2 = PerformanceMetrics()
+        with patch('sys.platform', 'darwin'):
+            mock_usage.ru_maxrss = 100 * 1024 * 1024
+            metrics2._record_rss_start()
+            assert abs(metrics2.rss_start - 100.0) < 0.01
 
 # TEST FOR RECORD RSS END WITH PSUTIL
 @patch('autotools.utils.performance.PSUTIL_AVAILABLE', True)
@@ -244,23 +300,39 @@ def test_record_rss_end_with_psutil_exception(mock_process_class):
 
 # TEST FOR RECORD RSS END WITHOUT PSUTIL
 @patch('autotools.utils.performance.PSUTIL_AVAILABLE', False)
-@patch('autotools.utils.performance.resource.getrusage')
-def test_record_rss_end_without_psutil(mock_getrusage):
+def test_record_rss_end_without_psutil():
+    mock_resource = MagicMock()
+    mock_resource.RUSAGE_SELF = 0
     mock_usage = MagicMock()
     mock_usage.ru_maxrss = 1024 * 150
-    mock_getrusage.return_value = mock_usage
+    mock_resource.getrusage.return_value = mock_usage
     
     metrics = PerformanceMetrics()
     metrics.rss_start = 100.0 / 1024
     
-    with patch('sys.platform', 'linux'):
-        metrics._record_rss_end()
-        assert metrics.rss_peak > 0
+    with patch('autotools.utils.performance.RESOURCE_AVAILABLE', True), patch('autotools.utils.performance.resource', mock_resource):
+        with patch('sys.platform', 'linux'):
+            metrics._record_rss_end()
+            assert metrics.rss_peak > 0
+        
+        with patch('sys.platform', 'darwin'):
+            metrics.rss_start = 100.0 / (1024 * 1024)
+            metrics._record_rss_end()
+            assert metrics.rss_peak > 0
+
+# TEST FOR RECORD RSS END WITHOUT PSUTIL OR RESOURCE
+@patch('autotools.utils.performance.PSUTIL_AVAILABLE', False)
+@patch('autotools.utils.performance.RESOURCE_AVAILABLE', False)
+def test_record_rss_end_fallback():
+    metrics = PerformanceMetrics()
+    metrics.rss_start = 50.0
+    metrics._record_rss_end()
+    assert metrics.rss_peak == pytest.approx(50.0)
     
-    with patch('sys.platform', 'darwin'):
-        metrics.rss_start = 100.0 / (1024 * 1024)
-        metrics._record_rss_end()
-        assert metrics.rss_peak > 0
+    metrics2 = PerformanceMetrics()
+    metrics2.rss_start = None
+    metrics2._record_rss_end()
+    assert metrics2.rss_peak == pytest.approx(0.0)
 
 # TEST FOR RECORD FS START WITH PSUTIL
 @patch('autotools.utils.performance.PSUTIL_AVAILABLE', True)
@@ -614,18 +686,22 @@ def test_finalize_metrics(mock_ctx):
         get_metrics().end_command()
         
         runner = CliRunner()
-        with runner.isolation() as (out, err):
+        with runner.isolation() as isolation:
+            out = isolation[0] if isinstance(isolation, tuple) else isolation
             finalize_metrics(mock_ctx)
-            output = out.getvalue().decode('utf-8') if isinstance(out.getvalue(), bytes) else out.getvalue()
+            output = out.getvalue()
+            output = output.decode('utf-8') if isinstance(output, bytes) else output
             assert "PERFORMANCE METRICS" in output
 
 # TEST FOR FINALIZE METRICS DISABLED
 def test_finalize_metrics_disabled(mock_ctx):
     with patch('autotools.utils.performance.should_enable_metrics', return_value=False):
         runner = CliRunner()
-        with runner.isolation() as (out, err):
+        with runner.isolation() as isolation:
+            out = isolation[0] if isinstance(isolation, tuple) else isolation
             finalize_metrics(mock_ctx)
-            output = out.getvalue().decode('utf-8') if isinstance(out.getvalue(), bytes) else out.getvalue()
+            output = out.getvalue()
+            output = output.decode('utf-8') if isinstance(output, bytes) else output
             assert "PERFORMANCE METRICS" not in output
 
 # TEST FOR GET METRICS FUNCTION
@@ -772,6 +848,38 @@ def test_get_metrics_rss_peak_none():
     
     result = metrics.get_metrics()
     assert abs(result['rss_mb_peak'] - 0.0) < 1e-9
+
+# TEST FOR RESOURCE AVAILABLE WHEN RESOURCE IS IMPORTED
+def test_resource_available_when_imported():
+    import autotools.utils.performance as perf_module
+    assert hasattr(perf_module, 'RESOURCE_AVAILABLE')
+    assert isinstance(perf_module.RESOURCE_AVAILABLE, bool)
+
+# TEST FOR RESOURCE AVAILABLE = True PATH
+def test_resource_available_true_path():
+    import sys
+    import importlib
+
+    mock_resource = MagicMock()
+    mock_resource.RUSAGE_SELF = 0
+
+    perf_module_name = 'autotools.utils.performance'
+    original_resource = sys.modules.get('resource')
+    
+    fake_resource = MagicMock()
+    fake_resource.RUSAGE_SELF = 0
+    sys.modules['resource'] = fake_resource
+    
+    try:
+        if perf_module_name in sys.modules: importlib.reload(sys.modules[perf_module_name])
+        else: importlib.import_module(perf_module_name)
+
+        perf_module = sys.modules[perf_module_name]
+        assert hasattr(perf_module, 'RESOURCE_AVAILABLE')
+    finally:
+        if original_resource: sys.modules['resource'] = original_resource
+        elif 'resource' in sys.modules: del sys.modules['resource']
+        if perf_module_name in sys.modules: importlib.reload(sys.modules[perf_module_name])
 
 # TEST FOR PSUTIL IMPORT ERROR TO COVER EXCEPT BLOCK
 def test_psutil_import_error_coverage():

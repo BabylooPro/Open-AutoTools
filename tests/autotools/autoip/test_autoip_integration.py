@@ -38,8 +38,8 @@ def test_autoip_cli_test(mock_test):
     assert result.exit_code == 0
     assert "Google DNS" in result.output
     assert "CloudFlare" in result.output
-    assert "✓ 20ms" in result.output
-    assert "✗ Failed" in result.output
+    assert "OK 20ms" in result.output
+    assert "X Failed" in result.output
 
 # TEST FOR SPEED TEST
 @patch('autotools.autoip.core.run_speedtest')

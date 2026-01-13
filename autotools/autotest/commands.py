@@ -4,6 +4,7 @@ import sys
 import os
 import re
 from ..utils.updates import check_for_updates
+from ..utils.text import safe_text
 
 # CLI COMMAND TO RUN TEST SUITE WITH PYTEST
 @click.command()
@@ -32,12 +33,12 @@ def _install_test_dependencies():
         import pytest
         import pytest_cov
     except ImportError:
-        click.echo(click.style("\n❌ pytest and/or pytest-cov not found. Installing...", fg='yellow', bold=True))
+        click.echo(safe_text(click.style("\n[X] pytest and/or pytest-cov not found. Installing...", fg='yellow', bold=True)))
         try:
-            subprocess.run(['pip', 'install', 'pytest', 'pytest-cov'], check=True)
-            click.echo(click.style("✅ Successfully installed pytest and pytest-cov", fg='green', bold=True))
+            subprocess.run([sys.executable, '-m', 'pip', 'install', 'pytest', 'pytest-cov'], check=True)
+            click.echo(safe_text(click.style("[OK] Successfully installed pytest and pytest-cov", fg='green', bold=True)))
         except subprocess.CalledProcessError as e:
-            click.echo(click.style(f"\n❌ Failed to install dependencies: {str(e)}", fg='red', bold=True))
+            click.echo(safe_text(click.style(f"\n[X] Failed to install dependencies: {str(e)}", fg='red', bold=True)))
             sys.exit(1)
 
 # BUILDS THE TEST COMMAND ARGUMENTS BY ADDING THE CORRECT TEST PATH AND OPTIONS
@@ -149,10 +150,10 @@ def _run_test_process(cmd):
         coverage_data = _process_test_output(process)
         _handle_test_result(process, coverage_data)
     except subprocess.CalledProcessError as e:
-        click.echo(click.style(f"\n❌ TESTS FAILED WITH RETURN CODE {e.returncode}", fg='red', bold=True))
+        click.echo(safe_text(click.style(f"\n[X] TESTS FAILED WITH RETURN CODE {e.returncode}", fg='red', bold=True)))
         sys.exit(1)
     except Exception as e:
-        click.echo(click.style(f"\n❌ ERROR RUNNING TESTS: {str(e)}", fg='red', bold=True))
+        click.echo(safe_text(click.style(f"\n[X] ERROR RUNNING TESTS: {str(e)}", fg='red', bold=True)))
         sys.exit(1)
 
 # PREPARES ENVIRONMENT FOR TEST PROCESS
@@ -198,8 +199,8 @@ def _process_test_output(process):
 # HANDLES TEST RESULT AND DISPLAYS COVERAGE
 def _handle_test_result(process, coverage_data):
     if process.returncode == 0:
-        click.echo(click.style("\n✅ ALL TESTS PASSED !", fg='green', bold=True))
+        click.echo(safe_text(click.style("\n[OK] ALL TESTS PASSED !", fg='green', bold=True)))
         _display_coverage_metrics(coverage_data)
     else:
-        click.echo(click.style("\n❌ SOME TESTS FAILED!", fg='red', bold=True))
+        click.echo(safe_text(click.style("\n[X] SOME TESTS FAILED!", fg='red', bold=True)))
         sys.exit(1) 

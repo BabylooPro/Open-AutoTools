@@ -1,6 +1,6 @@
 # Development
 
-Open-AutoTools is developed using Python 3.11+.
+Open-AutoTools is developed using Python 3.10+.
 
 ## Setup Development Environment
 
@@ -13,13 +13,13 @@ source venv/bin/activate  # On macOS/Linux
 venv\Scripts\activate  # On Windows
 
 # Install project dependencies
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 
 # For development, install in editable mode
 pip install -e .
 
-# install test dependencies directly (optional)
-pip install -e ".[test]"
+# Or install dev extras (includes test/build tooling)
+pip install -e ".[dev]"
 
 # Build the package locally
 python -m build  # Creates dist/Open_AutoTools-X.X.X-py3-none-any.whl
@@ -35,12 +35,12 @@ autotools --version  # Should show "Development mode: enabled" when using pip in
 
 Open-AutoTools includes built-in performance metrics that are automatically enabled in development mode. These metrics track:
 
--   **Duration Metrics**: Total, startup, and command execution times
--   **CPU Metrics**: User time, system time, and CPU usage ratio
--   **Memory Metrics**: RSS peak and total allocations
--   **Garbage Collection**: GC pause time and collection count
--   **Filesystem I/O**: Bytes read/written and operation count
--   **Top Slowest Steps**: Breakdown of the slowest execution steps
+- **Duration Metrics**: Total, startup, and command execution times
+- **CPU Metrics**: User time, system time, and CPU usage ratio
+- **Memory Metrics**: RSS peak and total allocations
+- **Garbage Collection**: GC pause time and collection count
+- **Filesystem I/O**: Bytes read/written and operation count
+- **Top Slowest Steps**: Breakdown of the slowest execution steps
 
 ### Enabling/Disabling Performance Metrics
 

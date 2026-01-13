@@ -3,10 +3,16 @@ import gc
 import sys
 import time
 import click
-import resource
 import tracemalloc
 from contextlib import contextmanager
 from typing import Dict, List, Tuple, Optional
+
+try:
+    import resource
+    RESOURCE_AVAILABLE = True
+except ImportError:
+    resource = None
+    RESOURCE_AVAILABLE = False
 
 try:
     import psutil
@@ -133,47 +139,72 @@ class PerformanceMetrics:
 
     # RECORDS CPU USAGE AT START
     def _record_cpu_start(self):
-        usage = resource.getrusage(resource.RUSAGE_SELF)
-        self.cpu_user_start = usage.ru_utime
-        self.cpu_sys_start = usage.ru_stime
+        if PSUTIL_AVAILABLE:
+            process = psutil.Process()
+            cpu_times = process.cpu_times()
+            self.cpu_user_start = cpu_times.user
+            self.cpu_sys_start = cpu_times.system
+        elif RESOURCE_AVAILABLE:
+            usage = resource.getrusage(resource.RUSAGE_SELF)
+            self.cpu_user_start = usage.ru_utime
+            self.cpu_sys_start = usage.ru_stime
+        else:
+            self.cpu_user_start = time.process_time()
+            self.cpu_sys_start = 0.0
         
     # RECORDS CPU USAGE AT END
     def _record_cpu_end(self):
-        usage = resource.getrusage(resource.RUSAGE_SELF)
-        self.cpu_user_end = usage.ru_utime
-        self.cpu_sys_end = usage.ru_stime
+        if PSUTIL_AVAILABLE:
+            process = psutil.Process()
+            cpu_times = process.cpu_times()
+            self.cpu_user_end = cpu_times.user
+            self.cpu_sys_end = cpu_times.system
+        elif RESOURCE_AVAILABLE:
+            usage = resource.getrusage(resource.RUSAGE_SELF)
+            self.cpu_user_end = usage.ru_utime
+            self.cpu_sys_end = usage.ru_stime
+        else:
+            self.cpu_user_end = time.process_time()
+            self.cpu_sys_end = 0.0
         
     # RECORDS MEMORY USAGE AT START
     def _record_rss_start(self):
         if PSUTIL_AVAILABLE:
             process = psutil.Process()
             self.rss_start = process.memory_info().rss / (1024 * 1024)  # MB
-        else:
+        elif RESOURCE_AVAILABLE:
             usage = resource.getrusage(resource.RUSAGE_SELF)
             self.rss_start = usage.ru_maxrss / 1024  # MB (LINUX) OR KB (MACOS)
             if sys.platform == 'darwin': 
                 self.rss_start = self.rss_start / 1024  # CONVERT KB TO MB ON MACOS
+        else:
+            self.rss_start = 0.0
                 
     # RECORDS MEMORY USAGE AT END
     def _record_rss_end(self):
-        if PSUTIL_AVAILABLE:
-            process = psutil.Process()
-            mem_info = process.memory_info()
-            self.rss_peak = mem_info.rss / (1024 * 1024)  # MB
+        if PSUTIL_AVAILABLE: self._record_rss_end_psutil()
+        elif RESOURCE_AVAILABLE: self._record_rss_end_resource()
+        else: self.rss_peak = self.rss_start if self.rss_start is not None else 0.0
 
-            try:
-                if hasattr(process, 'memory_info_ex'):
-                    mem_ext = process.memory_info_ex()
-                    if hasattr(mem_ext, 'peak_wss'): 
-                        self.rss_peak = max(self.rss_peak, mem_ext.peak_wss / (1024 * 1024))
-            except Exception:
-                pass
-        else:
-            usage = resource.getrusage(resource.RUSAGE_SELF)
-            rss_current = usage.ru_maxrss / 1024
-            if sys.platform == 'darwin': 
-                rss_current = rss_current / 1024
-            self.rss_peak = max(self.rss_start, rss_current) if self.rss_start else rss_current
+    # RECORDS MEMORY USAGE AT END USING PSUTIL
+    def _record_rss_end_psutil(self):
+        process = psutil.Process()
+        mem_info = process.memory_info()
+        self.rss_peak = mem_info.rss / (1024 * 1024) # MB
+
+        try:
+            if hasattr(process, 'memory_info_ex'):
+                mem_ext = process.memory_info_ex()
+                if hasattr(mem_ext, 'peak_wss'): self.rss_peak = max(self.rss_peak, mem_ext.peak_wss / (1024 * 1024))
+        except Exception:
+            pass
+
+    # RECORDS MEMORY USAGE AT END USING RESOURCE
+    def _record_rss_end_resource(self):
+        usage = resource.getrusage(resource.RUSAGE_SELF)
+        rss_current = usage.ru_maxrss / 1024
+        if sys.platform == 'darwin': rss_current = rss_current / 1024
+        self.rss_peak = max(self.rss_start, rss_current) if self.rss_start else rss_current
             
     # RECORDS FILESYSTEM I/O AT START
     def _record_fs_start(self):
@@ -217,15 +248,15 @@ class PerformanceMetrics:
         
     # CALCULATES DURATION METRICS IN MILLISECONDS
     def _calculate_durations(self) -> Tuple[float, float, float]:
-        total_duration_ms = (self.process_end - self.process_start) * 1000 if self.process_end and self.process_start else 0
-        startup_duration_ms = (self.startup_end - self.startup_start) * 1000 if self.startup_end and self.startup_start else 0
-        command_duration_ms = (self.command_end - self.command_start) * 1000 if self.command_end and self.command_start else 0
+        total_duration_ms = (self.process_end - self.process_start) * 1000 if self.process_end is not None and self.process_start is not None else 0
+        startup_duration_ms = (self.startup_end - self.startup_start) * 1000 if self.startup_end is not None and self.startup_start is not None else 0
+        command_duration_ms = (self.command_end - self.command_start) * 1000 if self.command_end is not None and self.command_start is not None else 0
         return total_duration_ms, startup_duration_ms, command_duration_ms
         
     # CALCULATES CPU TIME METRICS IN MILLISECONDS
     def _calculate_cpu_time(self) -> Tuple[float, float, float]:
-        cpu_user_ms = (self.cpu_user_end - self.cpu_user_start) * 1000 if self.cpu_user_end and self.cpu_user_start else 0
-        cpu_sys_ms = (self.cpu_sys_end - self.cpu_sys_start) * 1000 if self.cpu_sys_end and self.cpu_sys_start else 0
+        cpu_user_ms = (self.cpu_user_end - self.cpu_user_start) * 1000 if self.cpu_user_end is not None and self.cpu_user_start is not None else 0
+        cpu_sys_ms = (self.cpu_sys_end - self.cpu_sys_start) * 1000 if self.cpu_sys_end is not None and self.cpu_sys_start is not None else 0
         cpu_time_total_ms = cpu_user_ms + cpu_sys_ms
         return cpu_time_total_ms, cpu_user_ms, cpu_sys_ms
         
@@ -260,9 +291,9 @@ class PerformanceMetrics:
         
     # CALCULATES FILESYSTEM I/O METRICS
     def _calculate_fs_io(self) -> Tuple[int, int, int]:
-        fs_bytes_read_total = self.fs_read_end - self.fs_read_start if self.fs_read_end and self.fs_read_start else 0
-        fs_bytes_written_total = self.fs_write_end - self.fs_write_start if self.fs_write_end and self.fs_write_start else 0
-        fs_ops_count = self.fs_ops_end - self.fs_ops_start if self.fs_ops_end and self.fs_ops_start else 0
+        fs_bytes_read_total = self.fs_read_end - self.fs_read_start if self.fs_read_end is not None and self.fs_read_start is not None else 0
+        fs_bytes_written_total = self.fs_write_end - self.fs_write_start if self.fs_write_end is not None and self.fs_write_start is not None else 0
+        fs_ops_count = self.fs_ops_end - self.fs_ops_start if self.fs_ops_end is not None and self.fs_ops_start is not None else 0
         return fs_bytes_read_total, fs_bytes_written_total, fs_ops_count
 
     # CALCULATES AND RETURNS ALL PERFORMANCE METRICS AS A DICTIONARY
