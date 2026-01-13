@@ -33,11 +33,11 @@ See [Installation Guide](docs/installation.md) for more details.
 
 ## Documentation
 
--   [Installation](docs/installation.md)
--   [Development](docs/development.md)
--   
--   [Performance](docs/performance.md)
--   [Docker Support](docs/docker.md)
+-   [Installation](docs/installation.md) - Install the CLI and verify your setup
+-   [Development](docs/development.md) - Dev environment, tooling, and contribution workflow
+-   [Testing](docs/testing.md) - Run tests, install test deps, and check coverage
+-   [Performance](docs/performance.md) - Performance metrics: what’s collected and how to enable them
+-   [Docker Support](docs/docker.md) - Run the toolkit and tests in Docker
 
 ## License
 
