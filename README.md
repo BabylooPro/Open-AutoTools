@@ -1,4 +1,4 @@
-# Open-AutoTools
+# OPEN-AUTOTOOLS
 
 [PYPI_BADGE]: https://badge.fury.io/py/Open-AutoTools.svg
 [PYPI_URL]: https://pypi.org/project/Open-AutoTools/
@@ -11,9 +11,9 @@
 
 [![PyPI][PYPI_BADGE]][PYPI_URL] [![Python][PYTHON_BADGE]][PYTHON_URL] [![CHANGELOG][CHANGELOG_BADGE]][CHANGELOG_URL] [![TODO][TODO_BADGE]][TODO_URL]
 
-Python CLI toolkit for everyday developer tasks. Boost productivity directly from your terminal.
+Python CLI toolkit for everyday developer tasks. Boost productivity directly from your terminal. (MacOS, Window, Linux)
 
-https://github.com/BabylooPro/Open-AutoTools/assets/35376790/d57f2b9d-55f8-4368-bb40-c0010eb9d49a
+https://github.com/user-attachments/assets/f959327b-b4ae-481d-8be0-c8957fb6ad36
 
 ## Quick Install
 
@@ -35,6 +35,7 @@ See [Installation Guide](docs/installation.md) for more details.
 
 -   [Installation](docs/installation.md)
 -   [Development](docs/development.md)
+-   
 -   [Performance](docs/performance.md)
 -   [Docker Support](docs/docker.md)
 
