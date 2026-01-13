@@ -258,6 +258,14 @@ def test_record_rss_start_without_psutil():
             metrics2._record_rss_start()
             assert abs(metrics2.rss_start - 100.0) < 0.01
 
+# TEST FOR RECORD RSS START WITHOUT PSUTIL OR RESOURCE
+@patch('autotools.utils.performance.PSUTIL_AVAILABLE', False)
+@patch('autotools.utils.performance.RESOURCE_AVAILABLE', False)
+def test_record_rss_start_without_psutil_or_resource():
+    metrics = PerformanceMetrics()
+    metrics._record_rss_start()
+    assert abs(metrics.rss_start - 0.0) < 1e-9
+
 # TEST FOR RECORD RSS END WITH PSUTIL
 @patch('autotools.utils.performance.PSUTIL_AVAILABLE', True)
 @patch('autotools.utils.performance.psutil.Process')
@@ -908,6 +916,44 @@ def test_psutil_import_error_coverage():
         assert metrics.rss_start is not None
     
     if original_psutil: sys.modules['psutil'] = original_psutil
+    if original_perf_module:
+        sys.modules[perf_module_name] = original_perf_module
+        importlib.reload(original_perf_module)
+
+# TEST FOR RESOURCE IMPORT ERROR TO COVER EXCEPT BLOCK
+def test_resource_import_error_coverage():
+    import builtins
+    original_resource = sys.modules.get('resource')
+    perf_module_name = 'autotools.utils.performance'
+    original_perf_module = sys.modules.get(perf_module_name)
+    
+    modules_to_remove = []
+    for key in sys.modules.keys():
+        if key == 'resource' or key == perf_module_name or key.startswith(perf_module_name + '.'):
+            modules_to_remove.append(key)
+
+    for key in modules_to_remove: del sys.modules[key]
+
+    original_import = builtins.__import__
+    def import_side_effect(name, *args, **kwargs):
+        if name == 'resource': raise ImportError("No module named 'resource'")
+        return original_import(name, *args, **kwargs)
+    
+    with patch('builtins.__import__', side_effect=import_side_effect):
+        perf_module = importlib.import_module(perf_module_name)
+        assert perf_module.RESOURCE_AVAILABLE is False
+        assert perf_module.resource is None
+        original_psutil_available = perf_module.PSUTIL_AVAILABLE
+        perf_module.PSUTIL_AVAILABLE = False
+
+        try:
+            metrics = perf_module.PerformanceMetrics()
+            metrics._record_rss_start()
+            assert abs(metrics.rss_start - 0.0) < 1e-9
+        finally:
+            perf_module.PSUTIL_AVAILABLE = original_psutil_available
+
+    if original_resource: sys.modules['resource'] = original_resource
     if original_perf_module:
         sys.modules[perf_module_name] = original_perf_module
         importlib.reload(original_perf_module)
