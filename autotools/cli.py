@@ -13,7 +13,7 @@ from importlib.metadata import version as get_version, PackageNotFoundError
 
 from .utils.version import print_version
 from .utils.updates import check_for_updates
-from .utils.commands import register_commands, autocaps, autolower, autopassword, autoip, autoconvert
+from .utils.commands import register_commands, autocaps, autolower, autopassword, autoip, autoconvert, autocolor
 from .utils.performance import init_metrics, finalize_metrics, get_metrics, should_enable_metrics
 
 load_dotenv()
@@ -37,6 +37,7 @@ def cli(ctx, perf):
             - autopassword: Generate secure passwords and encryption keys
             - autoip: Display network information and run diagnostics
             - autoconvert: Convert text, images, audio, and video between formats
+            - autocolor: Convert color codes between different formats (hex, RGB, HSL, etc)
             - test: Run the test suite (development only)
 
         \b

@@ -17,12 +17,11 @@
 -   [ ] **add:** AutoSearch: Searches for files and content in specified directories
 -   [ ] **add:** AutoUnit: Converts measurement units (e.g., meters to feet, liters to gallons)
 -   [ ] **add:** AutoSearch: Searches for files and content in specified directories with an fast and intelligent search
--   [ ] **add:** AutoColor: Converts color codes between different formats (hex, RGB, HSL)
--   [ ] **add:** AutoConvert: Converts text, images, audio, and video between different formats
 
 #### DONE - v0.0.5
 
 -   [x] **added:** AutoConvert: Converts text, images, audio, and video between different formats
+-   [x] **added:** AutoColor: Converts color codes between different formats (hex, RGB, HSL, etc)
 -   [x] **added(restored):** docstrings to tools command functions with \b method
 
 #### DONE - v0.0.4

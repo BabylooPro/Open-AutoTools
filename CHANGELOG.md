@@ -7,6 +7,7 @@ All notable changes to Open-AutoTools will be documented in this file.
 ### Added
 
 -   AutoConvert command for converts text, images, audio, and video between different formats
+-   AutoColor command for converting color codes between different formats (HEX, RGB, RGBA, HSL, HSLA)
 -   Docstrings to tools command functions
 
 ## [0.0.4] - 2026-01-13

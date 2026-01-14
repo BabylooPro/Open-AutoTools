@@ -30,6 +30,7 @@ See [Installation Guide](docs/installation.md) for more details.
 -   **[AutoPassword](docs/tools/autopassword.md)** - Generate secure passwords and encryption keys
 -   **[AutoIP](docs/tools/autoip.md)** - Display network information and diagnostics
 -   **[AutoConvert](docs/tools/autoconvert.md)** - Convert text, images, audio, and video between formats
+-   **[AutoColor](docs/tools/autocolor.md)** - Convert color codes between different formats (hex, RGB, HSL, etc)
 -   **[Test Suite](docs/tools/autotest.md)** - Run the test suite (development only)
 
 ## Documentation

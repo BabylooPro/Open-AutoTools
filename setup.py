@@ -33,6 +33,7 @@ setup(
         autopassword=autotools.cli:autopassword
         autoip=autotools.cli:autoip
         autoconvert=autotools.cli:autoconvert
+        autocolor=autotools.cli:autocolor
     ''',
     
     # METADATA FOR PYPI
