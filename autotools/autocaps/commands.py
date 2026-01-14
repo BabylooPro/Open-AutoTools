@@ -7,6 +7,16 @@ from ..utils.updates import check_for_updates
 @click.command()
 @click.argument('text', nargs=-1)
 def autocaps(text):
+    """
+        TRANSFORMS TEXT TO UPPERCASE.
+
+        \b
+        EXAMPLES:
+            autocaps hello world
+            autocaps "this is a test"
+            echo "text" | autocaps
+    """
+
     with LoadingAnimation(): result = autocaps_transform(" ".join(text))
     click.echo(result)
     update_msg = check_for_updates()

@@ -7,6 +7,7 @@ All notable changes to Open-AutoTools will be documented in this file.
 ### Added
 
 -   AutoConvert command for converts text, images, audio, and video between different formats
+-   Docstrings to tools command functions
 
 ## [0.0.4] - 2026-01-13
 

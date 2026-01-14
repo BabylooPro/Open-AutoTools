@@ -15,6 +15,29 @@ from ..utils.text import safe_text
 @click.option('--location', '-l', is_flag=True, help='Show IP location info')
 @click.option('--no-ip', '-n', is_flag=True, help='Hide IP addresses')
 def autoip(test, speed, monitor, interval, ports, dns, location, no_ip):
+    """
+        DISPLAYS NETWORK INFORMATION AND RUNS DIAGNOSTICS.
+
+        \b
+        FEATURES:
+            - Show IP addresses (public and private)
+            - RUN CONNECTIVITY TESTS
+            - Measure internet speed
+            - Monitor network traffic
+            - Check port status
+            - Display DNS servers
+            - Show IP location information
+
+        \b
+        EXAMPLES:
+            autoip
+            autoip --test
+            autoip --speed
+            autoip --monitor --interval 5
+            autoip --ports --dns --location
+            autoip --no-ip
+    """
+
     with LoadingAnimation():
         output = run(
             test=test, speed=speed, monitor=monitor, interval=interval,

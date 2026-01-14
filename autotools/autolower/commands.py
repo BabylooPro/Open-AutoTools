@@ -7,6 +7,16 @@ from ..utils.updates import check_for_updates
 @click.command()
 @click.argument('text', nargs=-1)
 def autolower(text):
+    """
+        TRANSFORMS TEXT TO LOWERCASE.
+
+        \b
+        EXAMPLES:
+            autolower HELLO WORLD
+            autolower "THIS IS A TEST"
+            echo "TEXT" | autolower
+    """
+
     with LoadingAnimation(): result = autolower_transform(" ".join(text))
     click.echo(result)
     update_msg = check_for_updates()

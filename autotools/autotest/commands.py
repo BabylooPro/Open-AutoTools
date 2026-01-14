@@ -14,6 +14,29 @@ from ..utils.text import safe_text
 @click.option('--html', is_flag=True, help='Generate HTML coverage report')
 @click.option('--module', '-m', help='Test specific module (e.g., autocaps, autolower)')
 def autotest(unit, integration, no_cov, html, module):
+    """
+        RUNS THE TEST SUITE WITH PYTEST.
+
+        \b
+        FEATURES:
+            - Run unit tests only
+            - Run integration tests only
+            - Generate coverage reports
+            - Generate HTML coverage reports
+            - Test specific modules
+            - Auto-install test dependencies
+
+        \b
+        EXAMPLES:
+            autotest
+            autotest --unit
+            autotest --integration
+            autotest --module autocaps
+            autotest --html
+            autotest --no-cov
+            autotest --unit --module autopassword
+    """
+
     _install_test_dependencies()
     
     cmd = _build_test_command(unit, integration, no_cov, html, module)

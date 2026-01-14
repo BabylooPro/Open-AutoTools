@@ -10,7 +10,6 @@
 
 **_New features to add_**
 
--   [ ] **add(restore):** docstrings to tools command functions with \b method
 -   [ ] **add:** AutoZip: Compresses files and directories into various archive formats (e.g., zip, tar.gz)
 -   [ ] **add:** AutoNote: Takes quick notes and saves them to a text file
 -   [ ] **add:** AutoTodo: Manages a simple task list in a text file
@@ -24,6 +23,7 @@
 #### DONE - v0.0.5
 
 -   [x] **added:** AutoConvert: Converts text, images, audio, and video between different formats
+-   [x] **added(restored):** docstrings to tools command functions with \b method
 
 #### DONE - v0.0.4
 

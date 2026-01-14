@@ -15,7 +15,29 @@ from .core import generate_password, generate_encryption_key, analyze_password_s
 @click.option('--analyze', '-a', is_flag=True, help='Analyze password strength')
 @click.option('--gen-key', '-g', is_flag=True, help='Generate encryption key')
 @click.option('--password-key', '-p', help='Generate key from password')
-def autopassword(length, no_uppercase, no_numbers, no_special, min_special, min_numbers, analyze, gen_key, password_key):    
+def autopassword(length, no_uppercase, no_numbers, no_special, min_special, min_numbers, analyze, gen_key, password_key):
+    """
+        GENERATES SECURE PASSWORDS OR ENCRYPTION KEYS.
+
+        \b
+        FEATURES:
+            - Generate random passwords with customizable length
+            - Control character sets (uppercase, numbers, special)
+            - Set minimum requirements for special characters and numbers
+            - Analyze password strength
+            - Generate encryption keys
+            - Derive keys from passwords
+
+        \b
+        EXAMPLES:
+            autopassword
+            autopassword --length 16
+            autopassword --length 20 --analyze
+            autopassword --no-special --min-numbers 3
+            autopassword --gen-key
+            autopassword --password-key "mypassword" --analyze
+    """
+
     # DISPLAYS PASSWORD STRENGTH ANALYSIS RESULTS
     def show_analysis(text, prefix=""):
         if not analyze: return
