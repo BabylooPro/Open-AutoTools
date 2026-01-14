@@ -2,13 +2,19 @@
 
 All notable changes to Open-AutoTools will be documented in this file.
 
-## [0.0.4] - Unreleased
+## [0.0.5] - unreleased
+
+### Added
+
+-   AutoConvert command for converts text, images, audio, and video between different formats
+
+## [0.0.4] - 2026-01-13
 
 ### Changed
 
 -   Removed all unstable tools: autodownload, autospell and autotranslate features
 
-## [0.0.3] - deprecated
+## [~~0.0.3~~] - deprecated
 
 ### Added
 

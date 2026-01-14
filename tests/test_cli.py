@@ -106,10 +106,10 @@ def test_cli_no_subcommand_with_metrics(mock_updates, mock_finalize, mock_get_me
     assert mock_metrics.end_process.called
 
 # TEST FOR EXECUTE WITH METRICS DISABLED
-@patch('autotools.cli.should_enable_metrics')
-@patch('autotools.cli.get_metrics')
+@patch('autotools.utils.commands.should_enable_metrics')
+@patch('autotools.utils.commands.get_metrics')
 def test_execute_with_metrics_disabled(mock_get_metrics, mock_should_enable):
-    from autotools.cli import _execute_with_metrics
+    from autotools.utils.commands import _execute_with_metrics
     
     mock_should_enable.return_value = False
     mock_callback = MagicMock(return_value='result')
@@ -121,9 +121,9 @@ def test_execute_with_metrics_disabled(mock_get_metrics, mock_should_enable):
     mock_callback.assert_called_once_with('arg1', 'arg2', kwarg1='value1')
 
 # TEST FOR WRAP COMMAND WITH CTX PARAMETER
-@patch('autotools.cli._execute_with_metrics')
+@patch('autotools.utils.commands._execute_with_metrics')
 def test_wrap_command_with_ctx_parameter(mock_execute):
-    from autotools.cli import _wrap_command_with_metrics
+    from autotools.utils.commands import _wrap_command_with_metrics
     from click import Command, Context
     
     def test_callback(ctx, arg1, arg2): return f"{arg1}-{arg2}"
@@ -150,9 +150,9 @@ def test_wrap_command_with_ctx_parameter(mock_execute):
     assert result == 'test-result'
 
 # TEST FOR WRAP COMMAND WITH EXISTING PERF OPTION
-@patch('autotools.cli._execute_with_metrics')
+@patch('autotools.utils.commands._execute_with_metrics')
 def test_wrap_command_with_existing_perf_option(mock_execute):
-    from autotools.cli import _wrap_command_with_metrics
+    from autotools.utils.commands import _wrap_command_with_metrics
     from click import Command, Context, Option
     
     def test_callback(arg1, arg2): return f"{arg1}-{arg2}"
@@ -224,13 +224,13 @@ def test_cli_no_subcommand_with_metrics_disabled_at_finalize(mock_updates, mock_
     mock_finalize.assert_not_called()
 
 # TEST FOR EXECUTE WITH METRICS ENABLED AND PROCESS_START IS NONE
-@patch('autotools.cli.should_enable_metrics')
-@patch('autotools.cli.init_metrics')
-@patch('autotools.cli.get_metrics')
-@patch('autotools.cli.track_step')
-@patch('autotools.cli.finalize_metrics')
+@patch('autotools.utils.commands.should_enable_metrics')
+@patch('autotools.utils.commands.init_metrics')
+@patch('autotools.utils.commands.get_metrics')
+@patch('autotools.utils.commands.track_step')
+@patch('autotools.utils.commands.finalize_metrics')
 def test_execute_with_metrics_enabled_process_start_none(mock_finalize, mock_track_step, mock_get_metrics, mock_init_metrics, mock_should_enable):
-    from autotools.cli import _execute_with_metrics
+    from autotools.utils.commands import _execute_with_metrics
     from contextlib import nullcontext
     
     mock_should_enable.return_value = True
@@ -257,12 +257,12 @@ def test_execute_with_metrics_enabled_process_start_none(mock_finalize, mock_tra
     assert result == 'result'
 
 # TEST FOR EXECUTE WITH METRICS ENABLED AND PROCESS_START IS NOT NONE
-@patch('autotools.cli.should_enable_metrics')
-@patch('autotools.cli.get_metrics')
-@patch('autotools.cli.track_step')
-@patch('autotools.cli.finalize_metrics')
+@patch('autotools.utils.commands.should_enable_metrics')
+@patch('autotools.utils.commands.get_metrics')
+@patch('autotools.utils.commands.track_step')
+@patch('autotools.utils.commands.finalize_metrics')
 def test_execute_with_metrics_enabled_process_start_not_none(mock_finalize, mock_track_step, mock_get_metrics, mock_should_enable):
-    from autotools.cli import _execute_with_metrics
+    from autotools.utils.commands import _execute_with_metrics
     from contextlib import nullcontext
     
     mock_should_enable.return_value = True
@@ -287,12 +287,12 @@ def test_execute_with_metrics_enabled_process_start_not_none(mock_finalize, mock
     assert result == 'result'
 
 # TEST FOR EXECUTE WITH METRICS ENABLED AND PROCESS_END IS NOT NONE
-@patch('autotools.cli.should_enable_metrics')
-@patch('autotools.cli.get_metrics')
-@patch('autotools.cli.track_step')
-@patch('autotools.cli.finalize_metrics')
+@patch('autotools.utils.commands.should_enable_metrics')
+@patch('autotools.utils.commands.get_metrics')
+@patch('autotools.utils.commands.track_step')
+@patch('autotools.utils.commands.finalize_metrics')
 def test_execute_with_metrics_enabled_process_end_not_none(mock_finalize, mock_track_step, mock_get_metrics, mock_should_enable):
-    from autotools.cli import _execute_with_metrics
+    from autotools.utils.commands import _execute_with_metrics
     from contextlib import nullcontext
     
     mock_should_enable.return_value = True

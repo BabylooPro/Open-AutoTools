@@ -13,8 +13,8 @@ from importlib.metadata import version as get_version, PackageNotFoundError
 
 from .utils.version import print_version
 from .utils.updates import check_for_updates
-from .utils.commands import autocaps, autolower, autopassword, autoip, autotest
-from .utils.performance import init_metrics, finalize_metrics, get_metrics, should_enable_metrics, track_step
+from .utils.commands import register_commands, autocaps, autolower, autopassword, autoip, autoconvert
+from .utils.performance import init_metrics, finalize_metrics, get_metrics, should_enable_metrics
 
 load_dotenv()
 
@@ -30,14 +30,17 @@ load_dotenv()
 @click.pass_context
 def cli(ctx, perf):
     """
-        A suite of automated tools for various tasks:\n
-        - autocaps: Convert text to uppercase\n
-        - autolower: Convert text to lowercase\n
-        - autopassword: Generate secure passwords and encryption keys\n
-        - autoip: Display network information and run diagnostics\n
-        - test: Run the test suite\n
-        \n
-        Run 'autotools COMMAND --help' for more information on each command.\n
+        \b
+        A suite of automated tools for various tasks:
+            - autocaps: Convert text to uppercase
+            - autolower: Convert text to lowercase
+            - autopassword: Generate secure passwords and encryption keys
+            - autoip: Display network information and run diagnostics
+            - autoconvert: Convert text, images, audio, and video between formats
+            - test: Run the test suite (development only)
+
+        \b
+        Run 'autotools COMMAND --help' for more information on each command.
     """
 
     # INITIALIZE METRICS IF NEEDED
@@ -54,60 +57,8 @@ def cli(ctx, perf):
             get_metrics().end_process()
             finalize_metrics(ctx)
 
-# EXECUTES COMMAND WITH PERFORMANCE TRACKING
-def _execute_with_metrics(ctx, original_callback, *args, **kwargs):
-    metrics = get_metrics()
-    # REMOVE 'perf' FROM kwargs IF PRESENT (IT'S NOT PART OF THE ORIGINAL CALLBACK SIGNATURE)
-    kwargs.pop('perf', None)
-    
-    if not should_enable_metrics(ctx): return original_callback(*args, **kwargs)
-    
-    if metrics.process_start is None:
-        init_metrics()
-        get_metrics().end_startup()
-    
-    metrics.start_command()
-    cmd_name = ctx.invoked_subcommand or ctx.command.name or 'unknown'
-    try:
-        with track_step(f'command_{cmd_name}'): result = original_callback(*args, **kwargs)
-        metrics.end_command()
-        return result
-    finally:
-        if metrics.process_end is None:
-            metrics.end_process()
-            finalize_metrics(ctx)
-
-# WRAPS COMMANDS WITH PERFORMANCE TRACKING
-def _wrap_command_with_metrics(cmd):
-    import inspect
-    original_callback = cmd.callback
-    
-    # ADD --perf OPTION TO THE COMMAND SO IT CAN BE USED DIRECTLY ON SUBCOMMANDS
-    has_perf_option = any(param.opts == ['--perf'] for param in cmd.params if isinstance(param, click.Option))
-    if not has_perf_option:
-        perf_option = click.Option(['--perf'], is_flag=True, help='Display performance metrics')
-        cmd.params.append(perf_option)
-    
-    sig = inspect.signature(original_callback)
-    expects_ctx = 'ctx' in sig.parameters
-    
-    if expects_ctx:
-        @click.pass_context
-        def wrapped_callback(ctx, *args, **kwargs):
-            return _execute_with_metrics(ctx, original_callback, ctx, *args, **kwargs)
-    else:
-        def wrapped_callback(*args, **kwargs):
-            ctx = click.get_current_context()
-            return _execute_with_metrics(ctx, original_callback, *args, **kwargs)
-    
-    cmd.callback = wrapped_callback
-    return cmd
-
-cli.add_command(_wrap_command_with_metrics(autocaps))
-cli.add_command(_wrap_command_with_metrics(autolower))
-cli.add_command(_wrap_command_with_metrics(autopassword))
-cli.add_command(_wrap_command_with_metrics(autoip))
-cli.add_command(_wrap_command_with_metrics(autotest), name='test')
+# REGISTER ALL COMMANDS TO CLI GROUP
+register_commands(cli)
 
 # DISPLAYS COMMAND OPTIONS
 def _display_command_options(cmd_obj):

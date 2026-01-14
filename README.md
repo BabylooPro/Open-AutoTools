@@ -29,6 +29,7 @@ See [Installation Guide](docs/installation.md) for more details.
 -   **[AutoLower](docs/tools/autolower.md)** - Convert text to lowercase
 -   **[AutoPassword](docs/tools/autopassword.md)** - Generate secure passwords and encryption keys
 -   **[AutoIP](docs/tools/autoip.md)** - Display network information and diagnostics
+-   **[AutoConvert](docs/tools/autoconvert.md)** - Convert text, images, audio, and video between formats
 -   **[Test Suite](docs/tools/autotest.md)** - Run the test suite (development only)
 
 ## Documentation

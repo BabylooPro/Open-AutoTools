@@ -8,3 +8,6 @@ netifaces>=0.11.0
 speedtest-cli>=2.1.3
 psutil>=5.9.0
 cryptography>=42.0.2
+Pillow>=10.0.0
+pydub>=0.25.1
+moviepy>=1.0.3
