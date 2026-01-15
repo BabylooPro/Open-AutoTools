@@ -374,4 +374,64 @@ def test_extract_ipv6_addresses_no_af_inet6():
     from autotools.autoip.core import _extract_ipv6_addresses
     addrs = {}
     result = _extract_ipv6_addresses(addrs)
-    assert result == [] 
+    assert result == []
+
+# TEST FOR DISPLAY LOCATION INFO IN CI
+@patch('autotools.autoip.core.get_ip_info')
+@patch('autotools.autoip.core.is_ci_environment')
+def test_display_location_info_in_ci(mock_ci, mock_get_info):
+    from autotools.autoip.core import _display_location_info
+    mock_ci.return_value = True
+    mock_get_info.return_value = {'city': 'Test', 'region': 'Test', 'country': 'Test', 'org': 'Test'}
+    output = []
+    _display_location_info(output)
+    assert "[REDACTED]" in "\n".join(output)
+    assert "City: [REDACTED]" in "\n".join(output)
+
+# TEST FOR FORMAT IP FOR DISPLAY
+def test_format_ip_for_display():
+    from autotools.autoip.core import _format_ip_for_display
+    from autotools.utils.text import mask_ipv4
+    assert _format_ip_for_display('192.168.1.1', mask_ipv4, True) == 'xxx.xxx.xxx.xxx'
+    assert _format_ip_for_display('192.168.1.1', mask_ipv4, False) == '192.168.1.1'
+    assert _format_ip_for_display(None, mask_ipv4, True) == 'Not available'
+    assert _format_ip_for_display('', mask_ipv4, True) == 'Not available'
+
+# TEST FOR DISPLAY LOCAL IPS IN CI
+@patch('autotools.autoip.core.is_ci_environment')
+def test_display_local_ips_in_ci(mock_ci):
+    from autotools.autoip.core import _display_local_ips
+    mock_ci.return_value = True
+    local_ips = {'ipv4': ['192.168.1.1'], 'ipv6': ['2001:db8::1']}
+    output = []
+    _display_local_ips(output, local_ips, True)
+    result = "\n".join(output)
+    assert 'xxx.xxx.xxx.xxx' in result
+    assert 'xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx' in result
+
+# TEST FOR DISPLAY PUBLIC IPS IN CI
+@patch('autotools.autoip.core.is_ci_environment')
+def test_display_public_ips_in_ci(mock_ci):
+    from autotools.autoip.core import _display_public_ips
+    mock_ci.return_value = True
+    public_ips = {'ipv4': '1.2.3.4', 'ipv6': '2001:db8::1'}
+    output = []
+    _display_public_ips(output, public_ips, True)
+    result = "\n".join(output)
+    assert 'xxx.xxx.xxx.xxx' in result
+    assert 'xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx' in result
+
+# TEST FOR DISPLAY IP ADDRESSES WITH CI MASKING
+@patch('autotools.autoip.core.get_local_ips')
+@patch('autotools.autoip.core.get_public_ips')
+@patch('autotools.autoip.core.is_ci_environment')
+def test_display_ip_addresses_in_ci(mock_ci, mock_public, mock_local):
+    from autotools.autoip.core import _display_ip_addresses
+    mock_ci.return_value = True
+    mock_local.return_value = {'ipv4': ['192.168.1.1'], 'ipv6': ['2001:db8::1']}
+    mock_public.return_value = {'ipv4': '1.2.3.4', 'ipv6': '2001:db8::1'}
+    output = []
+    _display_ip_addresses(output)
+    result = "\n".join(output)
+    assert 'xxx.xxx.xxx.xxx' in result
+    assert 'xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx' in result 

@@ -2,7 +2,7 @@ import click
 from .core import run
 from ..utils.loading import LoadingAnimation
 from ..utils.updates import check_for_updates
-from ..utils.text import safe_text
+from ..utils.text import safe_text, is_ci_environment, mask_sensitive_info
 
 # CLI COMMAND TO DISPLAY NETWORK INFORMATION AND RUN DIAGNOSTICS
 @click.command()
@@ -43,6 +43,9 @@ def autoip(test, speed, monitor, interval, ports, dns, location, no_ip):
             test=test, speed=speed, monitor=monitor, interval=interval,
             ports=ports, dns=dns, location=location, no_ip=no_ip
         )
+
+    if is_ci_environment(): output = mask_sensitive_info(output, mask_ips=True)
+    
     click.echo(safe_text(output))
     update_msg = check_for_updates()
     if update_msg: click.echo(update_msg) 

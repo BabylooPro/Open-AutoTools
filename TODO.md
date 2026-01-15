@@ -2,7 +2,6 @@
 
 **_Bugs to fix_**
 
--   [ ] **fix:** ![HIGH][high] ensure no IP addresses or sensitive information are exposed in workflow logs with autoip tools
 -   [ ] **fix:** ![HIGH][high] optimize execution performance of all tools features
 -   [ ] **fix:** ![MID][mid] detect unclosed double quotes in CLI commands and automatically fix them by either adding a closing double quote at the end or switching to single quotes
 
@@ -23,6 +22,7 @@
 -   [x] **added:** AutoConvert: Converts text, images, audio, and video between different formats
 -   [x] **added:** AutoColor: Converts color codes between different formats (hex, RGB, HSL, etc)
 -   [x] **added(restored):** docstrings to tools command functions with \b method
+-   [x] **fixed:** ensure no IP addresses or sensitive information are exposed in workflow logs with autoip tools
 
 #### DONE - v0.0.4
 

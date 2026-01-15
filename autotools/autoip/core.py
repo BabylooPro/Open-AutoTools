@@ -6,6 +6,7 @@ import netifaces
 import time
 import speedtest
 import psutil
+from ..utils.text import is_ci_environment, mask_ipv4, mask_ipv6, mask_sensitive_info
 
 # EXTRACTS IPV4 ADDRESSES FROM INTERFACE ADDRESSES
 def _extract_ipv4_addresses(addrs):
@@ -158,25 +159,42 @@ def get_ip_info(ip=None):
     except requests.RequestException as e:
         raise ValueError(f"Error connecting to IP info service: {str(e)}")
 
+# FORMATS IP ADDRESS FOR DISPLAY (MASKS IF IN CI)
+def _format_ip_for_display(ip, mask_func, in_ci):
+    if not ip: return 'Not available'
+    return mask_func(ip) if in_ci else ip
+
+# DISPLAYS LOCAL IP ADDRESSES
+def _display_local_ips(output, local_ips, in_ci):
+    output.append("\nLocal IPs:")
+    if local_ips['ipv4']:
+        for ip in local_ips['ipv4']:
+            display_ip = _format_ip_for_display(ip, mask_ipv4, in_ci)
+            output.append(f"IPv4: {display_ip}")
+    else:
+        output.append("IPv4: Not available")
+    if local_ips['ipv6']:
+        for ip in local_ips['ipv6']:
+            display_ip = _format_ip_for_display(ip, mask_ipv6, in_ci)
+            output.append(f"IPv6: {display_ip}")
+    else:
+        output.append("IPv6: Not available")
+
+# DISPLAYS PUBLIC IP ADDRESSES
+def _display_public_ips(output, public_ips, in_ci):
+    output.append("\nPublic IPs:")
+    public_ipv4 = _format_ip_for_display(public_ips['ipv4'], mask_ipv4, in_ci)
+    public_ipv6 = _format_ip_for_display(public_ips['ipv6'], mask_ipv6, in_ci)
+    output.append(f"IPv4: {public_ipv4}")
+    output.append(f"IPv6: {public_ipv6}")
+
 # DISPLAYS LOCAL AND PUBLIC IP ADDRESSES
 def _display_ip_addresses(output):
     local_ips = get_local_ips()
     public_ips = get_public_ips()
-    output.append("\nLocal IPs:")
-
-    if local_ips['ipv4']:
-        for ip in local_ips['ipv4']: output.append(f"IPv4: {ip}")
-    else:
-        output.append("IPv4: Not available")
-        
-    if local_ips['ipv6']:
-        for ip in local_ips['ipv6']: output.append(f"IPv6: {ip}")
-    else:
-        output.append("IPv6: Not available")
-    
-    output.append("\nPublic IPs:")
-    output.append(f"IPv4: {public_ips['ipv4'] or 'Not available'}")
-    output.append(f"IPv6: {public_ips['ipv6'] or 'Not available'}")
+    in_ci = is_ci_environment()
+    _display_local_ips(output, local_ips, in_ci)
+    _display_public_ips(output, public_ips, in_ci)
 
 # DISPLAYS CONNECTIVITY TEST RESULTS
 def _display_connectivity_tests(output):
@@ -190,21 +208,37 @@ def _display_connectivity_tests(output):
 def _display_location_info(output):
     try:
         loc = get_ip_info()
+        in_ci = is_ci_environment()
         output.append("\nLocation Info:")
-        output.append(f"City: {loc.get('city', 'Unknown')}")
-        output.append(f"Region: {loc.get('region', 'Unknown')}")
-        output.append(f"Country: {loc.get('country', 'Unknown')}")
-        output.append(f"ISP: {loc.get('org', 'Unknown')}")
+
+        if in_ci:
+            output.append("City: [REDACTED]")
+            output.append("Region: [REDACTED]")
+            output.append("Country: [REDACTED]")
+            output.append("ISP: [REDACTED]")
+        else:
+            output.append(f"City: {loc.get('city', 'Unknown')}")
+            output.append(f"Region: {loc.get('region', 'Unknown')}")
+            output.append(f"Country: {loc.get('country', 'Unknown')}")
+            output.append(f"ISP: {loc.get('org', 'Unknown')}")
+
     except Exception as e:
-        output.append(f"\nLocation lookup failed: {str(e)}")
+        error_msg = str(e)
+        if is_ci_environment(): error_msg = mask_sensitive_info(error_msg)
+        output.append(f"\nLocation lookup failed: {error_msg}")
 
 # DISPLAYS DNS SERVER INFORMATION
 def _display_dns_servers(output):
     output.append("\nDNS Servers:")
+    in_ci = is_ci_environment()
     try:
         with open('/etc/resolv.conf', 'r') as f:
             for line in f:
-                if 'nameserver' in line: output.append(f"DNS: {line.split()[1]}")
+                if 'nameserver' in line:
+                    dns_ip = line.split()[1]
+                    display_dns = mask_ipv4(dns_ip) if in_ci else dns_ip
+                    output.append(f"DNS: {display_dns}")
+
     except OSError:
         output.append("Could not read DNS configuration")
 
@@ -246,6 +280,7 @@ def _monitor_network_traffic(output, interval):
 # MAIN FUNCTION TO RUN NETWORK DIAGNOSTICS AND DISPLAY RESULTS
 def run(test=False, speed=False, monitor=False, interval=1, ports=False, dns=False, location=False, no_ip=False):
     output = []
+    in_ci = is_ci_environment()
 
     if not no_ip: _display_ip_addresses(output)
     if test: _display_connectivity_tests(output)
@@ -259,4 +294,6 @@ def run(test=False, speed=False, monitor=False, interval=1, ports=False, dns=Fal
         if run_speedtest(): output.append("Speed test completed successfully")
         else: output.append("Speed test failed")
 
-    return "\n".join(output) 
+    result = "\n".join(output)
+    if in_ci: result = mask_sensitive_info(result, mask_ips=True)
+    return result 
