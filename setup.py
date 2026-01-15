@@ -34,6 +34,7 @@ setup(
         autoip=autotools.cli:autoip
         autoconvert=autotools.cli:autoconvert
         autocolor=autotools.cli:autocolor
+        autozip=autotools.cli:autozip
     ''',
     
     # METADATA FOR PYPI

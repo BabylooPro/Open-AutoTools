@@ -8,6 +8,7 @@ from ..autoip.commands import autoip as _autoip
 from ..autotest.commands import autotest as _autotest
 from ..autoconvert.commands import autoconvert as _autoconvert
 from ..autocolor.commands import autocolor as _autocolor
+from ..autozip.commands import autozip as _autozip
 from .performance import init_metrics, finalize_metrics, get_metrics, should_enable_metrics, track_step
 
 __all__ = [
@@ -18,6 +19,7 @@ __all__ = [
     'autotest',
     'autoconvert',
     'autocolor',
+    'autozip',
     'register_commands'
 ]
 
@@ -74,6 +76,7 @@ autopassword = _wrap_command_with_metrics(_autopassword)
 autoip = _wrap_command_with_metrics(_autoip)
 autoconvert = _wrap_command_with_metrics(_autoconvert)
 autocolor = _wrap_command_with_metrics(_autocolor)
+autozip = _wrap_command_with_metrics(_autozip)
 autotest = _wrap_command_with_metrics(_autotest)
 
 # FUNCTION TO REGISTER ALL COMMANDS TO CLI GROUP
@@ -84,4 +87,5 @@ def register_commands(cli_group):
     cli_group.add_command(autoip)
     cli_group.add_command(autoconvert)
     cli_group.add_command(autocolor)
+    cli_group.add_command(autozip)
     cli_group.add_command(autotest, name='test')

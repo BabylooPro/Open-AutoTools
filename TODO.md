@@ -10,16 +10,16 @@
 
 **_New features to add_**
 
--   [ ] **add:** AutoZip: Compresses files and directories into various archive formats (e.g., zip, tar.gz)
--   [ ] **add:** AutoNote: Takes quick notes and saves them to a text file
--   [ ] **add:** AutoTodo: Manages a simple task list in a text file
+-   [ ] **add:** AutoNote: Takes quick notes and saves them to a markdown file
+-   [ ] **add:** AutoTodo: Manages a simple task list in a markdown file
 -   [ ] **add:** AutoClipboard: Manages clipboard content, allows easy copy/paste from the command line
 -   [ ] **add:** AutoSearch: Searches for files and content in specified directories
--   [ ] **add:** AutoUnit: Converts measurement units (e.g., meters to feet, liters to gallons)
+-   [ ] **add:** AutoUnit: Converts measurement units (example: meters to feet, liters to gallons)
 -   [ ] **add:** AutoSearch: Searches for files and content in specified directories with an fast and intelligent search
 
 #### DONE - v0.0.5
 
+-   [x] **added:** AutoZip: Compresses files and directories into various archive formats (example: zip, tar.gz)
 -   [x] **added:** AutoConvert: Converts text, images, audio, and video between different formats
 -   [x] **added:** AutoColor: Converts color codes between different formats (hex, RGB, HSL, etc)
 -   [x] **added(restored):** docstrings to tools command functions with \b method

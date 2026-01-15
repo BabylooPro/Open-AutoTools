@@ -8,6 +8,7 @@ All notable changes to Open-AutoTools will be documented in this file.
 
 -   AutoConvert command for converts text, images, audio, and video between different formats
 -   AutoColor command for converting color codes between different formats (HEX, RGB, RGBA, HSL, HSLA)
+-   AutoZip command for compressing files and directories into various archive formats (ZIP, TAR.GZ, TAR.BZ2, TAR.XZ, TAR)
 -   Docstrings to tools command functions
 
 ## [0.0.4] - 2026-01-13
