@@ -1,125 +1,226 @@
-# INFO: USE THIS COMMAND TO CREATE A NEW RELEASE:
-# git tag v1.0.0
-# git push origin v1.0.0
-
 name: Publish to PyPI
-run-name: "Release ${{ github.ref_name }}"
+run-name: "${{ inputs.publish_type }} Release ${{ inputs.version }}"
 
 on:
-  push:
-    tags:
-      - "v*"
-      - "!v*-rc*"
+    workflow_dispatch:
+        inputs:
+            version:
+                description: "Version to publish (ex: 1.0.0, 1.0.0-rc.1, 1.0.0b1, 0.0.3-rc.6.dev1)"
+                required: true
+                type: string
+            publish_type:
+                description: "Type of publication"
+                required: true
+                type: choice
+                options:
+                    - production
+                    - pre-release
+                    - test
+            run_tests:
+                description: "Run tests before publishing"
+                required: false
+                type: boolean
+                default: true
 
 jobs:
-  update-version:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          ref: master
-          fetch-depth: 0
+    test:
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        strategy:
+            matrix:
+                python-version: ["3.12", "3.11", "3.10"]
+            fail-fast: false
+        steps:
+            - name: Skip tests
+              if: inputs.run_tests == false
+              run: echo "Tests skipped by user"
 
-      - name: Update version in setup.py
-        run: |
-          VERSION="${{ github.ref_name }}"
-          VERSION="${VERSION#v}"
-          sed -i "s/version='[^']*'/version='$VERSION'/" setup.py
+            - uses: actions/checkout@v4
+              if: inputs.run_tests == true
 
-      - name: Commit and push changes
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          git checkout master
+            - name: Set up Python ${{ matrix.python-version }}
+              if: inputs.run_tests == true
+              uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ matrix.python-version }}
+                  allow-prereleases: true
+                  check-latest: true
 
-          # Check if there are changes to commit
-          if git diff --quiet; then
-            echo "No changes to commit"
-            exit 0
-          else
-            git commit -am "updated: version to ${{ github.ref_name }}"
-            git push origin master
-          fi
+            - name: Get pip cache dir
+              if: inputs.run_tests == true
+              id: pip-cache
+              run: |
+                  echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
 
-  create-release:
-    needs: update-version
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
+            - name: Cache pip packages
+              if: inputs.run_tests == true
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      ${{ steps.pip-cache.outputs.dir }}
+                      ~/.cache/pip
+                  key: ${{ runner.os }}-py${{ matrix.python-version }}-pip-${{ hashFiles('**/requirements.txt', '**/setup.py') }}
+                  restore-keys: |
+                      ${{ runner.os }}-py${{ matrix.python-version }}-pip-
+                      ${{ runner.os }}-py${{ matrix.python-version }}-
 
-      - name: Create Release ZIP
-        run: |
-          zip -r Open-AutoTools-${{ github.ref_name }}.zip . -x "*.git*"
+            - name: Install system dependencies
+              if: inputs.run_tests == true
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y build-essential python3-dev libffi-dev \
+                    portaudio19-dev python3-pyaudio gcc g++ make \
+                    cmake pkg-config libicu-dev zlib1g-dev libcurl4-openssl-dev \
+                    openjdk-11-jdk xclip xvfb
+              timeout-minutes: 5
 
-      - name: Extract Release Notes
-        run: |
-          VERSION="${{ github.ref_name }}"
-          VERSION="${VERSION#v}"
-          RELEASE_NOTES=$(awk -v ver="$VERSION" '
-            BEGIN { found=0; buffer="" }
-            $0 ~ "^## \\[" ver "\\]" { found=1; next }
-            found && /^## / { exit }
-            found { buffer = buffer $0 "\n" }
-            END { print buffer }
-          ' CHANGELOG.md)
+            - name: Install dependencies
+              if: inputs.run_tests == true
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -e .[test]
+                  pip install pytest pytest-cov pytest-timeout
+              timeout-minutes: 10
 
-          echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
-          echo "$RELEASE_NOTES" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+            - name: Run tests
+              if: inputs.run_tests == true
+              env:
+                  CI: true
+              run: |
+                  xvfb-run pytest -vv --cov=autotools --cov-report=term-missing \
+                    --timeout=120 --timeout-method=thread \
+                    --capture=no \
+                    --full-trace \
+                    -vv --durations=0 --showlocals \
+                    --log-cli-level=DEBUG \
+                    --tb=long \
+                    -s \
+                    -v
+              timeout-minutes: 10
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: Open-AutoTools-${{ github.ref_name }}.zip
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
-          body: ${{ env.RELEASE_NOTES }}
-          draft: false
-          prerelease: false
-          generate_release_notes: false
+    update-version:
+        needs: test
+        if: always() && (needs.test.result == 'success' || needs.test.result == 'skipped')
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  ref: master
+                  fetch-depth: 0
 
-  deploy:
-    needs: [update-version, create-release]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: master
-          fetch-depth: 0
+            - name: Update version in setup.py
+              run: |
+                  VERSION="${{ inputs.version }}"
+                  sed -i "s/version='[^']*'/version='$VERSION'/" setup.py
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-          cache: "pip"
-          cache-dependency-path: |
-            requirements.txt
-            setup.py
+    create-release:
+        needs: [test, update-version]
+        if: inputs.publish_type != 'test' && always() && (needs.test.result == 'success' || needs.test.result == 'skipped')
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
 
-      - name: Verify files
-        run: |
-          ls -la
-          echo "Content of requirements.txt:"
-          cat requirements.txt
-          echo "Content of setup.py:"
-          cat setup.py
+            - name: Get Previous Tag
+              if: inputs.publish_type == 'pre-release'
+              run: |
+                  CURRENT_TAG="v${{ inputs.version }}"
+                  PREVIOUS_TAG=$(git tag --sort=-v:refname | grep -A 1 "^$CURRENT_TAG$" | tail -n 1 || echo "")
+                  echo "PREVIOUS_TAG=$PREVIOUS_TAG" >> $GITHUB_ENV
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install build twine wheel readme-renderer
+            - name: Extract Commit Messages
+              if: inputs.publish_type == 'pre-release' && env.PREVIOUS_TAG != ''
+              run: |
+                  COMMIT_MESSAGES=$(git log --pretty=format:"%s" ${{ env.PREVIOUS_TAG }}..HEAD | \
+                    grep -iv "README.md\|TODO.md\|CHANGELOG.md\|LICENSE\|.gitignore\|.*[(]workflow[)].*")
+                  echo "COMMIT_MESSAGES<<EOF" >> $GITHUB_ENV
+                  echo "$COMMIT_MESSAGES" >> $GITHUB_ENV
+                  echo "EOF" >> $GITHUB_ENV
 
-      - name: Build package
-        run: python -m build
+            - name: Create Release ZIP
+              run: |
+                  zip -r Open-AutoTools-v${{ inputs.version }}.zip . -x "*.git*"
 
-      - name: Publish to PyPI
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_KEY }}
-        run: |
-          twine upload dist/*
+            - name: Extract Release Notes
+              run: |
+                  VERSION="${{ inputs.version }}"
+                  RELEASE_NOTES=$(awk -v ver="$VERSION" '
+                    BEGIN { found=0; buffer="" }
+                    $0 ~ "^## \\[" ver "\\]" { found=1; next }
+                    found && /^## / { exit }
+                    found { buffer = buffer $0 "\n" }
+                    END { print buffer }
+                  ' CHANGELOG.md)
+
+                  echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+                  echo "$RELEASE_NOTES" >> $GITHUB_ENV
+                  echo "EOF" >> $GITHUB_ENV
+
+            - name: Create GitHub Release
+              uses: softprops/action-gh-release@v1
+              with:
+                  files: Open-AutoTools-v${{ inputs.version }}.zip
+                  tag_name: v${{ inputs.version }}
+                  name: ${{ inputs.publish_type == 'pre-release' && 'Pre-Release' || 'Release' }} v${{ inputs.version }}
+                  body: |
+                      ${{ env.RELEASE_NOTES }}
+                      ${{ inputs.publish_type == 'pre-release' && env.PREVIOUS_TAG != '' && format('## Commits since {0}:', env.PREVIOUS_TAG) || '' }}
+                      ${{ inputs.publish_type == 'pre-release' && env.COMMIT_MESSAGES != '' && env.COMMIT_MESSAGES || '' }}
+                  draft: false
+                  prerelease: ${{ inputs.publish_type == 'pre-release' }}
+                  generate_release_notes: false
+
+    deploy:
+        needs: [test, update-version, create-release]
+        if: always() && (needs.test.result == 'success' || needs.test.result == 'skipped') && (needs.update-version.result == 'success' || needs.update-version.result == 'skipped') && (inputs.publish_type == 'test' || needs.create-release.result == 'success' || needs.create-release.result == 'skipped')
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  ref: master
+                  fetch-depth: 0
+
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.x"
+                  cache: "pip"
+                  cache-dependency-path: |
+                      requirements.txt
+                      setup.py
+
+            - name: Verify files
+              run: |
+                  ls -la
+                  echo "Content of requirements.txt:"
+                  cat requirements.txt
+                  echo "Content of setup.py:"
+                  cat setup.py
+
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install build twine wheel readme-renderer
+
+            - name: Build package
+              run: python -m build
+
+            - name: Publish to PyPI
+              if: inputs.publish_type == 'production' || inputs.publish_type == 'pre-release'
+              env:
+                  TWINE_USERNAME: __token__
+                  TWINE_PASSWORD: ${{ secrets.PYPI_API_KEY }}
+              run: |
+                  twine upload dist/*
+
+            - name: Publish to TestPyPI
+              if: inputs.publish_type == 'test'
+              env:
+                  TWINE_USERNAME: __token__
+                  TWINE_PASSWORD: ${{ secrets.PYPI_TEST_API_KEY }}
+                  TWINE_REPOSITORY_URL: https://test.pypi.org/legacy/
+              run: |
+                  twine upload --repository testpypi dist/*
