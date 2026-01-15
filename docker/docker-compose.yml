@@ -12,6 +12,15 @@ services:
       - PYTHONUNBUFFERED=1
       - PLATFORM=Ubuntu
       - VERBOSE=1
+      - CI=${CI:-}
+      - GITHUB_ACTIONS=${GITHUB_ACTIONS:-}
+      - GITLAB_CI=${GITLAB_CI:-}
+      - JENKINS_URL=${JENKINS_URL:-}
+      - TRAVIS=${TRAVIS:-}
+      - CIRCLECI=${CIRCLECI:-}
+      - APPVEYOR=${APPVEYOR:-}
+      - BUILDKITE=${BUILDKITE:-}
+      - TEAMCITY=${TEAMCITY:-}
 
   macos:
     container_name: autotools-macos
@@ -26,6 +35,15 @@ services:
       - PYTHONUNBUFFERED=1
       - PLATFORM=macOS
       - VERBOSE=1
+      - CI=${CI:-}
+      - GITHUB_ACTIONS=${GITHUB_ACTIONS:-}
+      - GITLAB_CI=${GITLAB_CI:-}
+      - JENKINS_URL=${JENKINS_URL:-}
+      - TRAVIS=${TRAVIS:-}
+      - CIRCLECI=${CIRCLECI:-}
+      - APPVEYOR=${APPVEYOR:-}
+      - BUILDKITE=${BUILDKITE:-}
+      - TEAMCITY=${TEAMCITY:-}
 
   windows:
     container_name: autotools-windows
@@ -40,3 +58,12 @@ services:
       - PYTHONUNBUFFERED=1
       - PLATFORM=Windows
       - VERBOSE=1
+      - CI=${CI:-}
+      - GITHUB_ACTIONS=${GITHUB_ACTIONS:-}
+      - GITLAB_CI=${GITLAB_CI:-}
+      - JENKINS_URL=${JENKINS_URL:-}
+      - TRAVIS=${TRAVIS:-}
+      - CIRCLECI=${CIRCLECI:-}
+      - APPVEYOR=${APPVEYOR:-}
+      - BUILDKITE=${BUILDKITE:-}
+      - TEAMCITY=${TEAMCITY:-}

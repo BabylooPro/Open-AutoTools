@@ -285,8 +285,10 @@ def test_display_location_info_exception(mock_get_info):
 
 # TEST FOR DISPLAY DNS SERVERS
 @patch('builtins.open', create=True)
-def test_display_dns_servers(mock_open):
+@patch('autotools.autoip.core.is_ci_environment')
+def test_display_dns_servers(mock_ci, mock_open):
     from autotools.autoip.core import _display_dns_servers
+    mock_ci.return_value = False
     mock_open.return_value.__enter__.return_value = ["nameserver 8.8.8.8\n", "nameserver 1.1.1.1\n", "# comment\n"]
     output = []
     _display_dns_servers(output)
