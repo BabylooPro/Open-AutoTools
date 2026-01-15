@@ -98,9 +98,16 @@ jobs:
                     -v
               timeout-minutes: 10
 
-    update-version:
+    test-platform:
         needs: test
-        if: always() && (needs.test.result == 'success' || needs.test.result == 'skipped')
+        if: inputs.run_tests == true
+        uses: ./.github/workflows/test-cross-platform-docker.yml
+        with:
+            debug_enabled: false
+
+    update-version:
+        needs: [test, test-platform]
+        if: always() && (needs.test.result == 'success' || needs.test.result == 'skipped') && (needs['test-platform'].result == 'success' || needs['test-platform'].result == 'skipped')
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
@@ -114,8 +121,8 @@ jobs:
                   sed -i "s/version='[^']*'/version='$VERSION'/" setup.py
 
     create-release:
-        needs: [test, update-version]
-        if: inputs.publish_type != 'test' && always() && (needs.test.result == 'success' || needs.test.result == 'skipped')
+        needs: [test, test-platform, update-version]
+        if: inputs.publish_type != 'test' && always() && (needs.test.result == 'success' || needs.test.result == 'skipped') && (needs['test-platform'].result == 'success' || needs['test-platform'].result == 'skipped')
         runs-on: ubuntu-latest
         permissions:
             contents: write
@@ -174,8 +181,8 @@ jobs:
                   generate_release_notes: false
 
     deploy:
-        needs: [test, update-version, create-release]
-        if: always() && (needs.test.result == 'success' || needs.test.result == 'skipped') && (needs.update-version.result == 'success' || needs.update-version.result == 'skipped') && (inputs.publish_type == 'test' || needs.create-release.result == 'success' || needs.create-release.result == 'skipped')
+        needs: [test, test-platform, update-version, create-release]
+        if: always() && (needs.test.result == 'success' || needs.test.result == 'skipped') && (needs['test-platform'].result == 'success' || needs['test-platform'].result == 'skipped') && (needs.update-version.result == 'success' || needs.update-version.result == 'skipped') && (inputs.publish_type == 'test' || needs.create-release.result == 'success' || needs.create-release.result == 'skipped')
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
