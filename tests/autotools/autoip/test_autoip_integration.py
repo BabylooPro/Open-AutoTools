@@ -19,7 +19,7 @@ MOCK_IP_INFO = {
 # TEST FOR BASIC CLI FUNCTIONALITY
 @patch('autotools.autoip.core.get_local_ips')
 @patch('autotools.autoip.core.get_public_ips')
-@patch('autotools.autoip.core.is_ci_environment')
+@patch('autotools.utils.text.is_ci_environment')
 def test_autoip_cli_basic(mock_ci, mock_public_ips, mock_local_ips):
     mock_ci.return_value = False
     mock_local_ips.return_value = {'ipv4': ['192.168.1.100'], 'ipv6': ['fe80::1']}
@@ -55,7 +55,7 @@ def test_autoip_cli_speed(mock_speed):
 
 # TEST FOR LOCATION INFO DISPLAY
 @patch('autotools.autoip.core.get_ip_info')
-@patch('autotools.autoip.core.is_ci_environment')
+@patch('autotools.utils.text.is_ci_environment')
 def test_autoip_cli_location(mock_ci, mock_get_info):
     mock_ci.return_value = False
     mock_get_info.return_value = MOCK_IP_INFO
