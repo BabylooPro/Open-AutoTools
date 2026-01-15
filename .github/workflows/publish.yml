@@ -1,3 +1,14 @@
+# RELEASE (PYPI PRODUCTION):
+# 1.0.0
+
+# PRE-RELEASE (PYPI PRE-RELEASE):
+# 1.0.0rc1
+# 1.0.0b1
+
+# DEV TEST (PYPI TEST):
+# 1.0.0rc1.dev1
+# 1.0.0b1.dev1
+
 name: Publish to PyPI
 run-name: "${{ inputs.publish_type }} Release ${{ inputs.version }}"
 
