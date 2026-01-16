@@ -40,9 +40,8 @@ RUN pip install --upgrade pip setuptools wheel && \
     pip install --no-cache-dir \
     psutil \
     netifaces \
-    spacy==3.7.2 --no-deps && \
-    pip install --no-cache-dir spacy[all]==3.7.2 && \
-    python -m spacy download en_core_web_sm
+    spacy==3.7.2 && \
+    pip install --no-cache-dir https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.0/en_core_web_sm-3.7.0-py3-none-any.whl
 
 # COPY PROJECT FILES
 COPY . .
@@ -120,8 +119,8 @@ RUN pip install --upgrade pip setuptools wheel && \
     pip install --no-cache-dir \
     psutil \
     netifaces \
-    spacy[all]==3.7.2 && \
-    python -m spacy download en_core_web_sm
+    spacy==3.7.2 && \
+    pip install --no-cache-dir https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.0/en_core_web_sm-3.7.0-py3-none-any.whl
 
 # COPY PROJECT FILES
 COPY . .
@@ -170,8 +169,8 @@ RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
     pip install --no-cache-dir \
     psutil \
     netifaces \
-    spacy[all]==3.7.2 && \
-    python -m spacy download en_core_web_sm
+    spacy==3.7.2 && \
+    pip install --no-cache-dir https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.0/en_core_web_sm-3.7.0-py3-none-any.whl
 
 # COPY PROJECT FILES
 COPY . .
@@ -180,7 +179,7 @@ COPY . .
 RUN pip install -e .
 
 # COPY TEST SCRIPT
-COPY run_tests.sh /app/run_tests.sh
+COPY docker/run_tests.sh /app/run_tests.sh
 RUN chmod +x /app/run_tests.sh
 
 # SET ENTRYPOINT TO TEST SCRIPT
