@@ -3,6 +3,14 @@ from .core import autocolor_convert
 from ..utils.loading import LoadingAnimation
 from ..utils.updates import check_for_updates
 
+# SMOKE TEST CASES (USED BY 'autotools smoke')
+SMOKE_TESTS = [
+    {'name': 'hex-default', 'args': ['#FF5733']},
+    {'name': 'hex-rgb', 'args': ['#FF5733', '--format', 'rgb']},
+    {'name': 'rgb-hsl', 'args': ['rgb(255,87,51)', '--format', 'hsl']},
+    {'name': 'hsl-rgba', 'args': ['hsl(9,100%,60%)', '--format', 'rgba']},
+]
+
 # CLI COMMAND TO CONVERT COLOR CODES BETWEEN FORMATS
 @click.command()
 @click.argument('color', nargs=-1)

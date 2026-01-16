@@ -4,6 +4,7 @@ import base64
 import argparse
 import json as json_module
 import sys
+import os
 
 from dotenv import load_dotenv
 from datetime import datetime
@@ -13,7 +14,7 @@ from importlib.metadata import version as get_version, PackageNotFoundError
 
 from .utils.version import print_version
 from .utils.updates import check_for_updates
-from .utils.commands import register_commands, autocaps, autolower, autopassword, autoip, autoconvert, autocolor, autozip
+from .utils.commands import get_wrapped_tool_commands
 from .utils.performance import init_metrics, finalize_metrics, get_metrics, should_enable_metrics
 
 load_dotenv()
@@ -59,8 +60,16 @@ def cli(ctx, perf):
             get_metrics().end_process()
             finalize_metrics(ctx)
 
-# REGISTER ALL COMMANDS TO CLI GROUP
-register_commands(cli)
+# DISCOVER AND REGISTER ALL TOOL COMMANDS
+_wrapped_tool_commands = get_wrapped_tool_commands()
+for _tool_name in sorted(_wrapped_tool_commands):
+    _cmd = _wrapped_tool_commands[_tool_name]
+
+    if _tool_name == 'autotest': cli.add_command(_cmd, name='test')
+    else: cli.add_command(_cmd)
+
+# EXPOSE TOOL COMMANDS FOR console_scripts ENTRYPOINTS (setup.py)
+for _tool_name, _cmd in _wrapped_tool_commands.items(): globals()[_tool_name] = _cmd
 
 # DISPLAYS COMMAND OPTIONS
 def _display_command_options(cmd_obj):
@@ -105,5 +114,44 @@ def autotools():
     if update_msg:
         click.echo(click.style("\nUpdate Available:", fg='red', bold=True))
         click.echo(update_msg)
+
+# LISTS TOOL SUBCOMMANDS (MACHINE-FRIENDLY)
+@cli.command(name='list-tools')
+@click.option('--json', 'as_json', is_flag=True, help='OUTPUT JSON')
+def list_tools(as_json):
+    tools = []
+    for tool_name, cmd in get_wrapped_tool_commands().items():
+        public_name = 'test' if tool_name == 'autotest' else (cmd.name or tool_name)
+        tools.append(public_name)
+
+    tools = sorted(set(tools))
+    if as_json: click.echo(json_module.dumps(tools))
+    else: click.echo("\n".join(tools))
+
+# RUNS SMOKE TESTS FOR ALL DISCOVERED TOOLS (USED BY docker/run_tests.sh)
+@cli.command()
+@click.option('--workdir', type=click.Path(file_okay=False, dir_okay=True), default=None, help='WORK DIRECTORY FOR TEMP FILES')
+@click.option('--timeout', type=int, default=30, help='PER-CASE TIMEOUT (SECONDS)')
+@click.option('--include', 'include_tools', multiple=True, help='ONLY RUN THESE TOOLS (REPEATABLE)')
+@click.option('--exclude', 'exclude_tools', multiple=True, help='SKIP THESE TOOLS (REPEATABLE)')
+@click.option('--json', 'as_json', is_flag=True, help='OUTPUT JSON RESULTS')
+@click.option('--verbose/--quiet', default=(os.getenv('VERBOSE', '1') == '1'), help='SHOW COMMAND OUTPUT')
+def smoke(workdir, timeout, include_tools, exclude_tools, as_json, verbose):
+    from .utils.smoke import run_smoke
+
+    results = run_smoke(
+        workdir=workdir,
+        timeout_s=timeout,
+        include=set(include_tools),
+        exclude=set(exclude_tools),
+        verbose=verbose,
+        platform=os.getenv('PLATFORM') or 'Unknown Platform',
+        print_table=not as_json
+    )
+
+    if as_json: click.echo(json_module.dumps(results, ensure_ascii=False))
+
+    failed = [r for r in results if r.get('status') != 'OK']
+    raise SystemExit(1 if failed else 0)
 
 if __name__ == '__main__': cli()

@@ -4,6 +4,14 @@ from ..utils.loading import LoadingAnimation
 from ..utils.updates import check_for_updates
 from ..utils.text import safe_text, is_ci_environment, mask_sensitive_info
 
+# SMOKE TEST CASES (USED BY 'autotools smoke')
+SMOKE_TESTS = [
+    {'name': 'basic', 'args': ['--no-ip']},
+    {'name': 'connectivity', 'args': ['--test']},
+    {'name': 'dns', 'args': ['--dns']},
+    {'name': 'ports', 'args': ['--ports']},
+]
+
 # CLI COMMAND TO DISPLAY NETWORK INFORMATION AND RUN DIAGNOSTICS
 @click.command()
 @click.option('--test', '-t', is_flag=True, help='Run connectivity tests')

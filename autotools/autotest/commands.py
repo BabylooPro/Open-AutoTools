@@ -6,6 +6,12 @@ import re
 from ..utils.updates import check_for_updates
 from ..utils.text import safe_text
 
+# SMOKE TEST CASES (USED BY 'autotools smoke')
+# NOTE: THIS TOOL IS SKIPPED BY DEFAULT IN SMOKE RUNS (SEE docs/docker.md)
+SMOKE_TESTS = [
+    {'name': 'help', 'args': ['--help']},
+]
+
 # CLI COMMAND TO RUN TEST SUITE WITH PYTEST
 @click.command()
 @click.option('--unit', '-u', is_flag=True, help='Run only unit tests')

@@ -3,6 +3,14 @@ from .core import autolower_transform
 from ..utils.loading import LoadingAnimation
 from ..utils.updates import check_for_updates
 
+# SMOKE TEST CASES (USED BY 'autotools smoke')
+SMOKE_TESTS = [
+    {'name': 'basic', 'args': ['TEST', 'WITH', 'MULTIPLE', 'WORDS']},
+    {'name': 'special', 'args': ['SPECIAL', 'CHARS:', '!@#$%^&*()']},
+    {'name': 'mixed', 'args': ['123', 'MIXED', 'with', 'UPPERCASE', '456']},
+    {'name': 'unicode', 'args': ['ÁCCÊNTS', 'ÀND', 'ÉMOJIS', '🚀', '⭐']},
+]
+
 # CLI COMMAND TO TRANSFORM TEXT TO LOWERCASE
 @click.command()
 @click.argument('text', nargs=-1)

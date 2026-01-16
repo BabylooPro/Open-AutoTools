@@ -3,6 +3,14 @@ from .core import autocaps_transform
 from ..utils.loading import LoadingAnimation
 from ..utils.updates import check_for_updates
 
+# SMOKE TEST CASES (USED BY 'autotools smoke')
+SMOKE_TESTS = [
+    {'name': 'basic', 'args': ['test', 'with', 'multiple', 'words']},
+    {'name': 'special', 'args': ['special', 'chars:', '!@#$%^&*()']},
+    {'name': 'mixed', 'args': ['123', 'mixed', 'WITH', 'lowercase', '456']},
+    {'name': 'unicode', 'args': ['áccênts', 'ànd', 'émojis', '🚀', '⭐']},
+]
+
 # CLI COMMAND TO TRANSFORM TEXT TO UPPERCASE
 @click.command()
 @click.argument('text', nargs=-1)

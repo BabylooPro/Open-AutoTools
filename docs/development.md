@@ -35,12 +35,12 @@ autotools --version  # Should show "Development mode: enabled" when using pip in
 
 Open-AutoTools includes built-in performance metrics that are automatically enabled in development mode. These metrics track:
 
-- **Duration Metrics**: Total, startup, and command execution times
-- **CPU Metrics**: User time, system time, and CPU usage ratio
-- **Memory Metrics**: RSS peak and total allocations
-- **Garbage Collection**: GC pause time and collection count
-- **Filesystem I/O**: Bytes read/written and operation count
-- **Top Slowest Steps**: Breakdown of the slowest execution steps
+-   **Duration Metrics**: Total, startup, and command execution times
+-   **CPU Metrics**: User time, system time, and CPU usage ratio
+-   **Memory Metrics**: RSS peak and total allocations
+-   **Garbage Collection**: GC pause time and collection count
+-   **Filesystem I/O**: Bytes read/written and operation count
+-   **Top Slowest Steps**: Breakdown of the slowest execution steps
 
 ### Enabling/Disabling Performance Metrics
 
@@ -64,3 +64,9 @@ The metrics are displayed automatically at the end of command execution when ena
 ## Running Tests
 
 See [testing.md](testing.md) and [tools/autotest.md](tools/autotest.md) for detailed information about running the test suite.
+
+## Docker
+
+If you want to run the cross-platform smoke suite without touching your local env:
+
+-   More details: [docker.md](docker.md)

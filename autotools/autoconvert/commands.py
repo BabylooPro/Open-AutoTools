@@ -5,6 +5,11 @@ from .core import convert_file, detect_file_type
 from ..utils.loading import LoadingAnimation
 from ..utils.updates import check_for_updates
 
+# SMOKE TEST CASES (USED BY 'autotools smoke')
+SMOKE_TESTS = [
+    {'name': 'md-json', 'args': ['README.md', '/tmp/autoconvert-smoke.json']},
+]
+
 # CLI COMMAND TO CONVERT FILES BETWEEN DIFFERENT FORMATS
 @click.command()
 @click.argument('input_file', type=click.Path())

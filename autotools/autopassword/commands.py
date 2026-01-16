@@ -4,6 +4,19 @@ from ..utils.loading import LoadingAnimation
 from ..utils.updates import check_for_updates
 from .core import generate_password, generate_encryption_key, analyze_password_strength
 
+# SMOKE TEST CASES (USED BY 'autotools smoke')
+SMOKE_TESTS = [
+    {'name': 'basic', 'args': []},
+    {'name': 'length', 'args': ['--length', '32']},
+    {'name': 'no-special', 'args': ['--no-special']},
+    {'name': 'no-numbers', 'args': ['--no-numbers']},
+    {'name': 'no-uppercase', 'args': ['--no-uppercase']},
+    {'name': 'min-special', 'args': ['--min-special', '3']},
+    {'name': 'min-numbers', 'args': ['--min-numbers', '3']},
+    {'name': 'analysis', 'args': ['--analyze']},
+    {'name': 'encryption', 'args': ['--gen-key']},
+]
+
 # CLI COMMAND TO GENERATE PASSWORDS OR ENCRYPTION KEYS
 @click.command()
 @click.option('--length', '-l', default=12, help='Password length (default: 12)')

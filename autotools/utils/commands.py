@@ -1,27 +1,80 @@
 import click
 import inspect
+import importlib
+import pkgutil
+from types import ModuleType
+from typing import Dict, Iterable, List, Tuple
 
-from ..autocaps.commands import autocaps as _autocaps
-from ..autolower.commands import autolower as _autolower
-from ..autopassword.commands import autopassword as _autopassword
-from ..autoip.commands import autoip as _autoip
-from ..autotest.commands import autotest as _autotest
-from ..autoconvert.commands import autoconvert as _autoconvert
-from ..autocolor.commands import autocolor as _autocolor
-from ..autozip.commands import autozip as _autozip
 from .performance import init_metrics, finalize_metrics, get_metrics, should_enable_metrics, track_step
 
 __all__ = [
-    'autocaps',
-    'autolower',
-    'autopassword',
-    'autoip',
-    'autotest',
-    'autoconvert',
-    'autocolor',
-    'autozip',
+    'discover_tool_command_entries',
+    'get_wrapped_tool_commands',
     'register_commands'
 ]
+
+# PACKAGES THAT SHOULD NEVER BE TREATED AS TOOLS
+_EXCLUDED_TOOL_PACKAGES = {'utils', '__pycache__'}
+
+# ITERATES ALL TOP-LEVEL TOOL PACKAGES (autotools/<tool>/)
+def _iter_tool_packages() -> Iterable[str]:
+    import autotools as autotools_pkg
+    for module_info in pkgutil.iter_modules(autotools_pkg.__path__):
+        if not module_info.ispkg: continue
+        name = module_info.name
+        if name.startswith('_'): continue
+        if name in _EXCLUDED_TOOL_PACKAGES: continue
+        if name == 'cli': continue
+        yield name
+
+# IMPORTS autotools.<tool>.commands IF IT EXISTS
+def _import_tool_commands_module(tool_name: str) -> ModuleType | None:
+    full_name = f'autotools.{tool_name}.commands'
+    try:
+        return importlib.import_module(full_name)
+    except ModuleNotFoundError as e:
+        if e.name == full_name: return None
+        raise
+
+# EXTRACTS ALL CLICK COMMAND OBJECTS FROM A MODULE
+def _extract_click_commands(mod: ModuleType) -> List[click.Command]:
+    commands: List[click.Command] = []
+    for value in mod.__dict__.values():
+        if isinstance(value, click.core.Command): commands.append(value)
+    return commands
+
+# DISCOVERS TOOL COMMANDS AS (MODULE, CLICK COMMAND) BY TOOL PACKAGE NAME
+def discover_tool_command_entries() -> Dict[str, Tuple[ModuleType, click.Command]]:
+    entries: Dict[str, Tuple[ModuleType, click.Command]] = {}
+    for tool_name in _iter_tool_packages():
+        mod = _import_tool_commands_module(tool_name)
+        if mod is None: continue
+        cmds = _extract_click_commands(mod)
+        if not cmds: continue
+
+        selected = None
+        for c in cmds:
+            if c.name == tool_name:
+                selected = c
+                break
+
+        if selected is None:
+            if len(cmds) == 1:
+                selected = cmds[0]
+            else:
+                names = ', '.join(sorted({c.name or '<unnamed>' for c in cmds}))
+                raise RuntimeError(f"MULTIPLE CLICK COMMANDS FOUND IN {mod.__name__}: {names}")
+
+        entries[tool_name] = (mod, selected)
+
+    return entries
+
+# RETURNS WRAPPED TOOL COMMANDS (USED BY CLI GROUP AND CONSOLE_SCRIPTS EXPORTS)
+def get_wrapped_tool_commands() -> Dict[str, click.Command]:
+    wrapped: Dict[str, click.Command] = {}
+    for tool_name, (_mod, cmd) in discover_tool_command_entries().items():
+        wrapped[tool_name] = _wrap_command_with_metrics(cmd)
+    return wrapped
 
 # EXECUTES COMMAND WITH PERFORMANCE TRACKING
 def _execute_with_metrics(ctx, original_callback, *args, **kwargs):
@@ -47,6 +100,8 @@ def _execute_with_metrics(ctx, original_callback, *args, **kwargs):
 
 # WRAPS COMMANDS WITH PERFORMANCE TRACKING
 def _wrap_command_with_metrics(cmd):
+    if getattr(cmd, '_autotools_metrics_wrapped', False): return cmd
+
     original_callback = cmd.callback
     has_perf_option = any(param.opts == ['--perf'] for param in cmd.params if isinstance(param, click.Option))
 
@@ -67,25 +122,13 @@ def _wrap_command_with_metrics(cmd):
             return _execute_with_metrics(ctx, original_callback, *args, **kwargs)
     
     cmd.callback = wrapped_callback
+    cmd._autotools_metrics_wrapped = True
     return cmd
-
-# WRAP COMMANDS WITH METRICS
-autocaps = _wrap_command_with_metrics(_autocaps)
-autolower = _wrap_command_with_metrics(_autolower)
-autopassword = _wrap_command_with_metrics(_autopassword)
-autoip = _wrap_command_with_metrics(_autoip)
-autoconvert = _wrap_command_with_metrics(_autoconvert)
-autocolor = _wrap_command_with_metrics(_autocolor)
-autozip = _wrap_command_with_metrics(_autozip)
-autotest = _wrap_command_with_metrics(_autotest)
 
 # FUNCTION TO REGISTER ALL COMMANDS TO CLI GROUP
 def register_commands(cli_group):
-    cli_group.add_command(autocaps)
-    cli_group.add_command(autolower)
-    cli_group.add_command(autopassword)
-    cli_group.add_command(autoip)
-    cli_group.add_command(autoconvert)
-    cli_group.add_command(autocolor)
-    cli_group.add_command(autozip)
-    cli_group.add_command(autotest, name='test')
+    wrapped = get_wrapped_tool_commands()
+    for tool_name in sorted(wrapped):
+        cmd = wrapped[tool_name]
+        if tool_name == 'autotest': cli_group.add_command(cmd, name='test')
+        else: cli_group.add_command(cmd)
