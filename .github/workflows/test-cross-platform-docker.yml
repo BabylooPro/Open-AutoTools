@@ -62,9 +62,9 @@ jobs:
 
             - name: Verify package installation for ${{ matrix.platform }}
               run: |
-                  docker compose -f docker/docker-compose.yml run --rm ${{ matrix.platform }} pip list | grep Open-AutoTools || {
+                  docker compose -f docker/docker-compose.yml run --rm --entrypoint /bin/bash ${{ matrix.platform }} -c "pip list | grep Open-AutoTools" || {
                     echo "ERROR: Open-AutoTools package not found. Reinstalling..."
-                    docker compose -f docker/docker-compose.yml run --rm ${{ matrix.platform }} pip install -e .
+                    docker compose -f docker/docker-compose.yml run --rm --entrypoint /bin/bash ${{ matrix.platform }} -c "pip install -e ."
                   }
 
             - name: Run tests for ${{ matrix.platform }}

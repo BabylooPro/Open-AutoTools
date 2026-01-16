@@ -85,7 +85,7 @@ COPY docker/run_tests.sh /app/run_tests.sh
 RUN chmod +x /app/run_tests.sh
 
 # SET ENTRYPOINT TO TEST SCRIPT
-ENTRYPOINT ["/app/run_tests.sh"]
+ENTRYPOINT ["/app/docker/run_tests.sh"]
 
 
 ########################################################
@@ -133,7 +133,7 @@ COPY docker/run_tests.sh /app/run_tests.sh
 RUN chmod +x /app/run_tests.sh
 
 # SET ENTRYPOINT TO TEST SCRIPT
-ENTRYPOINT ["/app/run_tests.sh"]
+ENTRYPOINT ["/app/docker/run_tests.sh"]
 
 
 ########################################################
@@ -183,4 +183,4 @@ COPY docker/run_tests.sh /app/run_tests.sh
 RUN chmod +x /app/run_tests.sh
 
 # SET ENTRYPOINT TO TEST SCRIPT
-ENTRYPOINT ["bash", "/app/run_tests.sh"] 
+ENTRYPOINT ["bash", "/app/docker/run_tests.sh"] 
