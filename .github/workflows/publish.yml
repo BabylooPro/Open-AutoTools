@@ -120,9 +120,12 @@ jobs:
         needs: [test, test-platform]
         if: always() && (needs.test.result == 'success' || needs.test.result == 'skipped') && (needs['test-platform'].result == 'success' || needs['test-platform'].result == 'skipped')
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
         steps:
             - uses: actions/checkout@v4
               with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
                   ref: master
                   fetch-depth: 0
 
@@ -130,6 +133,21 @@ jobs:
               run: |
                   VERSION="${{ inputs.version }}"
                   sed -i "s/version='[^']*'/version='$VERSION'/" setup.py
+
+            - name: Commit and push changes
+              run: |
+                  git config --global user.name 'github-actions'
+                  git config --global user.email 'github-actions@github.com'
+                  git checkout master
+
+                  # CHECK IF THERE ARE CHANGES TO COMMIT
+                  if git diff --quiet; then
+                      echo "No changes to commit"
+                      exit 0
+                  else
+                      git commit -am "updated: version to ${{ inputs.version }}"
+                      git push origin master
+                  fi
 
     create-release:
         needs: [test, test-platform, update-version]
