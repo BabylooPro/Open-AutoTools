@@ -227,9 +227,7 @@ def _process_test_output(process):
 
 # HANDLES TEST RESULT AND DISPLAYS COVERAGE
 def _handle_test_result(process, coverage_data):
-    if process.returncode == 0:
-        click.echo(safe_text(click.style("\n[OK] ALL TESTS PASSED !", fg='green', bold=True)))
-        _display_coverage_metrics(coverage_data)
-    else:
-        click.echo(safe_text(click.style("\n[X] SOME TESTS FAILED!", fg='red', bold=True)))
-        sys.exit(1) 
+    if process.returncode == 0: click.echo(safe_text(click.style("\n[OK] ALL TESTS PASSED !", fg='green', bold=True)))
+    else: click.echo(safe_text(click.style("\n[X] SOME TESTS FAILED!", fg='red', bold=True)))
+    _display_coverage_metrics(coverage_data)
+    if process.returncode != 0: sys.exit(1)
