@@ -9,6 +9,7 @@
 
 **_New features to add_**
 
+-   [ ] **add(docker):** check whether Python 3.13 and 3.14 are fully compatible
 -   [ ] **add:** AutoNote: Takes quick notes and saves them to a markdown file
 -   [ ] **add:** AutoTodo: Manages a simple task list in a markdown file
 -   [ ] **add:** AutoClipboard: Manages clipboard content, allows easy copy/paste from the command line
