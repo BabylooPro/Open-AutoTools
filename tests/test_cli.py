@@ -1,8 +1,34 @@
+import os
+import json as json_module
 import pytest
 from click import Context, Option
 from click.testing import CliRunner
 from unittest.mock import patch, MagicMock
 from autotools.cli import cli, _display_command_options, _display_commands, _display_usage_examples, autotools
+
+
+# FIXTURES
+@pytest.fixture
+def cli_runner():
+    return CliRunner()
+
+
+@pytest.fixture
+def mock_check_updates_none():
+    with patch('autotools.cli.check_for_updates', return_value=None) as mock:
+        yield mock
+
+
+@pytest.fixture
+def mock_check_updates_available():
+    with patch('autotools.cli.check_for_updates', return_value="Update available: v1.0.0") as mock:
+        yield mock
+
+# HELPERS
+def _create_mock_command(name):
+    cmd = MagicMock()
+    cmd.name = name
+    return cmd
 
 # TEST FOR DISPLAY COMMAND OPTIONS
 def test_display_command_options():
@@ -30,37 +56,25 @@ def test_display_usage_examples():
     _display_usage_examples()
 
 # TEST FOR AUTOTOOLS COMMAND
-@patch('autotools.cli.check_for_updates')
-def test_autotools_command(mock_updates):
-    mock_updates.return_value = None
-    runner = CliRunner()
-    result = runner.invoke(cli, ['autotools'])
+def test_autotools_command(cli_runner, mock_check_updates_none):
+    result = cli_runner.invoke(cli, ['autotools'])
     assert result.exit_code == 0
     assert "Open-AutoTools Commands:" in result.output
 
 # TEST FOR AUTOTOOLS COMMAND WITH UPDATE
-@patch('autotools.cli.check_for_updates')
-def test_autotools_command_with_update(mock_updates):
-    mock_updates.return_value = "Update available: v1.0.0"
-    runner = CliRunner()
-    result = runner.invoke(cli, ['autotools'])
+def test_autotools_command_with_update(cli_runner, mock_check_updates_available):
+    result = cli_runner.invoke(cli, ['autotools'])
     assert result.exit_code == 0
     assert "Update Available:" in result.output
 
 # TEST FOR CLI HELP OPTION
-@patch('autotools.cli.check_for_updates')
-def test_cli_help_option(mock_updates):
-    mock_updates.return_value = None
-    runner = CliRunner()
-    result = runner.invoke(cli, ['--help'])
+def test_cli_help_option(cli_runner, mock_check_updates_none):
+    result = cli_runner.invoke(cli, ['--help'])
     assert result.exit_code == 0
 
 # TEST FOR CLI HELP OPTION WITH UPDATE
-@patch('autotools.cli.check_for_updates')
-def test_cli_help_option_with_update(mock_updates):
-    mock_updates.return_value = "Update available"
-    runner = CliRunner()
-    result = runner.invoke(cli, ['--help'])
+def test_cli_help_option_with_update(cli_runner, mock_check_updates_available):
+    result = cli_runner.invoke(cli, ['--help'])
     assert result.exit_code == 0
 
 # TEST FOR CLI WITH METRICS ENABLED
@@ -69,15 +83,14 @@ def test_cli_help_option_with_update(mock_updates):
 @patch('autotools.cli.init_metrics')
 @patch('autotools.cli.get_metrics')
 @patch('autotools.cli.check_for_updates')
-def test_cli_with_metrics_enabled(mock_updates, mock_get_metrics, mock_init_metrics, mock_should_enable, mock_autotools):
+def test_cli_with_metrics_enabled(mock_updates, mock_get_metrics, mock_init_metrics, mock_should_enable, mock_autotools, cli_runner):
     mock_should_enable.return_value = True
     mock_metrics = MagicMock()
     mock_get_metrics.return_value = mock_metrics
     mock_updates.return_value = None
     mock_autotools.return_value = None
     
-    runner = CliRunner()
-    result = runner.invoke(cli, ['autotools'])
+    result = cli_runner.invoke(cli, ['autotools'])
     assert result.exit_code == 0
     mock_init_metrics.assert_called_once()
 
@@ -92,15 +105,14 @@ def test_cli_with_metrics_enabled(mock_updates, mock_get_metrics, mock_init_metr
 @patch('autotools.cli.get_metrics')
 @patch('autotools.cli.finalize_metrics')
 @patch('autotools.cli.check_for_updates')
-def test_cli_no_subcommand_with_metrics(mock_updates, mock_finalize, mock_get_metrics, mock_init_metrics, mock_should_enable, mock_autotools):
+def test_cli_no_subcommand_with_metrics(mock_updates, mock_finalize, mock_get_metrics, mock_init_metrics, mock_should_enable, mock_autotools, cli_runner):
     mock_should_enable.return_value = True
     mock_metrics = MagicMock()
     mock_get_metrics.return_value = mock_metrics
     mock_updates.return_value = None
     mock_autotools.return_value = None
     
-    runner = CliRunner()
-    result = runner.invoke(cli, [])
+    result = cli_runner.invoke(cli, [])
     assert result.exit_code == 0
     mock_finalize.assert_called_once()
     assert mock_metrics.end_process.called
@@ -187,13 +199,12 @@ def test_wrap_command_with_existing_perf_option(mock_execute):
 @patch('autotools.cli.autotools')
 @patch('autotools.cli.should_enable_metrics')
 @patch('autotools.cli.check_for_updates')
-def test_cli_with_metrics_disabled_at_init(mock_updates, mock_should_enable, mock_autotools):
+def test_cli_with_metrics_disabled_at_init(mock_updates, mock_should_enable, mock_autotools, cli_runner):
     mock_should_enable.return_value = False
     mock_updates.return_value = None
     mock_autotools.return_value = None
     
-    runner = CliRunner()
-    result = runner.invoke(cli, [])
+    result = cli_runner.invoke(cli, [])
     assert result.exit_code == 0
     mock_should_enable.assert_called()
 
@@ -204,7 +215,7 @@ def test_cli_with_metrics_disabled_at_init(mock_updates, mock_should_enable, moc
 @patch('autotools.cli.get_metrics')
 @patch('autotools.cli.finalize_metrics')
 @patch('autotools.cli.check_for_updates')
-def test_cli_no_subcommand_with_metrics_disabled_at_finalize(mock_updates, mock_finalize, mock_get_metrics, mock_init_metrics, mock_should_enable, mock_autotools):
+def test_cli_no_subcommand_with_metrics_disabled_at_finalize(mock_updates, mock_finalize, mock_get_metrics, mock_init_metrics, mock_should_enable, mock_autotools, cli_runner):
     call_count = {'count': 0}
     
     def should_enable_side_effect(ctx):
@@ -218,8 +229,7 @@ def test_cli_no_subcommand_with_metrics_disabled_at_finalize(mock_updates, mock_
     mock_updates.return_value = None
     mock_autotools.return_value = None
     
-    runner = CliRunner()
-    result = runner.invoke(cli, [])
+    result = cli_runner.invoke(cli, [])
     assert result.exit_code == 0
     mock_finalize.assert_not_called()
 
@@ -315,3 +325,112 @@ def test_execute_with_metrics_enabled_process_end_not_none(mock_finalize, mock_t
     mock_metrics.end_process.assert_not_called()
     mock_finalize.assert_not_called()
     assert result == 'result'
+
+
+# TEST FOR list-tools (PLAIN TEXT)
+@patch('autotools.cli.get_wrapped_tool_commands')
+def test_list_tools_plain(mock_get_wrapped, cli_runner):
+    cmd_autocaps = _create_mock_command('autocaps')
+    cmd_unnamed = _create_mock_command(None)
+    cmd_autotest = _create_mock_command('autotest')
+
+    mock_get_wrapped.return_value = {
+        'autotest': cmd_autotest,
+        'autocaps': cmd_autocaps,
+        'tool_with_no_cmd_name': cmd_unnamed,
+        'tool_with_no_cmd_name_2': cmd_unnamed,
+    }
+
+    result = cli_runner.invoke(cli, ['list-tools'])
+    assert result.exit_code == 0
+
+    lines = [l.strip() for l in result.output.splitlines() if l.strip()]
+    assert lines == sorted(set(lines))
+    assert 'autocaps' in lines
+    assert 'test' in lines
+    assert 'tool_with_no_cmd_name' in lines
+
+
+# TEST FOR list-tools (JSON)
+@patch('autotools.cli.get_wrapped_tool_commands')
+def test_list_tools_json(mock_get_wrapped, cli_runner):
+    cmd_autocaps = _create_mock_command('autocaps')
+    cmd_autotest = _create_mock_command('autotest')
+
+    mock_get_wrapped.return_value = {'autocaps': cmd_autocaps, 'autotest': cmd_autotest}
+
+    result = cli_runner.invoke(cli, ['list-tools', '--json'])
+    assert result.exit_code == 0
+
+    tools = json_module.loads(result.output)
+    assert tools == sorted(tools)
+    assert 'autocaps' in tools
+    assert 'test' in tools
+
+
+# TEST FOR smoke (JSON SUCCESS)
+def test_smoke_command_json_success(monkeypatch, cli_runner):
+    from autotools.utils import smoke as smoke_module
+
+    calls = {}
+
+    def fake_run_smoke(*, workdir, timeout_s, include, exclude, verbose, platform, print_table):
+        calls['args'] = {
+            'workdir': workdir,
+            'timeout_s': timeout_s,
+            'include': include,
+            'exclude': exclude,
+            'verbose': verbose,
+            'platform': platform,
+            'print_table': print_table,
+        }
+        return [{'tool': 'autocaps', 'case': 'basic', 'status': 'OK'}]
+
+    monkeypatch.setattr(smoke_module, 'run_smoke', fake_run_smoke)
+    monkeypatch.setenv('PLATFORM', 'UnitTest')
+
+    with cli_runner.isolated_filesystem():
+        os.mkdir('wd')
+        result = cli_runner.invoke(
+            cli,
+            [
+                'smoke',
+                '--workdir',
+                'wd',
+                '--timeout',
+                '5',
+                '--include',
+                'autocaps',
+                '--exclude',
+                'autoip',
+                '--json',
+                '--verbose',
+            ],
+        )
+
+    assert result.exit_code == 0
+    assert json_module.loads(result.output)[0]['status'] == 'OK'
+
+    assert calls['args']['timeout_s'] == 5
+    assert calls['args']['include'] == {'autocaps'}
+    assert calls['args']['exclude'] == {'autoip'}
+    assert calls['args']['verbose'] is True
+    assert calls['args']['platform'] == 'UnitTest'
+    assert calls['args']['print_table'] is False
+
+
+# TEST FOR smoke (FAILURE EXIT CODE)
+def test_smoke_command_failure_exit_code(monkeypatch, cli_runner):
+    from autotools.utils import smoke as smoke_module
+
+    def fake_run_smoke(*, workdir, timeout_s, include, exclude, verbose, platform, print_table):
+        return [{'tool': 'autocaps', 'case': 'basic', 'status': 'FAIL'}]
+
+    monkeypatch.setattr(smoke_module, 'run_smoke', fake_run_smoke)
+    monkeypatch.delenv('PLATFORM', raising=False)
+
+    with cli_runner.isolated_filesystem():
+        os.mkdir('wd')
+        result = cli_runner.invoke(cli, ['smoke', '--workdir', 'wd', '--timeout', '1', '--quiet'])
+
+    assert result.exit_code == 1

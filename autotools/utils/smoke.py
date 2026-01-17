@@ -84,7 +84,7 @@ def _value_for_param(param: click.Parameter, tool_dir: Path) -> str:
     name = (param.name or '').lower()
     if 'color' in name: return '#FF5733'
 
-    looks_like_path = any(k in name for k in ['file', 'path', 'source', 'input', 'output', 'dir', 'folder'])
+    looks_like_path = any(k in name for k in ['file', 'path', 'source', 'input', 'output', 'dir', 'folder', 'archive'])
     if isinstance(getattr(param, 'type', None), click.Path) or looks_like_path:
         if any(k in name for k in ['input', 'source']):
             p = tool_dir / f'{param.name or "input"}.txt'
