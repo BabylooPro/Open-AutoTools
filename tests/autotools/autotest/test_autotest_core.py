@@ -54,15 +54,17 @@ def create_mock_process(poll_returns, readline_returns, wait_return=0):
 # TESTS FOR INSTALL TEST DEPENDENCIES
 # ALREADY INSTALLED
 def test_install_test_dependencies_already_installed(mock_subprocess):
-    with patch('builtins.__import__', return_value=MagicMock()):
-        _install_test_dependencies()
-        mock_subprocess.run.assert_not_called()
+    _install_test_dependencies()
+    mock_subprocess.run.assert_not_called()
 
 # MISSING PYTEST
 def test_install_test_dependencies_missing_pytest(mock_subprocess, mock_sys, mock_click):
-    def import_side_effect(name, *args, **kwargs):
+    import builtins
+    real_import = builtins.__import__
+
+    def import_side_effect(name, globals=None, locals=None, fromlist=(), level=0):
         if name == 'pytest': raise ImportError()
-        return MagicMock()
+        return real_import(name, globals, locals, fromlist, level)
 
     with patch('builtins.__import__', side_effect=import_side_effect):
         mock_subprocess.run.return_value = MagicMock(returncode=0)
@@ -72,13 +74,12 @@ def test_install_test_dependencies_missing_pytest(mock_subprocess, mock_sys, moc
 
 # MISSING PYTEST_COV
 def test_install_test_dependencies_missing_pytest_cov(mock_subprocess, mock_sys, mock_click):
-    import_count = {'count': 0}
+    import builtins
+    real_import = builtins.__import__
 
-    def import_side_effect(name, *args, **kwargs):
-        import_count['count'] += 1
-        if name == 'pytest': return MagicMock()
-        elif name == 'pytest_cov' and import_count['count'] == 2: raise ImportError()
-        return MagicMock()
+    def import_side_effect(name, globals=None, locals=None, fromlist=(), level=0):
+        if name == 'pytest_cov': raise ImportError()
+        return real_import(name, globals, locals, fromlist, level)
     
     with patch('builtins.__import__', side_effect=import_side_effect):
         mock_subprocess.run.return_value = MagicMock(returncode=0)
@@ -89,10 +90,12 @@ def test_install_test_dependencies_missing_pytest_cov(mock_subprocess, mock_sys,
 # INSTALLATION FAILURE
 def test_install_test_dependencies_installation_failure(mock_sys, mock_click):
     from autotools.autotest import commands
+    import builtins
+    real_import = builtins.__import__
 
-    def import_side_effect(name, *args, **kwargs):
+    def import_side_effect(name, globals=None, locals=None, fromlist=(), level=0):
         if name == 'pytest': raise ImportError()
-        return MagicMock()
+        return real_import(name, globals, locals, fromlist, level)
     
     with patch('builtins.__import__', side_effect=import_side_effect):
         real_called_process_error = commands.subprocess.CalledProcessError
