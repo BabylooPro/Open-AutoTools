@@ -41,9 +41,24 @@ docker builder prune -af
 docker image prune -af
 ```
 
-## Smoke tests (auto-discovery)
+## Test suite + smoke tests
 
-Docker runs the CLI smoke runner (`autotools smoke`). It **auto-detects tools**, so you **do not** need to edit `docker/run_tests.sh` when you add a new tool.
+By default, each container runs:
+
+- `autotools test` (full pytest suite + coverage)
+- then `autotools smoke` (CLI smoke runner, auto-discovery)
+
+You can disable either step:
+
+```bash
+# Skip full pytest suite, run smoke only
+RUN_AUTOTOOLS_TEST=0 docker-compose up
+
+# Skip smoke, run full pytest suite only
+RUN_AUTOTOOLS_SMOKE=0 docker-compose up
+```
+
+The smoke runner (`autotools smoke`) **auto-detects tools**, so you **do not** need to edit `docker/run_tests.sh` when you add a new tool.
 
 ### Adding a new tool to smoke
 
