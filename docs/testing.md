@@ -2,6 +2,10 @@
 
 Open-AutoTools uses pytest for unit and integration testing with coverage reporting.
 
+## Python Versions
+
+The project is tested on Python 3.10, 3.11, 3.12, 3.13, 3.14.
+
 ## Test Structure
 
 Tests are organized in `tests/` directories within each module. Unit tests are named `test_*_core.py` and integration tests are named `test_*_integration.py`.
@@ -33,3 +37,7 @@ The project maintains **100% code coverage** for all modules. Coverage reports e
 -   **Overall**: 100% coverage
 
 All code paths, including edge cases and error handling, are thoroughly tested to ensure reliability and maintainability.
+
+## Docker Matrix
+
+If you want to run the full cross-version smoke suite locally, see [docker.md](docker.md).

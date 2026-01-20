@@ -10,7 +10,11 @@ pip install open-autotools
 
 This command installs all the necessary tools to integrate Open-AutoTools into your workflow.
 
-You can also find the package on PyPI at: https://pypi.org/project/Open-AutoTools/
+You can also find the package on PyPI at: [Open-AutoTools](https://pypi.org/project/Open-AutoTools/)
+
+## Requirements
+
+-   Python 3.10, 3.11, 3.12, 3.13, 3.14
 
 ## Verify Installation
 

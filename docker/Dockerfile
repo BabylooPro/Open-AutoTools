@@ -2,28 +2,23 @@
 #                   UBUNTU STAGE                       #
 ########################################################
 
+ARG PYTHON_VERSION=3.12
+
 FROM ubuntu:24.04 AS builder
+ARG PYTHON_VERSION
 
 # PREVENT INTERACTIVE PROMPTS DURING BUILD
 ENV DEBIAN_FRONTEND=noninteractive
 
 # INSTALL SYSTEM DEPENDENCIES
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     software-properties-common \
     && add-apt-repository ppa:deadsnakes/ppa \
-    && apt-get update && apt-get install -y \
-    python3.12 \
-    python3.12-dev \
-    python3.12-venv \
-    python3-pip \
-    python3-setuptools \
-    git \
-    ffmpeg \
+    && apt-get update && apt-get install -y --no-install-recommends \
+    python${PYTHON_VERSION} \
+    python${PYTHON_VERSION}-dev \
+    python${PYTHON_VERSION}-venv \
     build-essential \
-    xclip \
-    xsel \
-    openjdk-17-jre \
-    bc \
     && rm -rf /var/lib/apt/lists/*
 
 # SET WORKING DIRECTORY
@@ -31,41 +26,36 @@ WORKDIR /app
 
 # CREATE AND ACTIVATE VIRTUAL ENVIRONMENT
 ENV VIRTUAL_ENV=/opt/venv
-RUN python3.12 -m venv $VIRTUAL_ENV
+RUN python${PYTHON_VERSION} -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # UPGRADE PIP AND INSTALL BUILD DEPENDENCIES
-RUN pip install --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir numpy cython rich>=13.7.0 && \
-    pip install --no-cache-dir \
-    psutil \
-    netifaces \
-    spacy==3.7.2 && \
-    pip install --no-cache-dir https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.0/en_core_web_sm-3.7.0-py3-none-any.whl
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
 # COPY PROJECT FILES
 COPY . .
 
 # INSTALL PROJECT IN EDITABLE MODE
-RUN pip install -e .
+RUN pip install --no-cache-dir -e .
 
 # UBUNTU STAGE
 FROM ubuntu:24.04 AS ubuntu
+ARG PYTHON_VERSION
 
 # PREVENT INTERACTIVE PROMPTS DURING BUILD
 ENV DEBIAN_FRONTEND=noninteractive
 
 # INSTALL RUNTIME DEPENDENCIES
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     software-properties-common \
     && add-apt-repository ppa:deadsnakes/ppa \
-    && apt-get update && apt-get install -y \
-    python3.12 \
-    python3.12-venv \
+    && apt-get update && apt-get install -y --no-install-recommends \
+    python${PYTHON_VERSION} \
+    python${PYTHON_VERSION}-venv \
     ffmpeg \
     xclip \
     xsel \
-    openjdk-17-jre \
+    openjdk-17-jre-headless \
     bc \
     && rm -rf /var/lib/apt/lists/*
 
@@ -80,29 +70,20 @@ WORKDIR /app
 # COPY PROJECT FILES FROM BUILDER
 COPY --from=builder /app /app
 
-# COPY AND MAKE TEST SCRIPT EXECUTABLE
-COPY docker/run_tests.sh /app/run_tests.sh
-RUN chmod +x /app/run_tests.sh
-
 # SET ENTRYPOINT TO TEST SCRIPT
 ENTRYPOINT ["bash", "/app/docker/run_tests.sh"]
 
 
 ########################################################
-#                   MACOS STAGE                        #
+#        SLIM STAGE (USED FOR macos/windows)           #
 ########################################################
 
-# MACOS STAGE (using slim python image as base)
-FROM python:3.12-slim AS macos
+FROM python:${PYTHON_VERSION}-slim AS slim-builder
+ARG PYTHON_VERSION
 
-# INSTALL SYSTEM DEPENDENCIES
-RUN apt-get update && apt-get install -y \
-    ffmpeg \
-    default-jre \
-    git \
+# INSTALL BUILD DEPENDENCIES (KEEP RUNTIME IMAGE SMALL)
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    python3-dev \
-    bc \
     && rm -rf /var/lib/apt/lists/*
 
 # SET WORKING DIRECTORY
@@ -114,73 +95,37 @@ RUN python -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # UPGRADE PIP AND INSTALL BUILD DEPENDENCIES
-RUN pip install --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir numpy cython rich>=13.7.0 && \
-    pip install --no-cache-dir \
-    psutil \
-    netifaces \
-    spacy==3.7.2 && \
-    pip install --no-cache-dir https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.0/en_core_web_sm-3.7.0-py3-none-any.whl
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
 # COPY PROJECT FILES
 COPY . .
 
 # INSTALL PROJECT IN EDITABLE MODE
-RUN pip install -e .
+RUN pip install --no-cache-dir -e .
 
-# COPY AND MAKE TEST SCRIPT EXECUTABLE
-COPY docker/run_tests.sh /app/run_tests.sh
-RUN chmod +x /app/run_tests.sh
+FROM python:${PYTHON_VERSION}-slim AS slim
+ARG PYTHON_VERSION
 
-# SET ENTRYPOINT TO TEST SCRIPT
-ENTRYPOINT ["bash", "/app/docker/run_tests.sh"]
-
-
-########################################################
-#                   WINDOWS STAGE                      #
-########################################################
-
-FROM python:3.11-slim AS windows
-
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Install build essentials and runtime dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    git \
+# INSTALL RUNTIME DEPENDENCIES
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
-    default-jre \
+    default-jre-headless \
     bc \
     && rm -rf /var/lib/apt/lists/*
+
+# COPY VIRTUAL ENV FROM BUILDER
+ENV VIRTUAL_ENV=/opt/venv
+COPY --from=slim-builder $VIRTUAL_ENV $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # SET WORKING DIRECTORY
 WORKDIR /app
 
-# Create and activate virtual environment
-ENV VIRTUAL_ENV=/opt/venv
-RUN python -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
-# INSTALL BUILD DEPENDENCIES
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir numpy cython rich>=13.7.0 && \
-    pip install --no-cache-dir \
-    psutil \
-    netifaces \
-    spacy==3.7.2 && \
-    pip install --no-cache-dir https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.0/en_core_web_sm-3.7.0-py3-none-any.whl
-
-# COPY PROJECT FILES
-COPY . .
-
-# INSTALL PROJECT IN EDITABLE MODE
-RUN pip install -e .
-
-# COPY TEST SCRIPT
-COPY docker/run_tests.sh /app/run_tests.sh
-RUN chmod +x /app/run_tests.sh
+# COPY PROJECT FILES FROM BUILDER (ALLOWS RUNNING WITHOUT BIND-MOUNT)
+COPY --from=slim-builder /app /app
 
 # SET ENTRYPOINT TO TEST SCRIPT
-ENTRYPOINT ["bash", "/app/docker/run_tests.sh"] 
+ENTRYPOINT ["bash", "/app/docker/run_tests.sh"]
+
+FROM slim AS macos
+FROM slim AS windows

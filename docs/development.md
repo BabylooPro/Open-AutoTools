@@ -1,6 +1,6 @@
 # Development
 
-Open-AutoTools is developed using Python 3.10+.
+Open-AutoTools is developed using Python 3.10, 3.11, 3.12, 3.13, 3.14.
 
 ## Setup Development Environment
 

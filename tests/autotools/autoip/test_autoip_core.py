@@ -25,12 +25,11 @@ def test_get_public_ip(mock_get):
     mock_get.assert_called_once()
 
 # TEST FOR LOCAL IP RETRIEVAL
-@patch('socket.socket')
-@patch('netifaces.gateways')
-@patch('netifaces.ifaddresses')
-def test_get_local_ip(mock_ifaddresses, mock_gateways, mock_socket):
-    mock_gateways.return_value = {'default': {2: ('192.168.1.1', 'eth0')}}
-    mock_ifaddresses.return_value = {2: [{'addr': '192.168.1.100'}]}
+@patch('psutil.net_if_addrs')
+def test_get_local_ip(mock_net_if_addrs):
+    import socket
+    from types import SimpleNamespace
+    mock_net_if_addrs.return_value = {'eth0': [SimpleNamespace(family=socket.AF_INET, address='192.168.1.100')]}
     ip = get_local_ip()
     assert ip == "192.168.1.100"
 
@@ -80,10 +79,11 @@ def test_get_public_ip_all_fail(mock_get):
 
 # TEST FOR GET LOCAL IP WITH FALLBACK
 @patch('socket.socket')
-@patch('netifaces.gateways')
-@patch('netifaces.ifaddresses')
-def test_get_local_ip_fallback(mock_ifaddresses, mock_gateways, mock_socket):
-    mock_gateways.side_effect = KeyError("No gateway")
+@patch('psutil.net_if_addrs')
+def test_get_local_ip_fallback(mock_net_if_addrs, mock_socket):
+    import socket
+    from types import SimpleNamespace
+    mock_net_if_addrs.return_value = {'lo': [SimpleNamespace(family=socket.AF_INET, address='127.0.0.1')]}
     mock_socket_instance = MagicMock()
     mock_socket_instance.getsockname.return_value = ('192.168.1.100', 0)
     mock_socket.return_value = mock_socket_instance
@@ -92,10 +92,9 @@ def test_get_local_ip_fallback(mock_ifaddresses, mock_gateways, mock_socket):
 
 # TEST FOR GET LOCAL IP ALL FAIL
 @patch('socket.socket')
-@patch('netifaces.gateways')
-@patch('netifaces.ifaddresses')
-def test_get_local_ip_all_fail(mock_ifaddresses, mock_gateways, mock_socket):
-    mock_gateways.side_effect = KeyError("No gateway")
+@patch('psutil.net_if_addrs')
+def test_get_local_ip_all_fail(mock_net_if_addrs, mock_socket):
+    mock_net_if_addrs.return_value = {}
     mock_socket.side_effect = OSError("Socket error")
     ip = get_local_ip()
     assert ip is None
@@ -176,15 +175,77 @@ def test_get_public_ips_ipv6_success(mock_get):
     assert ips['ipv6'] == "2001:db8::1"
 
 # TEST FOR GET LOCAL IPS
-@patch('netifaces.interfaces')
-@patch('netifaces.ifaddresses')
-def test_get_local_ips(mock_ifaddresses, mock_interfaces):
+@patch('psutil.net_if_addrs')
+def test_get_local_ips(mock_net_if_addrs):
+    import socket
+    from types import SimpleNamespace
     from autotools.autoip.core import get_local_ips
-    mock_interfaces.return_value = ['eth0', 'lo']
-    mock_ifaddresses.side_effect = [{2: [{'addr': '192.168.1.100'}], 30: [{'addr': 'fe80::1'}]}, {2: [{'addr': '127.0.0.1'}]}]
+    mock_net_if_addrs.return_value = {
+        'eth0': [
+            SimpleNamespace(family=socket.AF_INET, address='192.168.1.100'),
+            SimpleNamespace(family=socket.AF_INET6, address='fe80::1'),
+        ],
+        'lo': [
+            SimpleNamespace(family=socket.AF_INET, address='127.0.0.1'),
+        ],
+    }
     ips = get_local_ips()
     assert '192.168.1.100' in ips['ipv4']
     assert '127.0.0.1' not in ips['ipv4']
+
+# TEST FOR psutil ADDRS NORMALIZATION (COVERS SKIP BRANCHES)
+def test_psutil_addrs_to_family_map_skips_invalid_entries():
+    import socket
+    from types import SimpleNamespace
+    from autotools.autoip.core import _psutil_addrs_to_family_map
+
+    addrs = [
+        SimpleNamespace(family=socket.AF_INET, address=None),
+        SimpleNamespace(family=socket.AF_INET, address=""),
+        SimpleNamespace(family=9999, address="1.2.3.4"),
+        SimpleNamespace(family=socket.AF_INET, address="192.168.1.100"),
+        SimpleNamespace(family=socket.AF_INET6, address="2001:db8::1"),
+    ]
+
+    family_map = _psutil_addrs_to_family_map(addrs)
+    assert family_map == {
+        socket.AF_INET: [{'addr': '192.168.1.100'}],
+        socket.AF_INET6: [{'addr': '2001:db8::1'}],
+    }
+
+# TEST FOR GET LOCAL IPS WHEN psutil FAILS
+@patch('psutil.net_if_addrs')
+def test_get_local_ips_psutil_exception_returns_empty(mock_net_if_addrs):
+    from autotools.autoip.core import get_local_ips
+    mock_net_if_addrs.side_effect = Exception("psutil error")
+    ips = get_local_ips()
+    assert ips == {'ipv4': [], 'ipv6': []}
+
+# TEST FOR GET LOCAL IP SKIPS NON-IPV4 ENTRIES
+@patch('psutil.net_if_addrs')
+def test_get_local_ip_skips_non_ipv4_entries(mock_net_if_addrs):
+    import socket
+    from types import SimpleNamespace
+    mock_net_if_addrs.return_value = {
+        'eth0': [
+            SimpleNamespace(family=socket.AF_INET6, address='2001:db8::1'),
+            SimpleNamespace(family=socket.AF_INET, address='127.0.0.1'),
+            SimpleNamespace(family=socket.AF_INET, address='10.0.0.1'),
+        ],
+    }
+    ip = get_local_ip()
+    assert ip == '10.0.0.1'
+
+# TEST FOR GET LOCAL IP WHEN psutil FAILS (SOCKET FALLBACK)
+@patch('socket.socket')
+@patch('psutil.net_if_addrs')
+def test_get_local_ip_psutil_exception_falls_back_to_socket(mock_net_if_addrs, mock_socket):
+    mock_net_if_addrs.side_effect = Exception("psutil error")
+    mock_socket_instance = MagicMock()
+    mock_socket_instance.getsockname.return_value = ('192.168.1.100', 0)
+    mock_socket.return_value = mock_socket_instance
+    ip = get_local_ip()
+    assert ip == "192.168.1.100"
 
 # TEST FOR RUN SPEEDTEST FAILURE
 @patch('speedtest.Speedtest')
@@ -348,9 +409,9 @@ def test_run_with_speed_test_failure(mock_speed):
 
 # TEST FOR EXTRACT IPV4 ADDRESSES
 def test_extract_ipv4_addresses():
-    import netifaces
+    import socket
     from autotools.autoip.core import _extract_ipv4_addresses
-    addrs = {netifaces.AF_INET: [{'addr': '192.168.1.100'}, {'addr': '127.0.0.1'}, {'addr': '10.0.0.1'}]}
+    addrs = {socket.AF_INET: [{'addr': '192.168.1.100'}, {'addr': '127.0.0.1'}, {'addr': '10.0.0.1'}]}
     result = _extract_ipv4_addresses(addrs)
     assert '192.168.1.100' in result
     assert '10.0.0.1' in result
@@ -365,9 +426,9 @@ def test_extract_ipv4_addresses_no_af_inet():
 
 # TEST FOR EXTRACT IPV6 ADDRESSES
 def test_extract_ipv6_addresses():
-    import netifaces
+    import socket
     from autotools.autoip.core import _extract_ipv6_addresses
-    addrs = {netifaces.AF_INET6: [{'addr': '2001:db8::1'}, {'addr': 'fe80::1'}, {'addr': '2001:db8::2%eth0'}]}
+    addrs = {socket.AF_INET6: [{'addr': '2001:db8::1'}, {'addr': 'fe80::1'}, {'addr': '2001:db8::2%eth0'}]}
     result = _extract_ipv6_addresses(addrs)
     assert '2001:db8::1' in result
     assert '2001:db8::2' in result

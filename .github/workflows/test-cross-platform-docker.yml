@@ -37,10 +37,13 @@ on:
 jobs:
     docker-test:
         runs-on: ubuntu-latest
+        env:
+            COMPOSE_PROFILES: single
         strategy:
             fail-fast: false
             matrix:
                 platform: [ubuntu, macos, windows]
+                python_version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
         steps:
             - name: Checkout code
@@ -57,10 +60,14 @@ jobs:
               if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
 
             - name: Build ${{ matrix.platform }}
+              env:
+                  PYTHON_VERSION: ${{ matrix.python_version }}
               run: |
                   docker compose -f docker/docker-compose.yml build ${{ matrix.platform }}
 
             - name: Verify package installation for ${{ matrix.platform }}
+              env:
+                  PYTHON_VERSION: ${{ matrix.python_version }}
               run: |
                   docker compose -f docker/docker-compose.yml run --rm --entrypoint /bin/bash ${{ matrix.platform }} -c "pip list | grep Open-AutoTools" || {
                     echo "ERROR: Open-AutoTools package not found. Reinstalling..."
@@ -68,12 +75,14 @@ jobs:
                   }
 
             - name: Run tests for ${{ matrix.platform }}
+              env:
+                  PYTHON_VERSION: ${{ matrix.python_version }}
               run: docker compose -f docker/docker-compose.yml run --rm ${{ matrix.platform }}
 
             - name: Upload test artifacts for ${{ matrix.platform }}
               if: always()
               uses: actions/upload-artifact@v4
               with:
-                  name: test-results-${{ matrix.platform }}
+                  name: test-results-${{ matrix.platform }}-py${{ matrix.python_version }}
                   path: docker/data/
                   retention-days: 7

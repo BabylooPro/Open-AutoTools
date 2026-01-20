@@ -9,13 +9,11 @@
 
 **_New features to add_**
 
--   [ ] **add(docker):** check whether Python 3.13 and 3.14 are fully compatible
 -   [ ] **add:** AutoNote: Takes quick notes and saves them to a markdown file
 -   [ ] **add:** AutoTodo: Manages a simple task list in a markdown file
 -   [ ] **add:** AutoClipboard: Manages clipboard content, allows easy copy/paste from the command line
 -   [ ] **add:** AutoSearch: Searches for files and content in specified directories
 -   [ ] **add:** AutoUnit: Converts measurement units (example: meters to feet, liters to gallons)
--   [ ] **add:** AutoSearch: Searches for files and content in specified directories with an fast and intelligent search
 
 #### DONE - v0.0.5
 
@@ -24,6 +22,7 @@
 -   [x] **added:** AutoColor: Converts color codes between different formats (hex, RGB, HSL, etc)
 -   [x] **added(restored):** docstrings to tools command functions with \b method
 -   [x] **fixed:** ensure no IP addresses or sensitive information are exposed in workflow logs with autoip tools
+-   [x] **added:** check whether Python 3.13 and 3.14 are fully compatible
 
 #### DONE - v0.0.4
 

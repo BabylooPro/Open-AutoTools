@@ -35,12 +35,6 @@ autoip --no-ip --test --speed
 -   IP geolocation (city, region, country, ISP)
 -   Monitoring can be stopped with Ctrl+C
 
-## Compatibility
-
--   Windows 10/11 ✓
--   macOS 15+ ✓
--   Linux ✗
-
 ## Examples
 
 ```bash

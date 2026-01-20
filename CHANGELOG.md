@@ -10,6 +10,7 @@ All notable changes to Open-AutoTools will be documented in this file.
 -   AutoColor command for converting color codes between different formats (HEX, RGB, RGBA, HSL, HSLA)
 -   AutoZip command for compressing files and directories into various archive formats (ZIP, TAR.GZ, TAR.BZ2, TAR.XZ, TAR)
 -   Docstrings to tools command functions
+-   Compatibility with Python 3.13 & 3.14
 
 ## [0.0.4] - 2026-01-13
 

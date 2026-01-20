@@ -2,17 +2,27 @@ import socket
 import requests
 import json
 import ipaddress
-import netifaces
 import time
 import speedtest
 import psutil
 from ..utils.text import is_ci_environment, mask_ipv4, mask_ipv6, mask_sensitive_info
 
+# NORMALIZES psutil.net_if_addrs() OUTPUT TO A netifaces-LIKE STRUCTURE:
+def _psutil_addrs_to_family_map(addrs):
+    family_map = {}
+    for snic in addrs or []:
+        family = getattr(snic, 'family', None)
+        addr = getattr(snic, 'address', None)
+        if not addr: continue
+        if family not in (socket.AF_INET, socket.AF_INET6): continue
+        family_map.setdefault(family, []).append({'addr': addr})
+    return family_map
+
 # EXTRACTS IPV4 ADDRESSES FROM INTERFACE ADDRESSES
 def _extract_ipv4_addresses(addrs):
     ipv4_list = []
-    if netifaces.AF_INET in addrs:
-        for addr in addrs[netifaces.AF_INET]:
+    if socket.AF_INET in addrs:
+        for addr in addrs[socket.AF_INET]:
             if 'addr' in addr and not addr['addr'].startswith('127.'):
                 ipv4_list.append(addr['addr'])
     return ipv4_list
@@ -20,9 +30,9 @@ def _extract_ipv4_addresses(addrs):
 # EXTRACTS IPV6 ADDRESSES FROM INTERFACE ADDRESSES
 def _extract_ipv6_addresses(addrs):
     ipv6_list = []
-    if netifaces.AF_INET6 in addrs:
-        for addr in addrs[netifaces.AF_INET6]:
-            if 'addr' in addr and not addr['addr'].startswith('fe80:'):
+    if socket.AF_INET6 in addrs:
+        for addr in addrs[socket.AF_INET6]:
+            if 'addr' in addr and not addr['addr'].lower().startswith('fe80:'):
                 clean_addr = addr['addr'].split('%')[0]
                 ipv6_list.append(clean_addr)
     return ipv6_list
@@ -31,10 +41,13 @@ def _extract_ipv6_addresses(addrs):
 def get_local_ips():
     ips = {'ipv4': [], 'ipv6': []}
 
-    for interface in netifaces.interfaces():
-        addrs = netifaces.ifaddresses(interface)
-        ips['ipv4'].extend(_extract_ipv4_addresses(addrs))
-        ips['ipv6'].extend(_extract_ipv6_addresses(addrs))
+    try: if_addrs = psutil.net_if_addrs()
+    except Exception: return ips
+
+    for _, addrs in (if_addrs or {}).items():
+        family_map = _psutil_addrs_to_family_map(addrs)
+        ips['ipv4'].extend(_extract_ipv4_addresses(family_map))
+        ips['ipv6'].extend(_extract_ipv6_addresses(family_map))
 
     return ips
 
@@ -123,20 +136,26 @@ def get_public_ip():
 
 # GETS LOCAL IP ADDRESS OF DEFAULT NETWORK INTERFACE
 def get_local_ip():
+    # TRY psutil FIRST (NO NETWORK NEEDED)
     try:
-        gateways = netifaces.gateways()
-        default_interface = gateways['default'][netifaces.AF_INET][1]
-        addrs = netifaces.ifaddresses(default_interface)
-        return addrs[netifaces.AF_INET][0]['addr']
-    except (KeyError, IndexError, OSError):
-        try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            s.connect(("8.8.8.8", 80))
-            ip = s.getsockname()[0]
-            s.close()
-            return ip
-        except OSError:
-            return None
+        if_addrs = psutil.net_if_addrs()
+        for _, addrs in (if_addrs or {}).items():
+            for snic in addrs or []:
+                if getattr(snic, 'family', None) != socket.AF_INET: continue
+                addr = getattr(snic, 'address', None)
+                if addr and not addr.startswith('127.'): return addr
+    except Exception:
+        pass
+
+    # FALLBACK: UDP SOCKET TRICK
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except OSError:
+        return None
 
 # RETRIEVES DETAILED INFORMATION ABOUT AN IP ADDRESS
 def get_ip_info(ip=None):

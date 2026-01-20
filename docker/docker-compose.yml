@@ -1,69 +1,197 @@
+x-volumes: &volumes
+  - ../:/app
+  - ../docker/data:/data
+
+x-env-common: &env_common
+  PYTHONUNBUFFERED: "1"
+  VERBOSE: "1"
+  CI: ${CI:-}
+  GITHUB_ACTIONS: ${GITHUB_ACTIONS:-}
+  GITLAB_CI: ${GITLAB_CI:-}
+  JENKINS_URL: ${JENKINS_URL:-}
+  TRAVIS: ${TRAVIS:-}
+  CIRCLECI: ${CIRCLECI:-}
+  APPVEYOR: ${APPVEYOR:-}
+  BUILDKITE: ${BUILDKITE:-}
+  TEAMCITY: ${TEAMCITY:-}
+
+x-build-ubuntu: &build_ubuntu
+  context: ..
+  dockerfile: docker/Dockerfile
+  target: ubuntu
+
+x-build-macos: &build_macos
+  context: ..
+  dockerfile: docker/Dockerfile
+  target: macos
+
+x-build-windows: &build_windows
+  context: ..
+  dockerfile: docker/Dockerfile
+  target: windows
+
 services:
+  # DEFAULT LOCAL BEHAVIOR:
+  # - docker-compose up        => RUN FULL MATRIX (3.10 -> 3.14) FOR ALL PLATFORMS
+  # - COMPOSE_PROFILES=single  => RUN ubuntu/macos/windows WITH PYTHON_VERSION (DEFAULT 3.12)
+
+  # SINGLE-VERSION SERVICES (USED BY CI)
   ubuntu:
+    profiles: ["single"]
     container_name: autotools-ubuntu
     build:
-      context: ..
-      dockerfile: docker/Dockerfile
-      target: ubuntu
-    volumes:
-      - ../:/app
-      - ../docker/data:/data
+      <<: *build_ubuntu
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
+    volumes: *volumes
     environment:
-      - PYTHONUNBUFFERED=1
-      - PLATFORM=Ubuntu
-      - VERBOSE=1
-      - CI=${CI:-}
-      - GITHUB_ACTIONS=${GITHUB_ACTIONS:-}
-      - GITLAB_CI=${GITLAB_CI:-}
-      - JENKINS_URL=${JENKINS_URL:-}
-      - TRAVIS=${TRAVIS:-}
-      - CIRCLECI=${CIRCLECI:-}
-      - APPVEYOR=${APPVEYOR:-}
-      - BUILDKITE=${BUILDKITE:-}
-      - TEAMCITY=${TEAMCITY:-}
+      <<: *env_common
+      PLATFORM: Ubuntu
+      PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
 
   macos:
+    profiles: ["single"]
     container_name: autotools-macos
     build:
-      context: ..
-      dockerfile: docker/Dockerfile
-      target: macos
-    volumes:
-      - ../:/app
-      - ../docker/data:/data
+      <<: *build_macos
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
+    volumes: *volumes
     environment:
-      - PYTHONUNBUFFERED=1
-      - PLATFORM=macOS
-      - VERBOSE=1
-      - CI=${CI:-}
-      - GITHUB_ACTIONS=${GITHUB_ACTIONS:-}
-      - GITLAB_CI=${GITLAB_CI:-}
-      - JENKINS_URL=${JENKINS_URL:-}
-      - TRAVIS=${TRAVIS:-}
-      - CIRCLECI=${CIRCLECI:-}
-      - APPVEYOR=${APPVEYOR:-}
-      - BUILDKITE=${BUILDKITE:-}
-      - TEAMCITY=${TEAMCITY:-}
+      <<: *env_common
+      PLATFORM: macOS
+      PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
 
   windows:
+    profiles: ["single"]
     container_name: autotools-windows
     build:
-      context: ..
-      dockerfile: docker/Dockerfile
-      target: windows
-    volumes:
-      - ../:/app
-      - ../docker/data:/data
+      <<: *build_windows
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
+    volumes: *volumes
     environment:
-      - PYTHONUNBUFFERED=1
-      - PLATFORM=Windows
-      - VERBOSE=1
-      - CI=${CI:-}
-      - GITHUB_ACTIONS=${GITHUB_ACTIONS:-}
-      - GITLAB_CI=${GITLAB_CI:-}
-      - JENKINS_URL=${JENKINS_URL:-}
-      - TRAVIS=${TRAVIS:-}
-      - CIRCLECI=${CIRCLECI:-}
-      - APPVEYOR=${APPVEYOR:-}
-      - BUILDKITE=${BUILDKITE:-}
-      - TEAMCITY=${TEAMCITY:-}
+      <<: *env_common
+      PLATFORM: Windows
+      PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
+
+  # MATRIX SERVICES (DEFAULT)
+  ubuntu-py310:
+    container_name: autotools-ubuntu-py310
+    build:
+      <<: *build_ubuntu
+      args: { PYTHON_VERSION: "3.10" }
+    volumes: *volumes
+    environment: { <<: *env_common, PLATFORM: Ubuntu, PYTHON_VERSION: "3.10" }
+
+  ubuntu-py311:
+    container_name: autotools-ubuntu-py311
+    build:
+      <<: *build_ubuntu
+      args: { PYTHON_VERSION: "3.11" }
+    volumes: *volumes
+    environment: { <<: *env_common, PLATFORM: Ubuntu, PYTHON_VERSION: "3.11" }
+
+  ubuntu-py312:
+    container_name: autotools-ubuntu-py312
+    build:
+      <<: *build_ubuntu
+      args: { PYTHON_VERSION: "3.12" }
+    volumes: *volumes
+    environment: { <<: *env_common, PLATFORM: Ubuntu, PYTHON_VERSION: "3.12" }
+
+  ubuntu-py313:
+    container_name: autotools-ubuntu-py313
+    build:
+      <<: *build_ubuntu
+      args: { PYTHON_VERSION: "3.13" }
+    volumes: *volumes
+    environment: { <<: *env_common, PLATFORM: Ubuntu, PYTHON_VERSION: "3.13" }
+
+  ubuntu-py314:
+    container_name: autotools-ubuntu-py314
+    build:
+      <<: *build_ubuntu
+      args: { PYTHON_VERSION: "3.14" }
+    volumes: *volumes
+    environment: { <<: *env_common, PLATFORM: Ubuntu, PYTHON_VERSION: "3.14" }
+
+  macos-py310:
+    container_name: autotools-macos-py310
+    image: autotools-slim-py310
+    build:
+      <<: *build_macos
+      args: { PYTHON_VERSION: "3.10" }
+    volumes: *volumes
+    environment: { <<: *env_common, PLATFORM: macOS, PYTHON_VERSION: "3.10" }
+
+  macos-py311:
+    container_name: autotools-macos-py311
+    image: autotools-slim-py311
+    build:
+      <<: *build_macos
+      args: { PYTHON_VERSION: "3.11" }
+    volumes: *volumes
+    environment: { <<: *env_common, PLATFORM: macOS, PYTHON_VERSION: "3.11" }
+
+  macos-py312:
+    container_name: autotools-macos-py312
+    image: autotools-slim-py312
+    build:
+      <<: *build_macos
+      args: { PYTHON_VERSION: "3.12" }
+    volumes: *volumes
+    environment: { <<: *env_common, PLATFORM: macOS, PYTHON_VERSION: "3.12" }
+
+  macos-py313:
+    container_name: autotools-macos-py313
+    image: autotools-slim-py313
+    build:
+      <<: *build_macos
+      args: { PYTHON_VERSION: "3.13" }
+    volumes: *volumes
+    environment: { <<: *env_common, PLATFORM: macOS, PYTHON_VERSION: "3.13" }
+
+  macos-py314:
+    container_name: autotools-macos-py314
+    image: autotools-slim-py314
+    build:
+      <<: *build_macos
+      args: { PYTHON_VERSION: "3.14" }
+    volumes: *volumes
+    environment: { <<: *env_common, PLATFORM: macOS, PYTHON_VERSION: "3.14" }
+
+  windows-py310:
+    container_name: autotools-windows-py310
+    image: autotools-slim-py310
+    pull_policy: never
+    volumes: *volumes
+    environment: { <<: *env_common, PLATFORM: Windows, PYTHON_VERSION: "3.10" }
+
+  windows-py311:
+    container_name: autotools-windows-py311
+    image: autotools-slim-py311
+    pull_policy: never
+    volumes: *volumes
+    environment: { <<: *env_common, PLATFORM: Windows, PYTHON_VERSION: "3.11" }
+
+  windows-py312:
+    container_name: autotools-windows-py312
+    image: autotools-slim-py312
+    pull_policy: never
+    volumes: *volumes
+    environment: { <<: *env_common, PLATFORM: Windows, PYTHON_VERSION: "3.12" }
+
+  windows-py313:
+    container_name: autotools-windows-py313
+    image: autotools-slim-py313
+    pull_policy: never
+    volumes: *volumes
+    environment: { <<: *env_common, PLATFORM: Windows, PYTHON_VERSION: "3.13" }
+
+  windows-py314:
+    container_name: autotools-windows-py314
+    image: autotools-slim-py314
+    pull_policy: never
+    volumes: *volumes
+    environment: { <<: *env_common, PLATFORM: Windows, PYTHON_VERSION: "3.14" }
