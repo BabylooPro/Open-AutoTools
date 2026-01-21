@@ -86,3 +86,4 @@ jobs:
                   name: test-results-${{ matrix.platform }}-py${{ matrix.python_version }}
                   path: docker/data/
                   retention-days: 7
+                  if-no-files-found: ignore
