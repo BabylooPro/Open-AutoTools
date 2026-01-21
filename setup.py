@@ -18,7 +18,7 @@ dev_required = read_requirements("requirements-dev.txt")
 # SETUP CONFIGURATION FOR PACKAGE DISTRIBUTION
 setup(
     name='Open-AutoTools',
-    version='0.0.5b1.dev3',
+    version='0.0.5b1.dev4',
     packages=find_packages(exclude=["tests", "tests.*"]),
     include_package_data=True,
     install_requires=required,
