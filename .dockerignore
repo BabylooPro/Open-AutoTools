@@ -26,6 +26,7 @@ wheels/
 
 # VIRTUAL ENVIRONMENTS
 venv/
+.venv/
 env/
 ENV/
 
@@ -45,6 +46,7 @@ htmlcov/
 Dockerfile
 docker-compose.yml
 .dockerignore
+docker/data/
 
 # MISC
 .DS_Store

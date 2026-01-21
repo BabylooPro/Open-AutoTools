@@ -38,7 +38,7 @@ def test_autoip_cli_basic(mock_ci, mock_public_ips, mock_local_ips):
 def test_autoip_cli_test(mock_test):
     mock_test.return_value = [('Google DNS', True, 20), ('CloudFlare', False, None)]
     runner = CliRunner()
-    result = runner.invoke(autoip, ['--test'])
+    result = runner.invoke(autoip, ['--test', '--no-ip'])
     assert result.exit_code == 0
     assert "Google DNS" in result.output
     assert "CloudFlare" in result.output
@@ -50,7 +50,7 @@ def test_autoip_cli_test(mock_test):
 def test_autoip_cli_speed(mock_speed):
     mock_speed.return_value = True
     runner = CliRunner()
-    result = runner.invoke(autoip, ['--speed'])
+    result = runner.invoke(autoip, ['--speed', '--no-ip'])
     assert result.exit_code == 0
     assert "Running speed test" in result.output
     assert "completed successfully" in result.output
@@ -63,7 +63,7 @@ def test_autoip_cli_location(mock_ci, mock_get_info):
     mock_ci.return_value = False
     mock_get_info.return_value = MOCK_IP_INFO
     runner = CliRunner()
-    result = runner.invoke(autoip, ['--location'])
+    result = runner.invoke(autoip, ['--location', '--no-ip'])
     assert result.exit_code == 0
     assert "Mountain View" in result.output
     assert "California" in result.output

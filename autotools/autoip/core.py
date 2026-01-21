@@ -172,7 +172,8 @@ def get_ip_info(ip=None):
         response = requests.get(url)
         data = response.json()
 
-        if 'error' in data: raise ValueError(f"Error getting IP info: {data['error']}")
+        if 'error' in data:
+            raise ValueError(f"Error getting IP info: {data['error']}")
 
         return data
     except requests.RequestException as e:

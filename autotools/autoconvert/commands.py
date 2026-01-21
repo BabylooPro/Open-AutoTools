@@ -42,7 +42,8 @@ def autoconvert(input_file, output_file, input_type, output_type, format):
     # - MAKE OUTPUT DIRECTORY IF IT DOESN'T EXIST, RUN CONVERT WITH LOADING SPINNER
     # - SHOW RESULT, PRINT UPDATE NOTICE
     try:
-        if not os.path.exists(input_file): raise FileNotFoundError(f"INPUT FILE NOT FOUND: {input_file}")
+        if not os.path.exists(input_file):
+            raise FileNotFoundError(f"INPUT FILE NOT FOUND: {input_file}")
 
         if format:
             output_path = Path(output_file)

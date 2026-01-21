@@ -58,7 +58,8 @@ def xml_to_text(xml_str: str) -> str:
 
 # CONVERTS TEXT FILE FROM ONE FORMAT TO ANOTHER
 def convert_text_file(input_path: str, output_path: str) -> Tuple[bool, str]:
-    if not os.path.exists(input_path): raise FileNotFoundError(f"INPUT FILE NOT FOUND: {input_path}")
+    if not os.path.exists(input_path):
+        raise FileNotFoundError(f"INPUT FILE NOT FOUND: {input_path}")
     with open(input_path, 'r', encoding='utf-8') as f: content = f.read()
     
     input_ext = Path(input_path).suffix[1:].lower()

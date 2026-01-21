@@ -26,13 +26,15 @@ def _normalize_smoke_test_item(item: Any, default_name: str) -> Tuple[str, List[
     if isinstance(item, dict):
         name = item.get('name') or default_name
         args = item.get('args') or []
-        if not isinstance(args, list): raise TypeError("SMOKE_TESTS ITEM 'args' MUST BE A LIST")
+        if not isinstance(args, list):
+            raise TypeError("SMOKE_TESTS ITEM 'args' MUST BE A LIST")
         return str(name), [str(x) for x in args]
 
     if isinstance(item, (list, tuple)) and len(item) == 2 and isinstance(item[0], str):
         name = item[0] or default_name
         args = item[1] or []
-        if not isinstance(args, list): raise TypeError("SMOKE_TESTS TUPLE SECOND ITEM MUST BE A LIST")
+        if not isinstance(args, list):
+            raise TypeError("SMOKE_TESTS TUPLE SECOND ITEM MUST BE A LIST")
         return str(name), [str(x) for x in args]
 
     if isinstance(item, list): return default_name, [str(x) for x in item]
@@ -40,7 +42,8 @@ def _normalize_smoke_test_item(item: Any, default_name: str) -> Tuple[str, List[
 
 def _normalize_smoke_tests(value: Any) -> List[Tuple[str, List[str]]]:
     if not value: return []
-    if not isinstance(value, list): raise TypeError("SMOKE_TESTS MUST BE A LIST")
+    if not isinstance(value, list):
+        raise TypeError("SMOKE_TESTS MUST BE A LIST")
 
     tests: List[Tuple[str, List[str]]] = []
     for idx, item in enumerate(value):
@@ -102,6 +105,33 @@ def _value_for_param(param: click.Parameter, tool_dir: Path) -> str:
 
     return 'test'
 
+# VERBOSE HELPERS (KEEP _run_subprocess SIMPLE)
+# FOR CMD
+def _echo_cmd(argv: Sequence[str], verbose: bool) -> None:
+    if not verbose: return
+    click.echo(click.style(f"$ {' '.join(argv)}", fg='cyan', bold=True))
+
+# FOR OUTPUT
+def _echo_output(output: str, verbose: bool) -> None:
+    if not verbose: return
+    if not output.strip(): return
+    click.echo(output.rstrip())
+
+# FOR DURATION
+def _echo_duration(duration: float, verbose: bool) -> None:
+    if not verbose: return
+    click.echo(click.style(f"({duration:.2f}s)", fg='bright_black'))
+
+# FOR TIMEOUT
+def _echo_timeout(timeout_s: int, verbose: bool) -> None:
+    if not verbose: return
+    click.echo(click.style(f"TIMEOUT AFTER {timeout_s}s", fg='red', bold=True))
+
+# FOR PERMISSION ERROR
+def _echo_permission_error(err: Exception, verbose: bool) -> None:
+    if not verbose: return
+    click.echo(click.style(f"PERMISSION ERROR: {err}", fg='red', bold=True))
+
 # RUNS ONE COMMAND AND RETURNS (STATUS, RC, DURATION_S, OUTPUT)
 def _run_subprocess(argv: Sequence[str], timeout_s: int, verbose: bool) -> Tuple[str, int, float, str]:
     start = time.perf_counter()
@@ -119,19 +149,27 @@ def _run_subprocess(argv: Sequence[str], timeout_s: int, verbose: bool) -> Tuple
         output = completed.stdout or ''
         status = 'OK' if completed.returncode == 0 else 'X'
 
-        if verbose:
-            click.echo(click.style(f"$ {' '.join(argv)}", fg='cyan', bold=True))
-            if output.strip(): click.echo(output.rstrip())
-            click.echo(click.style(f"({duration:.2f}s)", fg='bright_black'))
+        _echo_cmd(argv, verbose)
+        _echo_output(output, verbose)
+        _echo_duration(duration, verbose)
 
         return status, completed.returncode, duration, output
+    except PermissionError as e:
+        duration = time.perf_counter() - start
+        if duration >= timeout_s:
+            _echo_cmd(argv, verbose)
+            _echo_timeout(timeout_s, verbose)
+            return 'TIMEOUT', 124, duration, ''
+
+        _echo_cmd(argv, verbose)
+        _echo_permission_error(e, verbose)
+        return 'X', 126, duration, str(e)
     except subprocess.TimeoutExpired as e:
         duration = time.perf_counter() - start
         output = (e.stdout or '') if hasattr(e, 'stdout') else ''
 
-        if verbose:
-            click.echo(click.style(f"$ {' '.join(argv)}", fg='cyan', bold=True))
-            click.echo(click.style(f"TIMEOUT AFTER {timeout_s}s", fg='red', bold=True))
+        _echo_cmd(argv, verbose)
+        _echo_timeout(timeout_s, verbose)
 
         return 'TIMEOUT', 124, duration, output
 

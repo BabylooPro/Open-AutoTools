@@ -383,6 +383,58 @@ def test_run_subprocess_timeout_no_stdout_attr(mock_echo, mock_run):
     assert status == 'TIMEOUT'
     assert rc == 124
 
+# WITH PERMISSION ERROR (TREATED AS FAILURE)
+@patch('autotools.utils.smoke.time.perf_counter')
+@patch('autotools.utils.smoke.subprocess.run')
+@patch('autotools.utils.smoke.click.echo')
+def test_run_subprocess_permission_error_verbose(mock_echo, mock_run, mock_perf_counter):
+    mock_perf_counter.side_effect = [0.0, 0.5]
+    mock_run.side_effect = PermissionError("Denied")
+
+    argv = [sys.executable, '-c', 'print("test")']
+    status, rc, duration, output = _run_subprocess(argv, timeout_s=10, verbose=True)
+    assert status == 'X'
+    assert rc == 126
+    assert duration == pytest.approx(0.5)
+    assert "Denied" in output
+
+    calls = [str(call) for call in mock_echo.call_args_list]
+    assert any("PERMISSION ERROR" in c for c in calls)
+
+# WITH PERMISSION ERROR (QUIET MODE)
+@patch('autotools.utils.smoke.time.perf_counter')
+@patch('autotools.utils.smoke.subprocess.run')
+@patch('autotools.utils.smoke.click.echo')
+def test_run_subprocess_permission_error_quiet(mock_echo, mock_run, mock_perf_counter):
+    mock_perf_counter.side_effect = [0.0, 0.5]
+    mock_run.side_effect = PermissionError("Denied")
+
+    argv = [sys.executable, '-c', 'print("test")']
+    status, rc, duration, output = _run_subprocess(argv, timeout_s=10, verbose=False)
+    assert status == 'X'
+    assert rc == 126
+    assert duration == pytest.approx(0.5)
+    assert "Denied" in output
+    assert not mock_echo.called
+
+# WITH PERMISSION ERROR (TREATED AS TIMEOUT)
+@patch('autotools.utils.smoke.time.perf_counter')
+@patch('autotools.utils.smoke.subprocess.run')
+@patch('autotools.utils.smoke.click.echo')
+def test_run_subprocess_permission_error_timeout(mock_echo, mock_run, mock_perf_counter):
+    mock_perf_counter.side_effect = [0.0, 2.0]
+    mock_run.side_effect = PermissionError("Denied")
+
+    argv = [sys.executable, '-c', 'print("test")']
+    status, rc, duration, output = _run_subprocess(argv, timeout_s=1, verbose=True)
+    assert status == 'TIMEOUT'
+    assert rc == 124
+    assert duration == pytest.approx(2.0)
+    assert output == ''
+
+    calls = [str(call) for call in mock_echo.call_args_list]
+    assert any("TIMEOUT" in c for c in calls)
+
 # TEST _print_summary
 # WITH SUCCESS AND FAILURE
 @patch('autotools.utils.smoke.click.echo')

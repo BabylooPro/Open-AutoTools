@@ -133,9 +133,10 @@ def test_convert_file_html_to_json(temp_dir, create_test_file):
 # TEST CONVERT FILE WITH EXCEPTION
 def test_convert_file_with_exception(temp_dir, create_test_file):
     input_file = create_test_file("input.txt", "test", mode="w")
-    invalid_output = "/nonexistent/path/output.txt"
+    invalid_output = os.path.join(temp_dir, "nonexistent_dir", "output.txt")
     
-    success, message = convert_file(input_file, invalid_output)
+    with patch("autotools.autoconvert.conversion.convert_text.os.makedirs", side_effect=OSError("Cannot create output directory")):
+        success, message = convert_file(input_file, invalid_output)
     assert success is False
     assert "FAILED" in message.upper()
 

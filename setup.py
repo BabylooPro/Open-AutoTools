@@ -22,7 +22,7 @@ setup(
     packages=find_packages(exclude=["tests", "tests.*"]),
     include_package_data=True,
     install_requires=required,
-    extras_require={ "dev": dev_required },
+    extras_require={"dev": dev_required, "test": dev_required},
     
     # ENTRY POINTS FOR CLI COMMANDS
     entry_points='''

@@ -7,7 +7,8 @@ def convert_video(input_path: str, output_path: str, output_format: Optional[str
     try:
         from moviepy.editor import VideoFileClip
         
-        if not os.path.exists(input_path): raise FileNotFoundError(f"INPUT FILE NOT FOUND: {input_path}")
+        if not os.path.exists(input_path):
+            raise FileNotFoundError(f"INPUT FILE NOT FOUND: {input_path}")
         if output_format is None: output_format = Path(output_path).suffix[1:].lower()
 
         with VideoFileClip(input_path) as video: video.write_videofile(output_path, codec='libx264', audio_codec='aac')

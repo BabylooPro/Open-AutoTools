@@ -8,19 +8,25 @@ Open-AutoTools can be tested across multiple platforms using Docker containers.
 # Go to docker directory
 cd docker
 
-# Run the full matrix locally (DEFAULT)
-# (3.10 -> 3.14) x (ubuntu/macos/windows)
+# Run full matrix (3.10 -> 3.14) x (ubuntu/macos/windows) concurrently (DEFAULT)
 docker-compose build
 docker-compose up
 
-# Build and run tests with a specific Python version (ex: 3.13, 3.14)
-COMPOSE_PROFILES=single PYTHON_VERSION=3.13 docker-compose build
-COMPOSE_PROFILES=single PYTHON_VERSION=3.13 docker-compose up
+# Run single-version services (ubuntu/macos/windows) with default Python (3.12)
+COMPOSE_PROFILES=single docker-compose build
+COMPOSE_PROFILES=single docker-compose up
+
+# Run single-version services with a specific Python version (example: 3.13, 3.14)
+PYTHON_VERSION=3.13 COMPOSE_PROFILES=single docker-compose build
+PYTHON_VERSION=3.13 COMPOSE_PROFILES=single docker-compose up
 
 # Run a single matrix service (example: Ubuntu / Python 3.14)
 docker-compose up ubuntu-py314
 
-# Test specific platform
+# Run the full matrix sequentially (LOWER DISK USAGE)
+./run_matrix.sh
+
+# Run only one platform in single-version mode (enable profile)
 COMPOSE_PROFILES=single docker-compose up ubuntu    # For Ubuntu
 COMPOSE_PROFILES=single docker-compose up macos     # For macOS
 COMPOSE_PROFILES=single docker-compose up windows   # For Windows
@@ -33,12 +39,13 @@ docker-compose down --remove-orphans
 
 -   **macos/windows services**: they run Linux containers (`python:X.Y-slim`) but set `PLATFORM` to exercise platform-specific code paths.
 -   **Ubuntu Python patch versions**: Ubuntu images install `pythonX.Y` via deadsnakes on Ubuntu 24.04, so patch versions can differ (example: 3.12.3). Slim images use official `python:X.Y-slim` (example: 3.12.x).
--   **Disk usage**: if Docker Desktop runs out of space, prune build cache and dangling images:
+-   **Disk usage**: if Docker Desktop runs out of space (example: `no space left on device` while exporting layers), prune build cache and dangling images:
 
 ```bash
 docker system df
 docker builder prune -af
 docker image prune -af
+docker volume prune -f
 ```
 
 ## Test suite + smoke tests
@@ -89,7 +96,7 @@ autotools smoke --include <tool> --verbose
 
 Each platform-specific container includes:
 
--   Python environment (matrix: 3.10 -> 3.14, single-profile default: 3.12, configurable with `PYTHON_VERSION`)
+-   Python environment (default: 3.12, configurable with `PYTHON_VERSION`, matrix: 3.10 -> 3.14)
 -   All required dependencies (FFmpeg, Java, etc.)
 -   Automated test suite
 -   Volume mapping for persistent data

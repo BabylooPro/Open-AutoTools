@@ -24,7 +24,8 @@ def _rgb_to_hex(r, g, b, alpha=None):
 # PARSES RGB/RGBA STRING
 def _parse_rgb(rgb_str):
     match = re.match(r'rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)', rgb_str.lower())
-    if not match: raise ValueError(f"INVALID RGB/RGBA FORMAT: {rgb_str}")
+    if not match:
+        raise ValueError(f"INVALID RGB/RGBA FORMAT: {rgb_str}")
     r, g, b = int(match.group(1)), int(match.group(2)), int(match.group(3))
     alpha = float(match.group(4)) if match.group(4) else None
     if alpha is not None and alpha > 1:
@@ -34,7 +35,8 @@ def _parse_rgb(rgb_str):
 # PARSES HSL/HSLA STRING
 def _parse_hsl(hsl_str):
     match = re.match(r'hsla?\((\d+),\s*(\d+)%,\s*(\d+)%(?:,\s*([\d.]+))?\)', hsl_str.lower())
-    if not match: raise ValueError(f"INVALID HSL/HSLA FORMAT: {hsl_str}")
+    if not match:
+        raise ValueError(f"INVALID HSL/HSLA FORMAT: {hsl_str}")
     h = int(match.group(1)) / 360.0
     s = int(match.group(2)) / 100.0
     l = int(match.group(3)) / 100.0

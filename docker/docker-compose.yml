@@ -34,10 +34,13 @@ x-build-windows: &build_windows
 
 services:
   # DEFAULT LOCAL BEHAVIOR:
-  # - docker-compose up        => RUN FULL MATRIX (3.10 -> 3.14) FOR ALL PLATFORMS
-  # - COMPOSE_PROFILES=single  => RUN ubuntu/macos/windows WITH PYTHON_VERSION (DEFAULT 3.12)
+  # - docker-compose up                             => RUN FULL MATRIX (3.10 -> 3.14) FOR ALL PLATFORMS
+  # - COMPOSE_PROFILES=single docker-compose up     => RUN ubuntu/macos/windows WITH PYTHON_VERSION (DEFAULT 3.12)
 
-  # SINGLE-VERSION SERVICES (USED BY CI)
+  # NOTE: SINGLE-VERSION SERVICES MUST BE PROFILED, OTHERWISE `docker-compose build/up`
+  # WOULD ALSO BUILD/RUN THEM IN MATRIX MODE BY DEFAULT.
+
+  # SINGLE-VERSION SERVICES (USED BY CI AND MOST LOCAL RUNS)
   ubuntu:
     profiles: ["single"]
     container_name: autotools-ubuntu

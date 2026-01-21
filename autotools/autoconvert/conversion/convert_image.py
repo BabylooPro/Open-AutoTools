@@ -7,7 +7,8 @@ def convert_image(input_path: str, output_path: str, output_format: Optional[str
     try:
         from PIL import Image
 
-        if not os.path.exists(input_path): raise FileNotFoundError(f"INPUT FILE NOT FOUND: {input_path}")
+        if not os.path.exists(input_path):
+            raise FileNotFoundError(f"INPUT FILE NOT FOUND: {input_path}")
         if output_format is None: output_format = Path(output_path).suffix[1:].upper()
 
         with Image.open(input_path) as img:
