@@ -35,6 +35,7 @@ setup(
         autoconvert=autotools.cli:autoconvert
         autocolor=autotools.cli:autocolor
         autozip=autotools.cli:autozip
+        autotodo=autotools.cli:autotodo
     ''',
     
     # METADATA FOR PYPI

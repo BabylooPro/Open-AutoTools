@@ -40,6 +40,7 @@ def cli(ctx, perf):
             - autoconvert: Convert text, images, audio, and video between formats
             - autocolor: Convert color codes between different formats (hex, RGB, HSL, etc)
             - autozip: Compress files and directories into various archive formats (zip, tar.gz, etc)
+            - autotodo: Create and manages a simple task list in a markdown file
             - test: Run the test suite (development only)
 
         \b

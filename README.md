@@ -35,6 +35,7 @@ See [Installation Guide](docs/installation.md) for more details.
 - **[AutoConvert](docs/tools/autoconvert.md)** - Convert text, images, audio, and video between formats
 - **[AutoColor](docs/tools/autocolor.md)** - Convert color codes between different formats (hex, RGB, HSL, etc)
 - **[AutoZip](docs/tools/autozip.md)** - Compress files and directories into various archive formats (ZIP, TAR.GZ, TAR.BZ2, TAR.XZ, TAR)
+- **[AutoTodo](docs/tools/autotodo.md)** - Create and manage a simple task list in a Markdown file
 - **[Test Suite](docs/tools/autotest.md)** - Run the test suite (development only)
 
 ## Documentation
