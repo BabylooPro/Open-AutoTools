@@ -43,6 +43,23 @@ def _extract_click_commands(mod: ModuleType) -> List[click.Command]:
         if isinstance(value, click.core.Command): commands.append(value)
     return commands
 
+# SELECTS THE APPROPRIATE COMMAND FROM A LIST OF COMMANDS FOR A GIVEN TOOL NAME
+def _select_command_for_tool(cmds: List[click.Command], tool_name: str, mod_name: str) -> click.Command:
+    selected = None
+    for c in cmds:
+        if c.name == tool_name:
+            selected = c
+            break
+
+    if selected is None:
+        if len(cmds) == 1:
+            selected = cmds[0]
+        else:
+            names = ', '.join(sorted({c.name or '<unnamed>' for c in cmds}))
+            raise RuntimeError(f"MULTIPLE CLICK COMMANDS FOUND IN {mod_name}: {names}")
+
+    return selected
+
 # DISCOVERS TOOL COMMANDS AS (MODULE, CLICK COMMAND) BY TOOL PACKAGE NAME
 def discover_tool_command_entries() -> Dict[str, Tuple[ModuleType, click.Command]]:
     entries: Dict[str, Tuple[ModuleType, click.Command]] = {}
@@ -52,19 +69,7 @@ def discover_tool_command_entries() -> Dict[str, Tuple[ModuleType, click.Command
         cmds = _extract_click_commands(mod)
         if not cmds: continue
 
-        selected = None
-        for c in cmds:
-            if c.name == tool_name:
-                selected = c
-                break
-
-        if selected is None:
-            if len(cmds) == 1:
-                selected = cmds[0]
-            else:
-                names = ', '.join(sorted({c.name or '<unnamed>' for c in cmds}))
-                raise RuntimeError(f"MULTIPLE CLICK COMMANDS FOUND IN {mod.__name__}: {names}")
-
+        selected = _select_command_for_tool(cmds, tool_name, mod.__name__)
         entries[tool_name] = (mod, selected)
 
     return entries
