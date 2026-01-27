@@ -39,6 +39,7 @@ def cli(ctx, perf):
             - autoip: Display network information and run diagnostics
             - autoconvert: Convert text, images, audio, and video between formats
             - autocolor: Convert color codes between different formats (hex, RGB, HSL, etc)
+            - autounit: Convert measurement units (meters to feet, liters to gallons, etc)
             - autozip: Compress files and directories into various archive formats (zip, tar.gz, etc)
             - autotodo: Create and manages a simple task list in a markdown file
             - test: Run the test suite (development only)

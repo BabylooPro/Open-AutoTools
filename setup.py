@@ -34,6 +34,7 @@ setup(
         autoip=autotools.cli:autoip
         autoconvert=autotools.cli:autoconvert
         autocolor=autotools.cli:autocolor
+        autounit=autotools.cli:autounit
         autozip=autotools.cli:autozip
         autotodo=autotools.cli:autotodo
     ''',

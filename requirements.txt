@@ -10,3 +10,4 @@ cryptography>=42.0.2
 Pillow>=10.0.0
 pydub>=0.25.1
 moviepy>=1.0.3
+pint>=0.23

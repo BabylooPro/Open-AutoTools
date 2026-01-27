@@ -8,7 +8,6 @@
 - **add:** AutoNote: Takes quick notes and saves them to a markdown file
 - **add:** AutoClipboard: Manages clipboard content, allows easy copy/paste from the command line
 - **add:** AutoSearch: Searches for files and content in specified directories
-- **add:** AutoUnit: Converts measurement units (example: meters to feet, liters to gallons)
 
 #### IN PROGRESS
 
@@ -17,6 +16,7 @@
 - **added:** AutoZip: Compresses files and directories into various archive formats (example: zip, tar.gz)
 - **added:** AutoConvert: Converts text, images, audio, and video between different formats
 - **added:** AutoColor: Converts color codes between different formats (hex, RGB, HSL, etc)
+- **added:** AutoUnit: Converts measurement units (example: meters to feet, liters to gallons)
 - **added:** AutoTodo: Manages a simple task list in a markdown file
 - **added(restored):** docstrings to tools command functions with \b method
 - **fixed:** ensure no IP addresses or sensitive information are exposed in workflow logs with autoip tools

@@ -19,6 +19,8 @@ _CATEGORY_BY_TOOL = {
     'autoconvert': 'Files',
     'autozip': 'Files',
     'autocolor': 'Color',
+    'autotodo': 'Task',
+    'autounit': 'Conversion',
 }
 
 # NORMALIZES SMOKE TEST DEFINITIONS TO A LIST OF (NAME, ARGS)
