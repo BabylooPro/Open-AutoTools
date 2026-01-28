@@ -237,8 +237,8 @@ def run_smoke(workdir: Optional[str], timeout_s: int, include: set[str], exclude
             tool_dir = run_root / tool_name
             tool_dir.mkdir(parents=True, exist_ok=True)
 
-            _get_smoke_tests(mod, tool_name, cmd, tool_dir)
-            results.extend(_run_tool_smoke(tool_name, public_name, mod, timeout_s=timeout_s, verbose=verbose))
+            smoke_tests = _get_smoke_tests(mod, tool_name, cmd, tool_dir)
+            results.extend(_run_tool_smoke(public_name, mod, smoke_tests, timeout_s=timeout_s, verbose=verbose))
 
         if print_table: _print_summary(results, platform=platform)
 
