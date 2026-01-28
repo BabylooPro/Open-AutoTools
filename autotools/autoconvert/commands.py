@@ -5,6 +5,9 @@ from .core import convert_file, detect_file_type
 from ..utils.loading import LoadingAnimation
 from ..utils.updates import check_for_updates
 
+# TOOL CATEGORY (USED BY 'autotools smoke')
+TOOL_CATEGORY = 'Files'
+
 # SMOKE TEST CASES (USED BY 'autotools smoke')
 SMOKE_TESTS = [
     {'name': 'md-json', 'args': ['README.md', '/tmp/autoconvert-smoke.json']},

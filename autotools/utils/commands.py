@@ -10,7 +10,8 @@ from .performance import init_metrics, finalize_metrics, get_metrics, should_ena
 __all__ = [
     'discover_tool_command_entries',
     'get_wrapped_tool_commands',
-    'register_commands'
+    'register_commands',
+    'get_tool_category'
 ]
 
 # PACKAGES THAT SHOULD NEVER BE TREATED AS TOOLS
@@ -129,6 +130,10 @@ def _wrap_command_with_metrics(cmd):
     cmd.callback = wrapped_callback
     cmd._autotools_metrics_wrapped = True
     return cmd
+
+# EXTRACTS TOOL CATEGORY FROM MODULE (FALLBACK TO 'Other' IF NOT DEFINED)
+def get_tool_category(mod: ModuleType) -> str:
+    return getattr(mod, 'TOOL_CATEGORY', 'Other')
 
 # FUNCTION TO REGISTER ALL COMMANDS TO CLI GROUP
 def register_commands(cli_group):

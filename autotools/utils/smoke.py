@@ -8,20 +8,7 @@ import subprocess
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional, Sequence, Tuple
-from .commands import discover_tool_command_entries
-
-# DEFAULT CATEGORIES (USED ONLY FOR OUTPUT TABLE)
-_CATEGORY_BY_TOOL = {
-    'autocaps': 'Text',
-    'autolower': 'Text',
-    'autopassword': 'Security',
-    'autoip': 'Network',
-    'autoconvert': 'Files',
-    'autozip': 'Files',
-    'autocolor': 'Color',
-    'autotodo': 'Task',
-    'autounit': 'Conversion',
-}
+from .commands import discover_tool_command_entries, get_tool_category
 
 # NORMALIZES SMOKE TEST DEFINITIONS TO A LIST OF (NAME, ARGS)
 def _normalize_smoke_test_item(item: Any, default_name: str) -> Tuple[str, List[str]]:
@@ -138,15 +125,7 @@ def _echo_permission_error(err: Exception, verbose: bool) -> None:
 def _run_subprocess(argv: Sequence[str], timeout_s: int, verbose: bool) -> Tuple[str, int, float, str]:
     start = time.perf_counter()
     try:
-        completed = subprocess.run(
-            list(argv),
-            text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            timeout=timeout_s,
-            env=dict(os.environ),
-        )
-        
+        completed = subprocess.run( list(argv), text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=timeout_s, env=dict(os.environ))
         duration = time.perf_counter() - start
         output = completed.stdout or ''
         status = 'OK' if completed.returncode == 0 else 'X'
@@ -219,20 +198,14 @@ def _smoke_root(workdir: Optional[str]) -> Iterator[Path]:
     with tempfile.TemporaryDirectory(prefix='autotools_smoke_') as d: yield Path(d)
 
 # RUNS ALL CASES FOR A TOOL AND RETURNS RESULT ROWS
-def _run_tool_smoke(
-    tool_name: str,
-    public_name: str,
-    smoke_tests: List[Tuple[str, List[str]]],
-    timeout_s: int,
-    verbose: bool,
-) -> List[Dict[str, Any]]:
+def _run_tool_smoke(public_name: str, mod: Any, smoke_tests: List[Tuple[str, List[str]]], timeout_s: int, verbose: bool) -> List[Dict[str, Any]]:
     rows: List[Dict[str, Any]] = []
     for case_name, case_args in smoke_tests:
         argv = [sys.executable, '-m', 'autotools.cli', public_name, *case_args]
         status, rc, duration_s, output = _run_subprocess(argv, timeout_s=timeout_s, verbose=verbose)
 
         rows.append({
-            'category': _CATEGORY_BY_TOOL.get(tool_name, 'Other'),
+            'category': get_tool_category(mod),
             'tool': public_name,
             'case': case_name,
             'status': status if status in ('OK', 'X') else 'X',
@@ -245,15 +218,7 @@ def _run_tool_smoke(
     return rows
 
 # MAIN SMOKE ENTRYPOINT
-def run_smoke(
-    workdir: Optional[str],
-    timeout_s: int,
-    include: set[str],
-    exclude: set[str],
-    verbose: bool,
-    platform: str,
-    print_table: bool = True,
-) -> List[Dict[str, Any]]:
+def run_smoke(workdir: Optional[str], timeout_s: int, include: set[str], exclude: set[str], verbose: bool, platform: str, print_table: bool = True) -> List[Dict[str, Any]]:
     entries = discover_tool_command_entries()
 
     if 'test' not in include and 'autotest' not in include: exclude = set(exclude) | {'autotest', 'test'}
@@ -272,8 +237,8 @@ def run_smoke(
             tool_dir = run_root / tool_name
             tool_dir.mkdir(parents=True, exist_ok=True)
 
-            smoke_tests = _get_smoke_tests(mod, tool_name, cmd, tool_dir)
-            results.extend(_run_tool_smoke(tool_name, public_name, smoke_tests, timeout_s=timeout_s, verbose=verbose))
+            _get_smoke_tests(mod, tool_name, cmd, tool_dir)
+            results.extend(_run_tool_smoke(tool_name, public_name, mod, timeout_s=timeout_s, verbose=verbose))
 
         if print_table: _print_summary(results, platform=platform)
 

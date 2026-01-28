@@ -3,6 +3,9 @@ from .core import autocolor_convert
 from ..utils.loading import LoadingAnimation
 from ..utils.updates import check_for_updates
 
+# TOOL CATEGORY (USED BY 'autotools smoke')
+TOOL_CATEGORY = 'Color'
+
 # SMOKE TEST CASES (USED BY 'autotools smoke')
 SMOKE_TESTS = [
     {'name': 'hex-default', 'args': ['#FF5733']},

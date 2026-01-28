@@ -3,6 +3,9 @@ from .core import autocaps_transform
 from ..utils.loading import LoadingAnimation
 from ..utils.updates import check_for_updates
 
+# TOOL CATEGORY (USED BY 'autotools smoke')
+TOOL_CATEGORY = 'Text'
+
 # SMOKE TEST CASES (USED BY 'autotools smoke')
 SMOKE_TESTS = [
     {'name': 'basic', 'args': ['test', 'with', 'multiple', 'words']},

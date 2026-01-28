@@ -4,6 +4,9 @@ from .core import autozip_compress
 from ..utils.loading import LoadingAnimation
 from ..utils.updates import check_for_updates
 
+# TOOL CATEGORY (USED BY 'autotools smoke')
+TOOL_CATEGORY = 'Files'
+
 # SMOKE TEST CASES (USED BY 'autotools smoke')
 SMOKE_TESTS = [
     {'name': 'zip-readme', 'args': ['README.md', '--output', '/tmp/autozip-smoke.zip']},

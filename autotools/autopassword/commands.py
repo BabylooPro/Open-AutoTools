@@ -4,6 +4,9 @@ from ..utils.loading import LoadingAnimation
 from ..utils.updates import check_for_updates
 from .core import generate_password, generate_encryption_key, analyze_password_strength
 
+# TOOL CATEGORY (USED BY 'autotools smoke')
+TOOL_CATEGORY = 'Security'
+
 # SMOKE TEST CASES (USED BY 'autotools smoke')
 SMOKE_TESTS = [
     {'name': 'basic', 'args': []},

@@ -6,6 +6,9 @@ import re
 from ..utils.updates import check_for_updates
 from ..utils.text import safe_text
 
+# TOOL CATEGORY (USED BY 'autotools smoke')
+TOOL_CATEGORY = 'Testing'
+
 # SMOKE TEST CASES (USED BY 'autotools smoke')
 # NOTE: THIS TOOL IS SKIPPED BY DEFAULT IN SMOKE RUNS (SEE docs/docker.md)
 SMOKE_TESTS = [

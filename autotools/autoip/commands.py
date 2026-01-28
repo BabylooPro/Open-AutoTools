@@ -4,6 +4,9 @@ from ..utils.loading import LoadingAnimation
 from ..utils.updates import check_for_updates
 from ..utils.text import safe_text, is_ci_environment, mask_sensitive_info
 
+# TOOL CATEGORY (USED BY 'autotools smoke')
+TOOL_CATEGORY = 'Network'
+
 # SMOKE TEST CASES (USED BY 'autotools smoke')
 SMOKE_TESTS = [
     {'name': 'basic', 'args': ['--no-ip']},

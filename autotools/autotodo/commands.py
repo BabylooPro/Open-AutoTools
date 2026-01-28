@@ -4,6 +4,9 @@ from .core import (autotodo_add_task, autotodo_start, autotodo_done, autotodo_re
 from ..utils.loading import LoadingAnimation
 from ..utils.updates import check_for_updates
 
+# TOOL CATEGORY (USED BY 'autotools smoke')
+TOOL_CATEGORY = 'Task'
+
 # SMOKE TEST CASES (USED BY 'autotools smoke')
 SMOKE_TESTS = [{'name': 'autotodo-list', 'args': ['list']}]
 
