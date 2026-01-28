@@ -37,6 +37,7 @@ setup(
         autounit=autotools.cli:autounit
         autozip=autotools.cli:autozip
         autotodo=autotools.cli:autotodo
+        autonote=autotools.cli:autonote
     ''',
     
     # METADATA FOR PYPI

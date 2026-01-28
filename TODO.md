@@ -5,7 +5,6 @@
 - **fix:** HIGH optimize execution performance of all tools features
 - **fix:** detect unclosed double quotes in CLI commands and automatically fix them by either adding a closing double quote at the end or switching to single quotes
 - **add:** AAA comments in tests file (Arrange-Act-Assert)
-- **add:** AutoNote: Takes quick notes and saves them to a markdown file
 - **add:** AutoClipboard: Manages clipboard content, allows easy copy/paste from the command line
 - **add:** AutoSearch: Searches for files and content in specified directories
 
@@ -18,6 +17,7 @@
 - **added:** AutoColor: Converts color codes between different formats (hex, RGB, HSL, etc)
 - **added:** AutoUnit: Converts measurement units (example: meters to feet, liters to gallons)
 - **added:** AutoTodo: Manages a simple task list in a markdown file
+- **added:** AutoNote: Takes quick notes and saves them to a markdown file
 - **added(restored):** docstrings to tools command functions with \b method
 - **fixed:** ensure no IP addresses or sensitive information are exposed in workflow logs with autoip tools
 - **added:** check whether Python 3.13 and 3.14 are fully compatible

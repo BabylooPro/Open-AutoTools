@@ -11,6 +11,7 @@ All notable changes to Open-AutoTools will be documented in this file.
 - AutoUnit command for converting measurement units (meters to feet, liters to gallons, etc)
 - AutoZip command for compressing files and directories into various archive formats (ZIP, TAR.GZ, TAR.BZ2, TAR.XZ, TAR)
 - AutoTodo command for managing a simple task list in a Markdown file
+- AutoNote command for taking quick notes and saving them to a Markdown file
 - Docstrings to tools command functions
 - Compatibility with Python 3.13 & 3.14
 

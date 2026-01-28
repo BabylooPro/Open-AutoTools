@@ -37,6 +37,7 @@ See [Installation Guide](docs/installation.md) for more details.
 - **[AutoUnit](docs/tools/autounit.md)** - Convert measurement units (meters to feet, liters to gallons, etc)
 - **[AutoZip](docs/tools/autozip.md)** - Compress files and directories into various archive formats (ZIP, TAR.GZ, TAR.BZ2, TAR.XZ, TAR)
 - **[AutoTodo](docs/tools/autotodo.md)** - Create and manage a simple task list in a Markdown file
+- **[AutoNote](docs/tools/autonote.md)** - Takes quick notes and saves them to a Markdown file
 - **[Test Suite](docs/tools/autotest.md)** - Run the test suite (development only)
 
 ## Documentation
