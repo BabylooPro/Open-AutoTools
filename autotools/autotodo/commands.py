@@ -8,7 +8,7 @@ from ..utils.updates import check_for_updates
 TOOL_CATEGORY = 'Task'
 
 # SMOKE TEST CASES (USED BY 'autotools smoke')
-SMOKE_TESTS = [{'name': 'autotodo-list', 'args': ['list']}]
+SMOKE_TESTS = [{'name': 'autotodo-list', 'args': ['--list']}]
 
 # CLI COMMAND TO MANAGE TODO LIST
 @click.command()
