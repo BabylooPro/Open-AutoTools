@@ -2,14 +2,24 @@
 
 [PYPI_BADGE]: https://badge.fury.io/py/Open-AutoTools.svg
 [PYPI_URL]: https://pypi.org/project/Open-AutoTools/
+
+[PYPI_DOWNLOADS_BADGE]: https://img.shields.io/pypi/dm/Open-AutoTools
+[PYPI_DOWNLOADS_URL]: https://pypi.org/project/Open-AutoTools/
+
 [PYTHON_BADGE]: https://img.shields.io/badge/Python-3.10+-blue.svg
 [PYTHON_URL]: https://www.python.org/downloads/
+
 [CHANGELOG_BADGE]: https://img.shields.io/badge/CHANGELOG-red.svg
 [CHANGELOG_URL]: CHANGELOG.md
+
 [TODO_BADGE]: https://img.shields.io/badge/TODO-purple.svg
 [TODO_URL]: TODO.md
 
-[![PyPI][PYPI_BADGE]][PYPI_URL] [![Python][PYTHON_BADGE]][PYTHON_URL] [![CHANGELOG][CHANGELOG_BADGE]][CHANGELOG_URL] [![TODO][TODO_BADGE]][TODO_URL]
+[![PyPI][PYPI_BADGE]][PYPI_URL]
+[![Python][PYTHON_BADGE]][PYTHON_URL]
+[![Downloads][PYPI_DOWNLOADS_BADGE]][PYPI_DOWNLOADS_URL]
+[![CHANGELOG][CHANGELOG_BADGE]][CHANGELOG_URL]
+[![TODO][TODO_BADGE]][TODO_URL]
 
 Python CLI toolkit for everyday developer tasks. Boost productivity directly from your terminal.
 
