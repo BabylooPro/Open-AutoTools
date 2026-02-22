@@ -22,6 +22,8 @@ def test_detect_file_type_image():
     assert detect_file_type("file.png") == "image"
     assert detect_file_type("file.gif") == "image"
     assert detect_file_type("file.webp") == "image"
+    assert detect_file_type("file.heic") == "image"
+    assert detect_file_type("file.heif") == "image"
 
 # TEST DETECT AUDIO FILE TYPE
 def test_detect_file_type_audio():

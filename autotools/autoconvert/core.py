@@ -15,7 +15,7 @@ def detect_file_type(file_path: str) -> str:
     if ext in text_formats: return 'text'
 
     # IMAGE FORMATS
-    image_formats = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff', 'tif', 'ico', 'svg']
+    image_formats = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff', 'tif', 'ico', 'svg', 'heic', 'heif']
     if ext in image_formats: return 'image'
 
     # AUDIO FORMATS

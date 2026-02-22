@@ -8,24 +8,24 @@ Converts text, images, audio, and video files between different formats. Support
 
 ### Text Formats
 
--   **Input**: txt, md, markdown, json, xml, html, htm, csv
--   **Output**: txt, md, markdown, json, xml, html, htm, csv
+- **Input**: txt, md, markdown, json, xml, html, htm, csv
+- **Output**: txt, md, markdown, json, xml, html, htm, csv
 
 ### Image Formats
 
--   **Input/Output**: jpg, jpeg, png, gif, bmp, webp, tiff, tif, ico, svg
+- **Input/Output**: jpg, jpeg, png, gif, bmp, webp, tiff, tif, ico, svg, heic, heif
 
 > **Note**: SVG is detected as an image format but conversion may have limitations depending on the target format.
 
 ### Audio Formats
 
--   **Input/Output**: mp3, wav, ogg, flac, aac, m4a, wma, opus
+- **Input/Output**: mp3, wav, ogg, flac, aac, m4a, wma, opus
 
 > **Note**: WMA and Opus formats are detected but may require additional codec support in FFmpeg.
 
 ### Video Formats
 
--   **Input/Output**: mp4, avi, mov, mkv, wmv, flv, webm, m4v
+- **Input/Output**: mp4, avi, mov, mkv, wmv, flv, webm, m4v
 
 > **Note**: WMV, FLV, and M4V formats are detected but may require additional codec support in FFmpeg.
 
@@ -37,9 +37,9 @@ autoconvert <input_file> <output_file>
 
 ### Options
 
--   `--input-type, -i`: Force input file type (text/image/audio/video)
--   `--output-type, -o`: Force output file type (text/image/audio/video)
--   `--format, -f`: Output format (overrides output file extension)
+- `--input-type, -i`: Force input file type (text/image/audio/video)
+- `--output-type, -o`: Force output file type (text/image/audio/video)
+- `--format, -f`: Output format (overrides output file extension)
 
 ## Examples
 
@@ -112,37 +112,38 @@ autoconvert file.txt file.json --input-type text --output-type text
 
 AutoConvert requires additional dependencies for different conversion types:
 
--   **Images**: `Pillow` (PIL)
--   **Audio**: `pydub` (requires FFmpeg)
--   **Video**: `moviepy` (requires FFmpeg)
+- **Images**: `Pillow` (PIL)
+- **HEIC/HEIF images (optional)**: `pillow-heif`
+- **Audio**: `pydub` (requires FFmpeg)
+- **Video**: `moviepy` (requires FFmpeg)
 
 Install dependencies:
 
 ```bash
-pip install Pillow pydub moviepy
+pip install Pillow pydub moviepy pillow-heif
 ```
 
 > **Note**: For audio and video conversions, you also need to install FFmpeg on your system:
 
--   **macOS**: `brew install ffmpeg`
--   **Linux**: `sudo apt-get install ffmpeg` or `sudo yum install ffmpeg`
--   **Windows**: Download from [FFmpeg website](https://ffmpeg.org/download.html)
+- **macOS**: `brew install ffmpeg`
+- **Linux**: `sudo apt-get install ffmpeg` or `sudo yum install ffmpeg`
+- **Windows**: Download from [FFmpeg website](https://ffmpeg.org/download.html)
 
 ## Error Handling
 
 The tool will display clear error messages if:
 
--   Input file doesn't exist
--   Required dependencies are not installed
--   Conversion fails due to unsupported format or corrupted file
--   Output directory cannot be created
+- Input file doesn't exist
+- Required dependencies are not installed
+- Conversion fails due to unsupported format or corrupted file
+- Output directory cannot be created
 
 ## Notes
 
--   The tool automatically detects file types based on file extensions
--   Output directories are created automatically if they don't exist
--   Text conversions preserve content while changing format structure
--   Image conversions handle transparency (RGBA) appropriately for formats that don't support it (example: converting RGBA PNG to JPG)
--   Audio and video conversions may take longer depending on file size and system performance
--   Cross-type conversions (example: text to image) are not supported - conversions must be within the same media type
--   The `--format` option overrides the output file extension and automatically detects the output type
+- The tool automatically detects file types based on file extensions
+- Output directories are created automatically if they don't exist
+- Text conversions preserve content while changing format structure
+- Image conversions handle transparency (RGBA) appropriately for formats that don't support it (example: converting RGBA PNG to JPG)
+- Audio and video conversions may take longer depending on file size and system performance
+- Cross-type conversions (example: text to image) are not supported - conversions must be within the same media type
+- The `--format` option overrides the output file extension and automatically detects the output type
