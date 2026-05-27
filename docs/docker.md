@@ -92,6 +92,41 @@ autotools list-tools
 autotools smoke --include <tool> --verbose
 ```
 
+## CLI benchmarks
+
+Open-AutoTools also includes a manual Docker-only benchmark runner. It executes real CLI
+commands using the same tool discovery and `SMOKE_TESTS` scenarios as the smoke runner.
+It does not run as part of the default Docker matrix or CI workflow.
+
+```bash
+# Run all benchmark cases on Ubuntu, macOS, and Windows services concurrently
+docker compose -f docker/docker-compose.yml --profile benchmark up --build --abort-on-container-failure \
+  benchmark-ubuntu benchmark-macos benchmark-windows
+
+# Quick focused run on all benchmark services
+BENCHMARK_INCLUDE=autocaps BENCHMARK_ITERATIONS=2 \
+  docker compose -f docker/docker-compose.yml --profile benchmark up --build --abort-on-container-failure \
+  benchmark-ubuntu benchmark-macos benchmark-windows
+
+# Remove stopped benchmark containers after a run
+docker compose -f docker/docker-compose.yml --profile benchmark down --remove-orphans
+```
+
+Reports are written under `docker/data/benchmarks/<platform>/`:
+
+- JSON report for machine-readable results
+- Markdown report for quick review
+
+Configuration is environment-only:
+
+- `BENCHMARK_ITERATIONS` (default: `5`)
+- `BENCHMARK_WARMUP` (default: `1`)
+- `BENCHMARK_TIMEOUT` (default: `30`)
+- `BENCHMARK_INCLUDE` (comma- or space-separated tool names)
+- `BENCHMARK_EXCLUDE` (comma- or space-separated tool names)
+
+The benchmark is informational. It does not enforce performance thresholds.
+
 ## Platform Support
 
 Each platform-specific container includes:

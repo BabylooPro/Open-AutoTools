@@ -17,6 +17,13 @@ x-env-common: &env_common
   BUILDKITE: ${BUILDKITE:-}
   TEAMCITY: ${TEAMCITY:-}
 
+x-env-benchmark: &env_benchmark
+  BENCHMARK_ITERATIONS: ${BENCHMARK_ITERATIONS:-5}
+  BENCHMARK_WARMUP: ${BENCHMARK_WARMUP:-1}
+  BENCHMARK_TIMEOUT: ${BENCHMARK_TIMEOUT:-30}
+  BENCHMARK_INCLUDE: ${BENCHMARK_INCLUDE:-}
+  BENCHMARK_EXCLUDE: ${BENCHMARK_EXCLUDE:-}
+
 x-build-ubuntu: &build_ubuntu
   context: ..
   dockerfile: docker/Dockerfile
@@ -77,6 +84,50 @@ services:
     volumes: *volumes
     environment:
       <<: *env_common
+      PLATFORM: Windows
+      PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
+
+  # MANUAL CLI BENCHMARKS (DOES NOT RUN WITH DEFAULT TEST MATRIX)
+  # `--profile benchmark up` RUNS THESE THREE SERVICES CONCURRENTLY.
+  benchmark-ubuntu:
+    profiles: ["benchmark"]
+    container_name: autotools-benchmark-ubuntu
+    build:
+      <<: *build_ubuntu
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
+    entrypoint: ["bash", "/app/docker/run_benchmarks.sh"]
+    volumes: *volumes
+    environment:
+      <<: [*env_common, *env_benchmark]
+      PLATFORM: Ubuntu
+      PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
+
+  benchmark-macos:
+    profiles: ["benchmark"]
+    container_name: autotools-benchmark-macos
+    build:
+      <<: *build_macos
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
+    entrypoint: ["bash", "/app/docker/run_benchmarks.sh"]
+    volumes: *volumes
+    environment:
+      <<: [*env_common, *env_benchmark]
+      PLATFORM: macOS
+      PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
+
+  benchmark-windows:
+    profiles: ["benchmark"]
+    container_name: autotools-benchmark-windows
+    build:
+      <<: *build_windows
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
+    entrypoint: ["bash", "/app/docker/run_benchmarks.sh"]
+    volumes: *volumes
+    environment:
+      <<: [*env_common, *env_benchmark]
       PLATFORM: Windows
       PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
 

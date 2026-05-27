@@ -4,5 +4,5 @@ import pyperclip
 def autocaps_transform(text):
     transformed_text = text.upper()
     try: pyperclip.copy(transformed_text)
-    except pyperclip.PyperclipException: pass 
+    except (pyperclip.PyperclipException, OSError): pass 
     return transformed_text

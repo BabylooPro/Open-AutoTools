@@ -44,3 +44,11 @@ def test_autolower_transform_pyperclip_exception(monkeypatch):
     monkeypatch.setattr(pyperclip, "copy", mock_copy_fail)
     result = autolower_transform("HELLO")
     assert result == "hello"
+
+# TEST FOR OS CLIPBOARD ERRORS IN DOCKER/WSL
+def test_autolower_transform_clipboard_os_error(monkeypatch):
+    import pyperclip
+    def mock_copy_fail(text): raise FileNotFoundError("clip.exe")
+    monkeypatch.setattr(pyperclip, "copy", mock_copy_fail)
+    result = autolower_transform("HELLO")
+    assert result == "hello"

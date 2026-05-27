@@ -199,6 +199,14 @@ def test_autounit_convert_pyperclip_exception(monkeypatch):
     result = autounit_convert("100", "meter", "feet")
     assert "feet" in result
 
+# TEST FOR OS CLIPBOARD ERRORS IN DOCKER/WSL
+def test_autounit_convert_clipboard_os_error(monkeypatch):
+    def mock_copy_fail(text):
+        raise FileNotFoundError("clip.exe")
+    monkeypatch.setattr(pyperclip, "copy", mock_copy_fail)
+    result = autounit_convert("100", "meter", "feet")
+    assert "feet" in result
+
 # TEST FOR ROUND-TRIP CONVERSIONS
 def test_autounit_convert_round_trip():
     original_value = "100"

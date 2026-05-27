@@ -286,6 +286,13 @@ def test_autocolor_convert_pyperclip_exception(monkeypatch):
     result = autocolor_convert("#FF5733", "hex")
     assert result == "#FF5733"
 
+# TEST FOR OS CLIPBOARD ERRORS IN DOCKER/WSL
+def test_autocolor_convert_clipboard_os_error(monkeypatch):
+    def mock_copy_fail(text): raise FileNotFoundError("clip.exe")
+    monkeypatch.setattr(pyperclip, "copy", mock_copy_fail)
+    result = autocolor_convert("#FF5733", "hex")
+    assert result == "#FF5733"
+
 # TEST FOR ROUND-TRIP CONVERSIONS
 def test_autocolor_convert_round_trip():
     hex_color = "#FF5733"

@@ -94,6 +94,6 @@ def autocolor_convert(color_input, output_format='hex'):
     result = _format_output(r, g, b, alpha, output_format)
 
     try: pyperclip.copy(result)
-    except pyperclip.PyperclipException: pass
+    except (pyperclip.PyperclipException, OSError): pass
     
     return result

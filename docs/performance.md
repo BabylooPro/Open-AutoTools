@@ -6,47 +6,47 @@ Open-AutoTools includes comprehensive performance metrics to help developers und
 
 Performance metrics are automatically collected during command execution and provide detailed insights into:
 
--   Execution timing
--   CPU usage
--   Memory consumption
--   Garbage collection activity
--   Filesystem I/O operations
--   Step-by-step breakdown
+- Execution timing
+- CPU usage
+- Memory consumption
+- Garbage collection activity
+- Filesystem I/O operations
+- Step-by-step breakdown
 
 ## Metrics Collected
 
 ### Duration Metrics
 
--   **total_duration_ms**: Total execution time from process start to exit
--   **startup_duration_ms**: Time until command execution begins (runtime initialization, config loading)
--   **command_duration_ms**: Actual command execution time (excluding startup/shutdown)
+- **total_duration_ms**: Total execution time from process start to exit
+- **startup_duration_ms**: Time until command execution begins (runtime initialization, config loading)
+- **command_duration_ms**: Actual command execution time (excluding startup/shutdown)
 
 ### CPU Metrics
 
--   **cpu_time_total_ms**: Total CPU time (user + system)
--   **cpu_user_ms**: User CPU time
--   **cpu_sys_ms**: System CPU time
--   **cpu_usage_ratio**: CPU usage percentage (CPU time / total duration)
+- **cpu_time_total_ms**: Total CPU time (user + system)
+- **cpu_user_ms**: User CPU time
+- **cpu_sys_ms**: System CPU time
+- **cpu_usage_ratio**: CPU usage percentage (CPU time / total duration)
 
 ### Memory Metrics
 
--   **rss_mb_peak**: Peak resident set size (RSS) in megabytes
--   **alloc_mb_total**: Total memory allocations tracked via tracemalloc
+- **rss_mb_peak**: Peak resident set size (RSS) in megabytes
+- **alloc_mb_total**: Total memory allocations tracked via tracemalloc
 
 ### Garbage Collection Metrics
 
--   **gc_pause_total_ms**: Total time spent in garbage collection pauses
--   **gc_collections_count**: Number of GC collections performed
+- **gc_pause_total_ms**: Total time spent in garbage collection pauses
+- **gc_collections_count**: Number of GC collections performed
 
 ### Filesystem I/O Metrics
 
--   **fs_bytes_read_total**: Total bytes read from disk
--   **fs_bytes_written_total**: Total bytes written to disk
--   **fs_ops_count**: Total filesystem operations (reads + writes)
+- **fs_bytes_read_total**: Total bytes read from disk
+- **fs_bytes_written_total**: Total bytes written to disk
+- **fs_ops_count**: Total filesystem operations (reads + writes)
 
 ### Step Breakdown
 
--   **top_slowest_steps**: List of the slowest execution steps with their durations
+- **top_slowest_steps**: List of the slowest execution steps with their durations
 
 ## Enabling Performance Metrics
 
@@ -124,22 +124,22 @@ TOP SLOWEST STEPS:
 
 ### Dependencies
 
--   **psutil** (optional): Provides enhanced system metrics. Falls back to Python's `resource` module if unavailable.
--   **tracemalloc**: Built-in Python module for tracking memory allocations.
+- **psutil** (optional): Provides enhanced system metrics. Falls back to Python's `resource` module if unavailable.
+- **tracemalloc**: Built-in Python module for tracking memory allocations.
 
 ### Platform Compatibility
 
--   **Linux**: Uses `ru_maxrss` from `resource.getrusage()` (in KB)
--   **macOS**: Uses `ru_maxrss` from `resource.getrusage()` (in bytes)
--   **Windows**: Uses psutil when available
+- **Linux**: Uses `ru_maxrss` from `resource.getrusage()` (in KB)
+- **macOS**: Uses `ru_maxrss` from `resource.getrusage()` (in bytes)
+- **Windows**: Uses psutil when available
 
 ### Performance Impact
 
 Metrics collection has minimal overhead:
 
--   Memory tracking: ~1-2% overhead
--   CPU tracking: Negligible (<0.1%)
--   I/O tracking: Only when psutil is available
+- Memory tracking: ~1-2% overhead
+- CPU tracking: Negligible (<0.1%)
+- I/O tracking: Only when psutil is available
 
 ## Use Cases
 
@@ -147,6 +147,20 @@ Metrics collection has minimal overhead:
 2. **Resource Monitoring**: Track memory and CPU usage patterns
 3. **Optimization**: Measure improvements after code changes
 4. **CI/CD Integration**: Monitor performance regressions in automated tests
+
+## Docker CLI Benchmarks
+
+For repeatable command-level timings, run the Docker-only CLI benchmark from the project
+root:
+
+```bash
+docker compose -f docker/docker-compose.yml --profile benchmark up --build --abort-on-container-failure benchmark-ubuntu benchmark-macos benchmark-windows
+```
+
+The benchmark reuses the discovered tool smoke scenarios, repeats each case on the
+Ubuntu, macOS, and Windows Docker services concurrently, and writes JSON and Markdown
+reports under `docker/data/benchmarks/<platform>/`. Use `BENCHMARK_INCLUDE`,
+`BENCHMARK_EXCLUDE`, `BENCHMARK_ITERATIONS`, `BENCHMARK_WARMUP`, and `BENCHMARK_TIMEOUT` to focus or tune a run.
 
 ## Best Practices
 

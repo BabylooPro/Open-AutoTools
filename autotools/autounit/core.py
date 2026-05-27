@@ -23,7 +23,7 @@ def autounit_convert(value, from_unit, to_unit):
         output = f"{result_str} {to_unit}"
         
         try: pyperclip.copy(output)
-        except pyperclip.PyperclipException: pass
+        except (pyperclip.PyperclipException, OSError): pass
         
         return output
     

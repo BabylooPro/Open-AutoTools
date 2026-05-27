@@ -44,3 +44,11 @@ def test_autocaps_transform_pyperclip_exception(monkeypatch):
     monkeypatch.setattr(pyperclip, "copy", mock_copy_fail)
     result = autocaps_transform("hello")
     assert result == "HELLO"
+
+# TEST FOR OS CLIPBOARD ERRORS IN DOCKER/WSL
+def test_autocaps_transform_clipboard_os_error(monkeypatch):
+    import pyperclip
+    def mock_copy_fail(text): raise FileNotFoundError("clip.exe")
+    monkeypatch.setattr(pyperclip, "copy", mock_copy_fail)
+    result = autocaps_transform("hello")
+    assert result == "HELLO"
