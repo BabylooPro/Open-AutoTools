@@ -26,6 +26,7 @@ DEFAULT_TIMEOUT_S = 30
 DEFAULT_OUTPUT_DIR = "/data/benchmarks"
 DEFAULT_WORKDIR = "/tmp/autotools-benchmarks"
 DEFAULT_PROJECT_ROOT = "/app"
+RUN_ID_TIMESTAMP_FORMAT = "run_%Y%m%dT%H%MZ"
 
 
 # STORES DOCKER BENCHMARK RUNTIME CONFIGURATION
@@ -39,6 +40,7 @@ class BenchmarkConfig:
     output_dir: Path
     workdir: Path
     project_root: Path
+    run_id: str
     platform: str
     python_version: str
 
@@ -68,6 +70,7 @@ def parse_tool_filter(value: str | None) -> Set[str]:
 # LOADS BENCHMARK CONFIGURATION FROM ENVIRONMENT VARIABLES
 def load_config(env: Dict[str, str] | None = None) -> BenchmarkConfig:
     env = dict(os.environ if env is None else env)
+    run_id = env.get("BENCHMARK_RUN_ID") or default_run_id()
 
     return BenchmarkConfig(
         iterations=parse_int_env(env, "BENCHMARK_ITERATIONS", DEFAULT_ITERATIONS, 1),
@@ -78,6 +81,7 @@ def load_config(env: Dict[str, str] | None = None) -> BenchmarkConfig:
         output_dir=Path(env.get("BENCHMARK_OUTPUT_DIR", DEFAULT_OUTPUT_DIR)),
         workdir=Path(env.get("BENCHMARK_WORKDIR", DEFAULT_WORKDIR)),
         project_root=Path(env.get("BENCHMARK_PROJECT_ROOT", DEFAULT_PROJECT_ROOT)),
+        run_id=slugify(run_id),
         platform=env.get("PLATFORM", "Ubuntu"),
         python_version=env.get("PYTHON_VERSION", platform_python_version()),
     )
@@ -88,12 +92,19 @@ def platform_python_version() -> str:
     return f"{sys.version_info.major}.{sys.version_info.minor}"
 
 
+# RETURNS THE DEFAULT BENCHMARK RUN DIRECTORY NAME
+def default_run_id() -> str:
+    return datetime.now(timezone.utc).strftime(RUN_ID_TIMESTAMP_FORMAT)
+
+
 # NORMALIZES A VALUE FOR FILE AND DIRECTORY NAMES
 def slugify(value: str) -> str:
-    chars = [char.lower() if char.isalnum() else "-" for char in value.strip()]
+    chars = [
+        char.lower() if char.isalnum() else char if char == "_" else "-"
+        for char in value.strip()
+    ]
     slug = "".join(chars).strip("-")
-    while "--" in slug:
-        slug = slug.replace("--", "-")
+    while "--" in slug: slug = slug.replace("--", "-")
     return slug or "unknown"
 
 
@@ -329,6 +340,7 @@ def build_report(config: BenchmarkConfig, results: List[Dict[str, Any]], started
             "include": sorted(config.include),
             "exclude": sorted(config.exclude),
             "project_root": str(config.project_root),
+            "run_id": config.run_id,
             "case_count": len(results),
             "failed_case_count": len(failed_cases),
         },
@@ -338,11 +350,13 @@ def build_report(config: BenchmarkConfig, results: List[Dict[str, Any]], started
 
 # WRITES JSON AND MARKDOWN BENCHMARK REPORTS
 def write_reports(report: Dict[str, Any], output_dir: Path) -> Dict[str, str]:
-    output_dir.mkdir(parents=True, exist_ok=True)
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    platform_slug = slugify(report["metadata"].get("platform", "unknown"))
-    json_path = output_dir / f"benchmark-{platform_slug}-{stamp}.json"
-    markdown_path = output_dir / f"benchmark-{platform_slug}-{stamp}.md"
+    metadata = report["metadata"]
+    run_id = slugify(str(metadata.get("run_id", default_run_id())))
+    platform_slug = slugify(str(metadata.get("platform", "unknown")))
+    report_dir = output_dir / run_id / platform_slug
+    report_dir.mkdir(parents=True, exist_ok=True)
+    json_path = report_dir / "benchmark.json"
+    markdown_path = report_dir / "benchmark.md"
 
     json_path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     markdown_path.write_text(render_markdown_report(report), encoding="utf-8")
@@ -356,6 +370,7 @@ def render_markdown_report(report: Dict[str, Any]) -> str:
     lines = [
         "# Open-AutoTools CLI Benchmark",
         "",
+        f"- Run: {metadata.get('run_id', 'unknown')}",
         f"- Started: {metadata['started_at']}",
         f"- Finished: {metadata['finished_at']}",
         f"- Platform: {metadata['platform']}",
@@ -415,6 +430,7 @@ def run_benchmarks(config: BenchmarkConfig) -> Dict[str, Any]:
         raise RuntimeError("No benchmark cases selected")
 
     print("Running Open-AutoTools CLI benchmarks")
+    print(f"Run ID: {config.run_id}")
     print(f"Platform: {config.platform}")
     print(f"Python: {sys.version.split()[0]}")
     print(f"Iterations: {config.iterations}")

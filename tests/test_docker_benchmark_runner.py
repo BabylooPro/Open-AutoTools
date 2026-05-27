@@ -25,6 +25,7 @@ def test_load_config_parses_benchmark_env(tmp_path):
             "BENCHMARK_OUTPUT_DIR": str(tmp_path / "reports"),
             "BENCHMARK_WORKDIR": str(tmp_path / "work"),
             "BENCHMARK_PROJECT_ROOT": str(tmp_path / "project"),
+            "BENCHMARK_RUN_ID": "run_01",
             "PLATFORM": "Ubuntu",
             "PYTHON_VERSION": "3.12",
         }
@@ -38,6 +39,7 @@ def test_load_config_parses_benchmark_env(tmp_path):
     assert config.output_dir == tmp_path / "reports"
     assert config.workdir == tmp_path / "work"
     assert config.project_root == tmp_path / "project"
+    assert config.run_id == "run_01"
 
 
 # TEST FOR INVALID INTEGER ENVIRONMENT VALUES
@@ -71,6 +73,7 @@ def test_summarize_durations_uses_milliseconds_and_nearest_rank_p95():
 def test_slugify_normalizes_platform_names():
     assert benchmark_runner.slugify("macOS") == "macos"
     assert benchmark_runner.slugify("Windows 11") == "windows-11"
+    assert benchmark_runner.slugify("run_01") == "run_01"
     assert benchmark_runner.slugify("") == "unknown"
 
 
@@ -106,6 +109,7 @@ def test_write_reports_creates_json_and_markdown(tmp_path):
             "include": ["autocaps"],
             "exclude": [],
             "project_root": "/app",
+            "run_id": "run_01",
             "case_count": 1,
             "failed_case_count": 0,
         },
@@ -132,7 +136,9 @@ def test_write_reports_creates_json_and_markdown(tmp_path):
     json_report = Path(paths["json"])
     markdown_report = Path(paths["markdown"])
 
-    assert json_report.name.startswith("benchmark-ubuntu-")
-    assert markdown_report.name.startswith("benchmark-ubuntu-")
+    assert json_report == tmp_path / "run_01" / "ubuntu" / "benchmark.json"
+    assert markdown_report == tmp_path / "run_01" / "ubuntu" / "benchmark.md"
     assert json.loads(json_report.read_text(encoding="utf-8"))["metadata"]["case_count"] == 1
-    assert "| Text | autocaps | basic | OK | 2 |" in markdown_report.read_text(encoding="utf-8")
+    markdown = markdown_report.read_text(encoding="utf-8")
+    assert "- Run: run_01" in markdown
+    assert "| Text | autocaps | basic | OK | 2 |" in markdown

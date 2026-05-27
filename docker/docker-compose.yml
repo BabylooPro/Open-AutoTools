@@ -23,6 +23,7 @@ x-env-benchmark: &env_benchmark
   BENCHMARK_TIMEOUT: ${BENCHMARK_TIMEOUT:-30}
   BENCHMARK_INCLUDE: ${BENCHMARK_INCLUDE:-}
   BENCHMARK_EXCLUDE: ${BENCHMARK_EXCLUDE:-}
+  BENCHMARK_RUN_ID: ${BENCHMARK_RUN_ID:-}
 
 x-build-ubuntu: &build_ubuntu
   context: ..

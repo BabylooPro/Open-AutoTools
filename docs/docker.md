@@ -37,9 +37,9 @@ docker-compose down --remove-orphans
 
 ## Notes
 
--   **macos/windows services**: they run Linux containers (`python:X.Y-slim`) but set `PLATFORM` to exercise platform-specific code paths.
--   **Ubuntu Python patch versions**: Ubuntu images install `pythonX.Y` via deadsnakes on Ubuntu 24.04, so patch versions can differ (example: 3.12.3). Slim images use official `python:X.Y-slim` (example: 3.12.x).
--   **Disk usage**: if Docker Desktop runs out of space (example: `no space left on device` while exporting layers), prune build cache and dangling images:
+- **macos/windows services**: they run Linux containers (`python:X.Y-slim`) but set `PLATFORM` to exercise platform-specific code paths.
+- **Ubuntu Python patch versions**: Ubuntu images install `pythonX.Y` via deadsnakes on Ubuntu 24.04, so patch versions can differ (example: 3.12.3). Slim images use official `python:X.Y-slim` (example: 3.12.x).
+- **Disk usage**: if Docker Desktop runs out of space (example: `no space left on device` while exporting layers), prune build cache and dangling images:
 
 ```bash
 docker system df
@@ -69,8 +69,8 @@ The smoke runner (`autotools smoke`) **auto-detects tools**, so you **do not** n
 
 ### Adding a new tool to smoke
 
--   **Required**: add a package `autotools/<tool>/` with a `commands.py` that exposes a `@click.command()` (the command name should match the folder name).
--   **Recommended**: define `SMOKE_TESTS` in `autotools/<tool>/commands.py` so the smoke test is deterministic (otherwise it will try a best-effort default invocation).
+- **Required**: add a package `autotools/<tool>/` with a `commands.py` that exposes a `@click.command()` (the command name should match the folder name).
+- **Recommended**: define `SMOKE_TESTS` in `autotools/<tool>/commands.py` so the smoke test is deterministic (otherwise it will try a best-effort default invocation).
 
 Example:
 
@@ -100,19 +100,19 @@ It does not run as part of the default Docker matrix or CI workflow.
 
 ```bash
 # Run all benchmark cases on Ubuntu, macOS, and Windows services concurrently
-docker compose -f docker/docker-compose.yml --profile benchmark up --build --abort-on-container-failure \
-  benchmark-ubuntu benchmark-macos benchmark-windows
+docker compose -f docker/docker-compose.yml --profile benchmark up --build --abort-on-container-failure benchmark-ubuntu benchmark-macos benchmark-windows
 
 # Quick focused run on all benchmark services
-BENCHMARK_INCLUDE=autocaps BENCHMARK_ITERATIONS=2 \
-  docker compose -f docker/docker-compose.yml --profile benchmark up --build --abort-on-container-failure \
-  benchmark-ubuntu benchmark-macos benchmark-windows
+BENCHMARK_INCLUDE=autocaps BENCHMARK_ITERATIONS=2 docker compose -f docker/docker-compose.yml --profile benchmark up --build --abort-on-container-failure benchmark-ubuntu benchmark-macos benchmark-windows
+
+# Run with an explicit folder name
+BENCHMARK_RUN_ID=run_01 docker compose -f docker/docker-compose.yml --profile benchmark up --build --abort-on-container-failure benchmark-ubuntu benchmark-macos benchmark-windows
 
 # Remove stopped benchmark containers after a run
 docker compose -f docker/docker-compose.yml --profile benchmark down --remove-orphans
 ```
 
-Reports are written under `docker/data/benchmarks/<platform>/`:
+Reports are written under `docker/data/benchmarks/<run_id>/<platform>/`:
 
 - JSON report for machine-readable results
 - Markdown report for quick review
@@ -124,6 +124,7 @@ Configuration is environment-only:
 - `BENCHMARK_TIMEOUT` (default: `30`)
 - `BENCHMARK_INCLUDE` (comma- or space-separated tool names)
 - `BENCHMARK_EXCLUDE` (comma- or space-separated tool names)
+- `BENCHMARK_RUN_ID` (default: UTC minute folder such as `run_20260528T1432Z`)
 
 The benchmark is informational. It does not enforce performance thresholds.
 
@@ -131,9 +132,9 @@ The benchmark is informational. It does not enforce performance thresholds.
 
 Each platform-specific container includes:
 
--   Python environment (default: 3.12, configurable with `PYTHON_VERSION`, matrix: 3.10 -> 3.14)
--   All required dependencies (FFmpeg, Java, etc.)
--   Automated test suite
--   Volume mapping for persistent data
+- Python environment (default: 3.12, configurable with `PYTHON_VERSION`, matrix: 3.10 -> 3.14)
+- All required dependencies (FFmpeg, Java, etc.)
+- Automated test suite
+- Volume mapping for persistent data
 
 > **Note:** The Docker setup is primarily for testing and development. For regular use, install via pip as described in [installation.md](installation.md).
