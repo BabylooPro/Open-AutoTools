@@ -69,9 +69,9 @@ def _compress_tar_xz(source_paths, output_path, compression_level=6):
 # DETERMINES OUTPUT FORMAT FROM FILE EXTENSION
 def _get_format_from_extension(output_path):
     path_str = str(output_path).lower()
-    if path_str.endswith('.tar.gz') or path_str.endswith('.tgz'): return 'tar.gz'
-    elif path_str.endswith('.tar.bz2') or path_str.endswith('.tbz2'): return 'tar.bz2'
-    elif path_str.endswith('.tar.xz') or path_str.endswith('.txz'): return 'tar.xz'
+    if path_str.endswith(('.tar.gz', '.tgz')): return 'tar.gz'
+    elif path_str.endswith(('.tar.bz2', '.tbz2')): return 'tar.bz2'
+    elif path_str.endswith(('.tar.xz', '.txz')): return 'tar.xz'
     elif path_str.endswith('.tar'): return 'tar'
     elif path_str.endswith('.zip'): return 'zip'
     else:

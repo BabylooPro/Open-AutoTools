@@ -73,7 +73,6 @@ def check_for_updates(timeout=DEFAULT_UPDATE_TIMEOUT_S):
     
     import click
     import json
-    import urllib.error
     import urllib.request
     from importlib.metadata import distribution, PackageNotFoundError
     from packaging.version import parse as parse_version
@@ -107,12 +106,11 @@ def check_for_updates(timeout=DEFAULT_UPDATE_TIMEOUT_S):
                     return message
 
         _write_cached_update(current_version_text, None)
-    except (urllib.error.URLError, TimeoutError, OSError, ValueError, KeyError, json.JSONDecodeError):
+    except (OSError, ValueError, KeyError):
         try:
             current_version_text
         except UnboundLocalError:
             return None
         _write_cached_update(current_version_text, None, status='error')
-        pass
 
     return None 

@@ -9,7 +9,7 @@ TOOL_CATEGORY = 'Files'
 
 # SMOKE TEST CASES (USED BY 'autotools smoke')
 SMOKE_TESTS = [
-    {'name': 'zip-readme', 'args': ['README.md', '--output', '/tmp/autozip-smoke.zip']},
+    {'name': 'zip-readme', 'args': ['README.md', '--output', '.autotools-smoke/autozip-smoke.zip']},
 ]
 
 # CLI COMMAND TO COMPRESS FILES AND DIRECTORIES

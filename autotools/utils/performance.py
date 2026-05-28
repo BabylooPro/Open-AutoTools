@@ -28,7 +28,7 @@ if os.getenv('AUTOTOOLS_DISABLE_PERF', '').lower() in ('1', 'true', 'yes'): ENAB
 # ONLY ENABLE IF EXPLICITLY REQUESTED VIA ENV VAR OR IF PYTEST IS ACTUALLY RUNNING
 # DO NOT ENABLE BASED ON ARGUMENT VALUES TO AVOID FALSE POSITIVES (EXAMPLE: "test" AS COMMAND ARGUMENT)
 _ENV_TRACEMALLOC = os.getenv('AUTOTOOLS_ENABLE_TRACEMALLOC', '').lower() in ('1', 'true', 'yes')
-_IS_TEST_ENV = 'pytest' in sys.modules or any(arg.endswith('pytest') or arg.endswith('py.test') for arg in sys.argv)
+_IS_TEST_ENV = 'pytest' in sys.modules or any(arg.endswith(('pytest', 'py.test')) for arg in sys.argv)
 ENABLE_TRACEMALLOC = _ENV_TRACEMALLOC or _IS_TEST_ENV
 
 # PERFORMANCE METRICS COLLECTOR

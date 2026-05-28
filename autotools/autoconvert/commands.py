@@ -10,7 +10,7 @@ TOOL_CATEGORY = 'Files'
 
 # SMOKE TEST CASES (USED BY 'autotools smoke')
 SMOKE_TESTS = [
-    {'name': 'md-json', 'args': ['README.md', '/tmp/autoconvert-smoke.json']},
+    {'name': 'md-json', 'args': ['README.md', '.autotools-smoke/autoconvert-smoke.json']},
 ]
 
 # CLI COMMAND TO CONVERT FILES BETWEEN DIFFERENT FORMATS

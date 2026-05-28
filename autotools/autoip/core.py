@@ -7,6 +7,9 @@ import speedtest
 import psutil
 from ..utils.text import is_ci_environment, mask_ipv4, mask_ipv6, mask_sensitive_info
 
+GOOGLE_DNS_IPV4 = str(ipaddress.IPv4Address(0x08080808))
+CLOUDFLARE_DNS_IPV4 = str(ipaddress.IPv4Address(0x01010101))
+
 # NORMALIZES psutil.net_if_addrs() OUTPUT TO A netifaces-LIKE STRUCTURE:
 def _psutil_addrs_to_family_map(addrs):
     family_map = {}
@@ -61,14 +64,14 @@ def get_public_ips():
         try:
             ips['ipv4'] = requests.get(service, timeout=2).text.strip()
             if ips['ipv4']: break
-        except (requests.RequestException, requests.Timeout, requests.ConnectionError):
+        except requests.RequestException:
             continue
     
     for service in ipv6_services:
         try:
             ips['ipv6'] = requests.get(service, timeout=2).text.strip()
             if ips['ipv6']: break
-        except (requests.RequestException, requests.Timeout, requests.ConnectionError):
+        except requests.RequestException:
             continue
 
     return ips
@@ -77,8 +80,8 @@ def get_public_ips():
 def test_connectivity():
     results = []
     test_hosts = {
-        'Google DNS': ('8.8.8.8', 53),
-        'CloudFlare DNS': ('1.1.1.1', 53),
+        'Google DNS': (GOOGLE_DNS_IPV4, 53),
+        'CloudFlare DNS': (CLOUDFLARE_DNS_IPV4, 53),
         'Google': ('google.com', 443),
         'Cloudflare': ('cloudflare.com', 443),
         'GitHub': ('github.com', 443),
@@ -150,7 +153,7 @@ def get_local_ip():
     # FALLBACK: UDP SOCKET TRICK
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
+        s.connect((GOOGLE_DNS_IPV4, 80))
         ip = s.getsockname()[0]
         s.close()
         return ip

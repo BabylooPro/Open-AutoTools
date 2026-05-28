@@ -1,6 +1,6 @@
 import os
 import importlib.util
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages  # pyright: ignore[reportMissingModuleSource]
 
 # READING README.MD FOR LONG DESCRIPTION
 with open("README.md", "r", encoding="utf-8") as fh: long_description = fh.read()

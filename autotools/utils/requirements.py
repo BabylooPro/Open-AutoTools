@@ -13,7 +13,7 @@ def read_requirements(filename="requirements.txt"):
 
             for line in fh:
                 line = line.strip()
-                if line.startswith("-r") or line.startswith("--requirement"): continue
+                if line.startswith(("-r", "--requirement")): continue
                 if line and not line.startswith("#"): requirements.append(line)
 
             return requirements
