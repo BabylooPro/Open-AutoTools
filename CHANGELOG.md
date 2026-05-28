@@ -2,6 +2,12 @@
 
 All notable changes to Open-AutoTools will be documented in this file.
 
+## [0.0.7] - 2026-05-28
+
+### Fixed
+
+- Optimize execution performance of all tools features
+
 ## [0.0.6] - 2026-02-22
 
 ### Added
