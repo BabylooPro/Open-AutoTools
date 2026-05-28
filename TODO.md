@@ -9,7 +9,7 @@
 
 #### IN PROGRESS
 
-#### DONE - v0.0.6
+#### DONE - v0.0.7
 
 - **fixed:** Optimize execution performance of all tools features
 
