@@ -5,10 +5,11 @@ import pkgutil
 from types import ModuleType
 from typing import Dict, Iterable, List, Tuple
 
-from .performance import init_metrics, finalize_metrics, get_metrics, should_enable_metrics, track_step
-
 __all__ = [
     'discover_tool_command_entries',
+    'get_tool_names',
+    'get_tool_command_entry',
+    'get_wrapped_tool_command',
     'get_wrapped_tool_commands',
     'register_commands',
     'get_tool_category'
@@ -16,6 +17,34 @@ __all__ = [
 
 # PACKAGES THAT SHOULD NEVER BE TREATED AS TOOLS
 _EXCLUDED_TOOL_PACKAGES = {'utils', '__pycache__'}
+
+def _ctx_has_perf_flag(ctx) -> bool:
+    current = ctx
+    while current:
+        if current.params.get('perf', False): return True
+        current = getattr(current, 'parent', None)
+    return False
+
+def init_metrics():
+    from .performance import init_metrics as _init_metrics
+    return _init_metrics()
+
+def finalize_metrics(ctx):
+    from .performance import finalize_metrics as _finalize_metrics
+    return _finalize_metrics(ctx)
+
+def get_metrics():
+    from .performance import get_metrics as _get_metrics
+    return _get_metrics()
+
+def should_enable_metrics(ctx):
+    if not _ctx_has_perf_flag(ctx): return False
+    from .performance import should_enable_metrics as _should_enable_metrics
+    return _should_enable_metrics(ctx)
+
+def track_step(name: str):
+    from .performance import track_step as _track_step
+    return _track_step(name)
 
 # ITERATES ALL TOP-LEVEL TOOL PACKAGES (autotools/<tool>/)
 def _iter_tool_packages() -> Iterable[str]:
@@ -27,6 +56,10 @@ def _iter_tool_packages() -> Iterable[str]:
         if name in _EXCLUDED_TOOL_PACKAGES: continue
         if name == 'cli': continue
         yield name
+
+# RETURNS DISCOVERED TOP-LEVEL TOOL PACKAGE NAMES WITHOUT IMPORTING COMMAND MODULES
+def get_tool_names() -> List[str]:
+    return sorted(_iter_tool_packages())
 
 # IMPORTS autotools.<tool>.commands IF IT EXISTS
 def _import_tool_commands_module(tool_name: str) -> ModuleType | None:
@@ -64,16 +97,31 @@ def _select_command_for_tool(cmds: List[click.Command], tool_name: str, mod_name
 # DISCOVERS TOOL COMMANDS AS (MODULE, CLICK COMMAND) BY TOOL PACKAGE NAME
 def discover_tool_command_entries() -> Dict[str, Tuple[ModuleType, click.Command]]:
     entries: Dict[str, Tuple[ModuleType, click.Command]] = {}
-    for tool_name in _iter_tool_packages():
-        mod = _import_tool_commands_module(tool_name)
-        if mod is None: continue
-        cmds = _extract_click_commands(mod)
-        if not cmds: continue
-
-        selected = _select_command_for_tool(cmds, tool_name, mod.__name__)
-        entries[tool_name] = (mod, selected)
+    for tool_name in get_tool_names():
+        entry = get_tool_command_entry(tool_name)
+        if entry is not None: entries[tool_name] = entry
 
     return entries
+
+# RETURNS A SINGLE TOOL COMMAND ENTRY WITHOUT IMPORTING EVERY OTHER TOOL
+def get_tool_command_entry(tool_name: str) -> Tuple[ModuleType, click.Command] | None:
+    if tool_name not in set(get_tool_names()): return None
+
+    mod = _import_tool_commands_module(tool_name)
+    if mod is None: return None
+    cmds = _extract_click_commands(mod)
+    if not cmds: return None
+
+    selected = _select_command_for_tool(cmds, tool_name, mod.__name__)
+    return mod, selected
+
+# RETURNS ONE WRAPPED TOOL COMMAND BY PACKAGE NAME
+def get_wrapped_tool_command(tool_name: str) -> click.Command | None:
+    entry = get_tool_command_entry(tool_name)
+    if entry is None: return None
+
+    _mod, cmd = entry
+    return _wrap_command_with_metrics(cmd)
 
 # RETURNS WRAPPED TOOL COMMANDS (USED BY CLI GROUP AND CONSOLE_SCRIPTS EXPORTS)
 def get_wrapped_tool_commands() -> Dict[str, click.Command]:
@@ -84,10 +132,10 @@ def get_wrapped_tool_commands() -> Dict[str, click.Command]:
 
 # EXECUTES COMMAND WITH PERFORMANCE TRACKING
 def _execute_with_metrics(ctx, original_callback, *args, **kwargs):
-    metrics = get_metrics()
     kwargs.pop('perf', None)
     
     if not should_enable_metrics(ctx): return original_callback(*args, **kwargs)
+    metrics = get_metrics()
     if metrics.process_start is None:
         init_metrics()
         get_metrics().end_startup()

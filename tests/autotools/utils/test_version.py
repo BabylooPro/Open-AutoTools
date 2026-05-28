@@ -116,6 +116,15 @@ def test_print_version_false_value(mock_get_version):
     result = runner.invoke(cli, ['--help'])
     assert result.exit_code == 0
 
+
+# TEST FOR PRINT VERSION WITH RESILIENT CONTEXT
+def test_print_version_resilient_context_returns_without_exit():
+    ctx = MagicMock()
+    ctx.resilient_parsing = True
+    assert print_version(ctx, True) is None
+    ctx.exit.assert_not_called()
+
+
 # TEST FOR PRINT VERSION WITH DEVELOPMENT MODE
 @patch('autotools.utils.version._fetch_pypi_version_info')
 @patch('autotools.utils.version.get_version')

@@ -2,13 +2,16 @@
 
 #### TASK
 
-- **fix:** HIGH optimize execution performance of all tools features
 - **fix:** detect unclosed double quotes in CLI commands and automatically fix them by either adding a closing double quote at the end or switching to single quotes
 - **add:** AAA comments in tests file (Arrange-Act-Assert)
 - **add:** AutoClipboard: Manages clipboard content, allows easy copy/paste from the command line
 - **add:** AutoSearch: Searches for files and content in specified directories
 
 #### IN PROGRESS
+
+#### DONE - v0.0.6
+
+- **fixed:** Optimize execution performance of all tools features
 
 #### DONE - v0.0.5
 

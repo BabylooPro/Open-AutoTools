@@ -1,10 +1,13 @@
 import os
 import json as json_module
+import click
 import pytest
+import sys
+import types
 from click import Context, Option
 from click.testing import CliRunner
 from unittest.mock import patch, MagicMock
-from autotools.cli import cli, _display_command_options, _display_commands, _display_usage_examples, autotools
+from autotools.cli import cli, _display_command_options, _display_commands, _display_usage_examples, autotools, LazyToolCommand
 
 
 # FIXTURES
@@ -233,6 +236,125 @@ def test_cli_no_subcommand_with_metrics_disabled_at_finalize(mock_updates, mock_
     assert result.exit_code == 0
     mock_finalize.assert_not_called()
 
+
+# TEST FOR LAZY GROUP COMMAND LOADING
+def test_lazy_group_loads_only_selected_command(monkeypatch, cli_runner):
+    loaded = []
+
+    def fake_get_tool_names():
+        return ['autocaps', 'autounit']
+
+    def fake_get_wrapped_tool_command(tool_name):
+        loaded.append(tool_name)
+        return click.Command(tool_name, callback=lambda: click.echo('OK'))
+
+    monkeypatch.setattr('autotools.cli.get_tool_names', fake_get_tool_names)
+    monkeypatch.setattr('autotools.cli.get_wrapped_tool_command', fake_get_wrapped_tool_command)
+
+    result = cli_runner.invoke(cli, ['autocaps'])
+
+    assert result.exit_code == 0
+    assert 'OK' in result.output
+    assert loaded == ['autocaps']
+
+
+# TEST FOR LAZY DIRECT CONSOLE COMMAND LOADING
+def test_lazy_tool_command_delegates_only_its_tool(monkeypatch, cli_runner):
+    loaded = []
+
+    def fake_get_wrapped_tool_command(tool_name):
+        loaded.append(tool_name)
+        return click.Command(tool_name, callback=lambda: click.echo('OK'))
+
+    monkeypatch.setattr('autotools.cli.get_wrapped_tool_command', fake_get_wrapped_tool_command)
+
+    result = cli_runner.invoke(LazyToolCommand('autolower'), [])
+
+    assert result.exit_code == 0
+    assert 'OK' in result.output
+    assert loaded == ['autolower']
+
+
+# TEST FOR LAZY DIRECT CONSOLE COMMAND UNKNOWN TOOL
+def test_lazy_tool_command_unknown_tool(monkeypatch):
+    monkeypatch.setattr('autotools.cli.get_wrapped_tool_command', lambda tool_name: None)
+
+    with pytest.raises(click.ClickException, match='Unknown tool: unknown_tool'):
+        LazyToolCommand('unknown_tool')._load_command()
+
+
+# TEST FOR DOTENV LAZY LOAD WHEN .env EXISTS
+def test_load_dotenv_if_present_loads_module(monkeypatch, tmp_path):
+    import autotools.cli as cli_module
+
+    calls = []
+    dotenv_module = types.ModuleType('dotenv')
+    dotenv_module.load_dotenv = lambda: calls.append('loaded')
+    monkeypatch.setitem(sys.modules, 'dotenv', dotenv_module)
+    monkeypatch.chdir(tmp_path)
+    tmp_path.joinpath('.env').write_text('KEY=value', encoding='utf-8')
+
+    cli_module._load_dotenv_if_present()
+
+    assert calls == ['loaded']
+
+
+# TEST FOR DOTENV LAZY LOAD WHEN DEPENDENCY IS MISSING
+def test_load_dotenv_if_present_ignores_missing_dependency(monkeypatch, tmp_path):
+    import builtins
+    import autotools.cli as cli_module
+
+    real_import = builtins.__import__
+
+    def fake_import(name, *args, **kwargs):
+        if name == 'dotenv':
+            raise ImportError('dotenv missing')
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.chdir(tmp_path)
+    tmp_path.joinpath('.env').write_text('KEY=value', encoding='utf-8')
+    monkeypatch.setattr(builtins, '__import__', fake_import)
+
+    cli_module._load_dotenv_if_present()
+
+
+# TEST FOR CLI METRICS WRAPPERS LAZY IMPORT PATHS
+def test_cli_metrics_wrappers_delegate_when_perf_enabled(monkeypatch):
+    import importlib
+    import autotools.cli as cli_module
+
+    performance = importlib.import_module('autotools.utils.performance')
+
+    ctx = MagicMock()
+    ctx.params = {'perf': True}
+    ctx.parent = None
+
+    metrics = MagicMock()
+    monkeypatch.setattr(performance, 'should_enable_metrics', lambda passed_ctx: passed_ctx is ctx)
+    monkeypatch.setattr(performance, 'init_metrics', lambda: 'init-result')
+    monkeypatch.setattr(performance, 'finalize_metrics', lambda passed_ctx: ('finalized', passed_ctx))
+    monkeypatch.setattr(performance, 'get_metrics', lambda: metrics)
+
+    assert cli_module.should_enable_metrics(ctx) is True
+    assert cli_module.init_metrics() == 'init-result'
+    assert cli_module.finalize_metrics(ctx) == ('finalized', ctx)
+    assert cli_module.get_metrics() is metrics
+
+
+# TEST FOR CLI METRICS FLAG WALKING PARENT CONTEXTS
+def test_cli_ctx_has_perf_flag_walks_parent_context():
+    import autotools.cli as cli_module
+
+    parent = MagicMock()
+    parent.params = {'perf': True}
+    parent.parent = None
+    child = MagicMock()
+    child.params = {'perf': False}
+    child.parent = parent
+
+    assert cli_module._ctx_has_perf_flag(child) is True
+
+
 # TEST FOR EXECUTE WITH METRICS ENABLED AND PROCESS_START IS NONE
 @patch('autotools.utils.commands.should_enable_metrics')
 @patch('autotools.utils.commands.init_metrics')
@@ -328,19 +450,9 @@ def test_execute_with_metrics_enabled_process_end_not_none(mock_finalize, mock_t
 
 
 # TEST FOR list-tools (PLAIN TEXT)
-@patch('autotools.cli.get_wrapped_tool_commands')
-def test_list_tools_plain(mock_get_wrapped, cli_runner):
-    cmd_autocaps = _create_mock_command('autocaps')
-    cmd_unnamed = _create_mock_command(None)
-    cmd_autotest = _create_mock_command('autotest')
-
-    mock_get_wrapped.return_value = {
-        'autotest': cmd_autotest,
-        'autocaps': cmd_autocaps,
-        'tool_with_no_cmd_name': cmd_unnamed,
-        'tool_with_no_cmd_name_2': cmd_unnamed,
-    }
-
+@patch('autotools.cli.get_tool_names')
+def test_list_tools_plain(mock_get_tool_names, cli_runner):
+    mock_get_tool_names.return_value = ['autotest', 'autocaps', 'tool_with_no_cmd_name']
     result = cli_runner.invoke(cli, ['list-tools'])
     assert result.exit_code == 0
 
@@ -352,13 +464,9 @@ def test_list_tools_plain(mock_get_wrapped, cli_runner):
 
 
 # TEST FOR list-tools (JSON)
-@patch('autotools.cli.get_wrapped_tool_commands')
-def test_list_tools_json(mock_get_wrapped, cli_runner):
-    cmd_autocaps = _create_mock_command('autocaps')
-    cmd_autotest = _create_mock_command('autotest')
-
-    mock_get_wrapped.return_value = {'autocaps': cmd_autocaps, 'autotest': cmd_autotest}
-
+@patch('autotools.cli.get_tool_names')
+def test_list_tools_json(mock_get_tool_names, cli_runner):
+    mock_get_tool_names.return_value = ['autocaps', 'autotest']
     result = cli_runner.invoke(cli, ['list-tools', '--json'])
     assert result.exit_code == 0
 

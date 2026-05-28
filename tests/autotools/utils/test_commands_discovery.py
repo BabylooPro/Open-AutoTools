@@ -113,6 +113,42 @@ def test_wrap_command_with_metrics_is_idempotent(mock_click_command):
     cmd._autotools_metrics_wrapped = True
     assert commands_module._wrap_command_with_metrics(cmd) is cmd
 
+
+# TEST FOR SINGLE TOOL ENTRY UNKNOWN TOOL
+def test_get_tool_command_entry_unknown_tool(monkeypatch):
+    monkeypatch.setattr(commands_module, 'get_tool_names', lambda: ['known_tool'])
+
+    assert commands_module.get_tool_command_entry('missing_tool') is None
+
+
+# TEST FOR WRAPPED TOOL COMMAND UNKNOWN TOOL
+def test_get_wrapped_tool_command_unknown_tool(monkeypatch):
+    monkeypatch.setattr(commands_module, 'get_tool_command_entry', lambda _tool_name: None)
+
+    assert commands_module.get_wrapped_tool_command('missing_tool') is None
+
+
+# TEST FOR WRAPPED TOOL COMMANDS COLLECTION
+def test_get_wrapped_tool_commands_wraps_discovered_entries(monkeypatch, mock_click_command):
+    cmd_one = mock_click_command('one')
+    cmd_two = mock_click_command('two')
+    entries = {
+        'one': (ModuleType('one.commands'), cmd_one),
+        'two': (ModuleType('two.commands'), cmd_two),
+    }
+    wrapped_calls = []
+
+    def fake_wrap(cmd):
+        wrapped_calls.append(cmd.name)
+        return cmd
+
+    monkeypatch.setattr(commands_module, 'discover_tool_command_entries', lambda: entries)
+    monkeypatch.setattr(commands_module, '_wrap_command_with_metrics', fake_wrap)
+
+    assert commands_module.get_wrapped_tool_commands() == {'one': cmd_one, 'two': cmd_two}
+    assert wrapped_calls == ['one', 'two']
+
+
 # TEST FOR REGISTER COMMANDS (MAPS AUTOTEST TO TEST)
 def test_register_commands_maps_autotest_to_test(monkeypatch, mock_click_command):
     cmd_autotest = mock_click_command('autotest')

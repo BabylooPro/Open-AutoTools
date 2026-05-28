@@ -1,26 +1,88 @@
 import click
-import requests
-import base64
-import argparse
 import json as json_module
-import sys
 import os
 
-from dotenv import load_dotenv
-from datetime import datetime
-from urllib.parse import urlparse
-from packaging.version import parse as parse_version
-from importlib.metadata import version as get_version, PackageNotFoundError
+from .utils.commands import get_tool_names, get_wrapped_tool_command, get_wrapped_tool_commands
 
-from .utils.version import print_version
-from .utils.updates import check_for_updates
-from .utils.commands import get_wrapped_tool_commands
-from .utils.performance import init_metrics, finalize_metrics, get_metrics, should_enable_metrics
+def _public_tool_name(tool_name):
+    return 'test' if tool_name == 'autotest' else tool_name
 
-load_dotenv()
+def _internal_tool_name(public_name):
+    return 'autotest' if public_name == 'test' else public_name
+
+def _load_dotenv_if_present():
+    if not os.path.exists('.env'): return
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except ImportError:
+        pass
+
+def print_version(ctx, value):
+    if not value or ctx.resilient_parsing: return
+    _load_dotenv_if_present()
+    from .utils.version import print_version as _print_version
+    return _print_version(ctx, value)
+
+def check_for_updates():
+    from .utils.updates import check_for_updates as _check_for_updates
+    return _check_for_updates()
+
+def _ctx_has_perf_flag(ctx):
+    current = ctx
+    while current:
+        if current.params.get('perf', False): return True
+        current = getattr(current, 'parent', None)
+    return False
+
+def should_enable_metrics(ctx):
+    if not _ctx_has_perf_flag(ctx): return False
+    from .utils.performance import should_enable_metrics as _should_enable_metrics
+    return _should_enable_metrics(ctx)
+
+def init_metrics():
+    from .utils.performance import init_metrics as _init_metrics
+    return _init_metrics()
+
+def finalize_metrics(ctx):
+    from .utils.performance import finalize_metrics as _finalize_metrics
+    return _finalize_metrics(ctx)
+
+def get_metrics():
+    from .utils.performance import get_metrics as _get_metrics
+    return _get_metrics()
+
+# CLICK COMMAND PROXY USED BY console_scripts AND TESTS WITHOUT IMPORTING EVERY TOOL
+class LazyToolCommand(click.Command):
+    def __init__(self, tool_name):
+        self.tool_name = tool_name
+        super().__init__(name=_public_tool_name(tool_name))
+
+    def _load_command(self):
+        cmd = get_wrapped_tool_command(self.tool_name)
+        if cmd is None:
+            raise click.ClickException(f"Unknown tool: {self.tool_name}")
+        return cmd
+
+    def main(self, *args, **kwargs):
+        return self._load_command().main(*args, **kwargs)
+
+# LAZY GROUP: LISTS TOOLS WITHOUT IMPORTING THEM, IMPORTS ONLY THE SELECTED COMMAND
+class LazyAutoToolsGroup(click.Group):
+    def list_commands(self, ctx):
+        commands = set(super().list_commands(ctx))
+        commands.update(_public_tool_name(tool_name) for tool_name in get_tool_names())
+        return sorted(commands)
+
+    def get_command(self, ctx, cmd_name):
+        cmd = super().get_command(ctx, cmd_name)
+        if cmd is not None: return cmd
+
+        tool_name = _internal_tool_name(cmd_name)
+        return get_wrapped_tool_command(tool_name)
 
 # MAIN CLI ENTRY POINT - REGISTERS ALL COMMANDS AND HANDLES GLOBAL OPTIONS
-@click.group(invoke_without_command=True)
+@click.group(cls=LazyAutoToolsGroup, invoke_without_command=True)
 @click.option('--version', '--v', is_flag=True, callback=lambda ctx, param, value: print_version(ctx, value),
               expose_value=False, is_eager=True, help='Show version and check for updates')
 @click.option('--help', '-h', is_flag=True, callback=lambda ctx, param, value: 
@@ -50,6 +112,7 @@ def cli(ctx, perf):
     """
 
     # INITIALIZE METRICS IF NEEDED
+    _load_dotenv_if_present()
     if should_enable_metrics(ctx):
         init_metrics()
         get_metrics().step_start('startup')
@@ -62,17 +125,6 @@ def cli(ctx, perf):
         if should_enable_metrics(ctx):
             get_metrics().end_process()
             finalize_metrics(ctx)
-
-# DISCOVER AND REGISTER ALL TOOL COMMANDS
-_wrapped_tool_commands = get_wrapped_tool_commands()
-for _tool_name in sorted(_wrapped_tool_commands):
-    _cmd = _wrapped_tool_commands[_tool_name]
-
-    if _tool_name == 'autotest': cli.add_command(_cmd, name='test')
-    else: cli.add_command(_cmd)
-
-# EXPOSE TOOL COMMANDS FOR console_scripts ENTRYPOINTS (setup.py)
-for _tool_name, _cmd in _wrapped_tool_commands.items(): globals()[_tool_name] = _cmd
 
 # DISPLAYS COMMAND OPTIONS
 def _display_command_options(cmd_obj):
@@ -122,11 +174,7 @@ def autotools():
 @cli.command(name='list-tools')
 @click.option('--json', 'as_json', is_flag=True, help='OUTPUT JSON')
 def list_tools(as_json):
-    tools = []
-    for tool_name, cmd in get_wrapped_tool_commands().items():
-        public_name = 'test' if tool_name == 'autotest' else (cmd.name or tool_name)
-        tools.append(public_name)
-
+    tools = [_public_tool_name(tool_name) for tool_name in get_tool_names()]
     tools = sorted(set(tools))
     if as_json: click.echo(json_module.dumps(tools))
     else: click.echo("\n".join(tools))
@@ -156,5 +204,17 @@ def smoke(workdir, timeout, include_tools, exclude_tools, as_json, verbose):
 
     failed = [r for r in results if r.get('status') != 'OK']
     raise SystemExit(1 if failed else 0)
+
+autocaps = LazyToolCommand('autocaps')
+autolower = LazyToolCommand('autolower')
+autopassword = LazyToolCommand('autopassword')
+autoip = LazyToolCommand('autoip')
+autoconvert = LazyToolCommand('autoconvert')
+autocolor = LazyToolCommand('autocolor')
+autounit = LazyToolCommand('autounit')
+autozip = LazyToolCommand('autozip')
+autotodo = LazyToolCommand('autotodo')
+autonote = LazyToolCommand('autonote')
+autotest = LazyToolCommand('autotest')
 
 if __name__ == '__main__': cli()
