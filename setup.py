@@ -2,15 +2,20 @@ import os
 import importlib.util
 from setuptools import setup, find_packages  # pyright: ignore[reportMissingModuleSource]
 
+def _load_module_from_path(module_name, *path_parts):
+    module_path = os.path.join(os.path.dirname(__file__), *path_parts)
+    spec = importlib.util.spec_from_file_location(module_name, module_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
 # READING README.MD FOR LONG DESCRIPTION
 with open("README.md", "r", encoding="utf-8") as fh: long_description = fh.read()
 
 # LOADING REQUIREMENTS
-requirements_module_path = os.path.join(os.path.dirname(__file__), "autotools", "utils", "requirements.py")
-spec = importlib.util.spec_from_file_location("requirements", requirements_module_path)
-requirements_module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(requirements_module)
+requirements_module = _load_module_from_path("requirements", "autotools", "utils", "requirements.py")
 read_requirements = requirements_module.read_requirements
+tool_registry_module = _load_module_from_path("tool_registry", "autotools", "tool_registry.py")
 
 required = read_requirements("requirements.txt")
 dev_required = read_requirements("requirements-dev.txt")
@@ -25,20 +30,9 @@ setup(
     extras_require={"dev": dev_required, "test": dev_required},
     
     # ENTRY POINTS FOR CLI COMMANDS
-    entry_points='''
-        [console_scripts]
-        autotools=autotools.cli:cli
-        autocaps=autotools.cli:autocaps
-        autolower=autotools.cli:autolower
-        autopassword=autotools.cli:autopassword
-        autoip=autotools.cli:autoip
-        autoconvert=autotools.cli:autoconvert
-        autocolor=autotools.cli:autocolor
-        autounit=autotools.cli:autounit
-        autozip=autotools.cli:autozip
-        autotodo=autotools.cli:autotodo
-        autonote=autotools.cli:autonote
-    ''',
+    entry_points={
+        "console_scripts": list(tool_registry_module.CONSOLE_SCRIPT_ENTRY_POINTS),
+    },
     
     # METADATA FOR PYPI
     author="BabylooPro",

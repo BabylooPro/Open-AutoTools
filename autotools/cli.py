@@ -3,6 +3,7 @@ import json as json_module
 import os
 
 from .utils.commands import get_tool_names, get_wrapped_tool_command, get_wrapped_tool_commands
+from .tool_registry import LAZY_TOOL_NAMES
 
 def _public_tool_name(tool_name):
     return 'test' if tool_name == 'autotest' else tool_name
@@ -205,16 +206,6 @@ def smoke(workdir, timeout, include_tools, exclude_tools, as_json, verbose):
     failed = [r for r in results if r.get('status') != 'OK']
     raise SystemExit(1 if failed else 0)
 
-autocaps = LazyToolCommand('autocaps')
-autolower = LazyToolCommand('autolower')
-autopassword = LazyToolCommand('autopassword')
-autoip = LazyToolCommand('autoip')
-autoconvert = LazyToolCommand('autoconvert')
-autocolor = LazyToolCommand('autocolor')
-autounit = LazyToolCommand('autounit')
-autozip = LazyToolCommand('autozip')
-autotodo = LazyToolCommand('autotodo')
-autonote = LazyToolCommand('autonote')
-autotest = LazyToolCommand('autotest')
+globals().update({tool_name: LazyToolCommand(tool_name) for tool_name in LAZY_TOOL_NAMES})
 
 if __name__ == '__main__': cli()
