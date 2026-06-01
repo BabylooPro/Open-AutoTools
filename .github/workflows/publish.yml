@@ -100,12 +100,12 @@ jobs:
               if: inputs.run_tests == false
               run: echo "Tests skipped by user"
 
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
               if: inputs.run_tests == true
 
             - name: Set up Python ${{ matrix.python-version }}
               if: inputs.run_tests == true
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v6
               with:
                   python-version: ${{ matrix.python-version }}
                   allow-prereleases: true
@@ -119,7 +119,7 @@ jobs:
 
             - name: Cache pip packages
               if: inputs.run_tests == true
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               with:
                   path: |
                       ${{ steps.pip-cache.outputs.dir }}
@@ -177,7 +177,7 @@ jobs:
         permissions:
             contents: write
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
               with:
                   token: ${{ secrets.GITHUB_TOKEN }}
                   ref: master
@@ -210,7 +210,7 @@ jobs:
         permissions:
             contents: write
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
               with:
                   fetch-depth: 0
 
@@ -250,7 +250,7 @@ jobs:
                   echo "EOF" >> $GITHUB_ENV
 
             - name: Create GitHub Release
-              uses: softprops/action-gh-release@v1
+              uses: softprops/action-gh-release@v3
               with:
                   files: Open-AutoTools-v${{ inputs.version }}.zip
                   tag_name: v${{ inputs.version }}
@@ -268,13 +268,13 @@ jobs:
         if: always() && (needs.test.result == 'success' || needs.test.result == 'skipped') && (needs['test-platform'].result == 'success' || needs['test-platform'].result == 'skipped') && (needs.update-version.result == 'success' || needs.update-version.result == 'skipped') && (inputs.publish_type == 'test' || needs.create-release.result == 'success' || needs.create-release.result == 'skipped')
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
               with:
                   ref: master
                   fetch-depth: 0
 
             - name: Set up Python
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v6
               with:
                   python-version: "3.x"
                   cache: "pip"
