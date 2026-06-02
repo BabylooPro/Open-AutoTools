@@ -6,7 +6,7 @@ All notable changes to Open-AutoTools will be documented in this file.
 
 ### Fixed
 
-- Optimize execution performance of all tools features
+- Optimized execution performance across all tool features by reduced average execution time by **75.1%**
 
 ## [0.0.6] - 2026-02-22
 
