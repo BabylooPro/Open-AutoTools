@@ -47,6 +47,7 @@ Dockerfile
 docker-compose.yml
 .dockerignore
 docker/data/
+docker/benchmarks/
 
 # MISC
 .DS_Store

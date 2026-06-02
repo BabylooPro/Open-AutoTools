@@ -24,7 +24,7 @@ from autotools.utils.smoke import _build_default_case, _normalize_smoke_tests
 DEFAULT_ITERATIONS = 5
 DEFAULT_WARMUP = 1
 DEFAULT_TIMEOUT_S = 30
-DEFAULT_OUTPUT_DIR = "/data/benchmarks"
+DEFAULT_OUTPUT_DIR = "/benchmarks/data"
 DEFAULT_PROJECT_ROOT = "/app"
 DEFAULT_WORKDIR = f"{DEFAULT_PROJECT_ROOT}/.benchmark-work"
 RUN_ID_TIMESTAMP_FORMAT = "run_%Y%m%dT%H%MZ"

@@ -1,6 +1,7 @@
 x-volumes: &volumes
   - ../:/app
   - ../docker/data:/data
+  - ../docker/benchmarks:/benchmarks
 
 x-env-common: &env_common
   PYTHONUNBUFFERED: "1"

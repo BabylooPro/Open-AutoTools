@@ -1,7 +1,7 @@
 {
   "metadata": {
     "generated_at": "2026-06-02T00:19:38.591395+00:00",
-    "output_dir": "/data/benchmarks",
+    "output_dir": "/benchmarks/data",
     "report_count": 15,
     "run_count": 5,
     "runner_count": 3,

@@ -5,7 +5,7 @@ set -euo pipefail
 export CI=1
 export PYTHONDONTWRITEBYTECODE=1
 
-BENCHMARK_OUTPUT_DIR=${BENCHMARK_OUTPUT_DIR:-/data/benchmarks}
+BENCHMARK_OUTPUT_DIR=${BENCHMARK_OUTPUT_DIR:-/benchmarks/data}
 BENCHMARK_WORKDIR=${BENCHMARK_WORKDIR:-/tmp/autotools-benchmarks}
 BENCHMARK_RUN_ID=${BENCHMARK_RUN_ID:-$(date -u +run_%Y%m%dT%H%MZ)}
 

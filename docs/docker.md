@@ -112,7 +112,7 @@ BENCHMARK_RUN_ID=run_01 docker compose -f docker/docker-compose.yml --profile be
 docker compose -f docker/docker-compose.yml --profile benchmark down --remove-orphans
 ```
 
-Reports are written under `docker/data/benchmarks/<run_id>/<platform>/`:
+Reports are written under `docker/benchmarks/data/<run_id>/<platform>/`:
 
 - JSON report for machine-readable results
 - Markdown report for quick review

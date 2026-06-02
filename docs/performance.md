@@ -159,7 +159,7 @@ docker compose -f docker/docker-compose.yml --profile benchmark up --build --abo
 
 The benchmark reuses the discovered tool smoke scenarios, repeats each case on the
 Ubuntu, macOS, and Windows Docker services concurrently, and writes JSON and Markdown
-reports under `docker/data/benchmarks/<run_id>/<platform>/`. Use `BENCHMARK_RUN_ID`,
+reports under `docker/benchmarks/data/<run_id>/<platform>/`. Use `BENCHMARK_RUN_ID`,
 `BENCHMARK_INCLUDE`, `BENCHMARK_EXCLUDE`, `BENCHMARK_ITERATIONS`, `BENCHMARK_WARMUP`,
 and `BENCHMARK_TIMEOUT` to focus or tune a run.
 
