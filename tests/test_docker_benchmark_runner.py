@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 
-MODULE_PATH = Path(__file__).resolve().parents[1] / "docker" / "benchmark_runner.py"
+MODULE_PATH = Path(__file__).resolve().parents[1] / "docker" / "benchmarks" / "benchmark_runner.py"
 MODULE_DIR = str(MODULE_PATH.parent)
 if MODULE_DIR not in sys.path:
     sys.path.insert(0, MODULE_DIR)

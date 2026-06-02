@@ -24,4 +24,4 @@ echo "Output dir: $BENCHMARK_OUTPUT_DIR"
 echo "Workdir: $BENCHMARK_WORKDIR"
 echo
 
-python /app/docker/benchmark_runner.py
+python /app/docker/benchmarks/benchmark_runner.py
