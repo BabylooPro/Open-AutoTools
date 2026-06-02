@@ -15,6 +15,17 @@
 | macOS Python 3.12 | 5 | 170 | 0 | 764.662 | 129992.456 | 857.347 | 2541.458 | +238.833 | +45.4% |
 | Windows Python 3.12 | 5 | 170 | 0 | 765.070 | 130061.935 | 853.422 | 2467.120 | +239.242 | +45.5% |
 
+## Runner Drift (First vs Last Run)
+
+- First run: run_01
+- Last run: run_05
+
+| Runner | First avg ms | Last avg ms | Diff ms | Diff % |
+| --- | ---: | ---: | ---: | ---: |
+| Ubuntu Python 3.12 | 976.831 | 202.169 | -774.661 | -79.3% |
+| Windows Python 3.12 | 1327.387 | 351.235 | -976.152 | -73.5% |
+| macOS Python 3.12 | 1329.460 | 350.621 | -978.839 | -73.6% |
+
 ## Diff By Run
 
 | Run | Fastest | Runner | Avg mean ms | Diff ms | Diff % | Failed |

@@ -8374,5 +8374,32 @@
       "max_ms": 560.149
     }
   ],
-  "skipped_reports": []
+  "skipped_reports": [],
+  "runner_drift": {
+    "first_run": "run_01",
+    "last_run": "run_05",
+    "runners": [
+      {
+        "runner": "Ubuntu Python 3.12",
+        "first_avg_mean_ms": 976.830705882353,
+        "last_avg_mean_ms": 202.16935294117653,
+        "diff_ms": -774.6613529411765,
+        "diff_pct": -79.30354239237795
+      },
+      {
+        "runner": "Windows Python 3.12",
+        "first_avg_mean_ms": 1327.3873823529411,
+        "last_avg_mean_ms": 351.23497058823534,
+        "diff_ms": -976.1524117647058,
+        "diff_pct": -73.53937703056718
+      },
+      {
+        "runner": "macOS Python 3.12",
+        "first_avg_mean_ms": 1329.4598529411762,
+        "last_avg_mean_ms": 350.6205882352941,
+        "diff_ms": -978.8392647058821,
+        "diff_pct": -73.62683894067106
+      }
+    ]
+  }
 }

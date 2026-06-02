@@ -155,6 +155,7 @@ def build_final_result(output_dir: Path, generated_at: str) -> Dict[str, Any]:
         },
         "reports": reports,
         "results": results,
+        "runner_drift": runner_drift_stats(results, run_ids),
         "skipped_reports": loaded["skipped"],
     }
 
@@ -338,6 +339,76 @@ def render_global_runner_diff(results: List[Dict[str, Any]]) -> List[str]:
     return lines
 
 
+# BUILDS PER-RUNNER AVG MEAN MS FOR A SINGLE RUN, KEYED BY RUNNER
+def runner_run_means(results: List[Dict[str, Any]], run_id: str) -> Dict[str, float]:
+    return {row["runner"]: row["avg_mean_ms"] for row in runner_stats(results, run_id)}
+
+
+# BUILDS RAW FIRST-VS-LAST RUN DRIFT PER RUNNER FOR PERSISTENCE AND RENDERING
+def runner_drift_stats(results: List[Dict[str, Any]], run_ids: Any) -> Dict[str, Any]:
+    if not isinstance(run_ids, list) or len(run_ids) < 2:
+        return {"first_run": None, "last_run": None, "runners": []}
+
+    first_run = str(run_ids[0])
+    last_run = str(run_ids[-1])
+    first_means = runner_run_means(results, first_run)
+    last_means = runner_run_means(results, last_run)
+
+    rows: List[Dict[str, Any]] = []
+    for runner in sorted(set(first_means) & set(last_means)):
+        first = first_means[runner]
+        last = last_means[runner]
+        rows.append(
+            {
+                "runner": runner,
+                "first_avg_mean_ms": first,
+                "last_avg_mean_ms": last,
+                "diff_ms": last - first,
+                "diff_pct": ((last - first) / first) * 100 if first > 0 else 0.0,
+            }
+        )
+
+    return {"first_run": first_run, "last_run": last_run, "runners": rows}
+
+
+# RENDERS THE FIRST-VS-LAST RUN DRIFT PER RUNNER
+def render_runner_run_drift(results: List[Dict[str, Any]], run_ids: Any) -> List[str]:
+    lines = ["## Runner Drift (First vs Last Run)", ""]
+    drift = runner_drift_stats(results, run_ids)
+
+    if not drift["runners"]:
+        if drift["first_run"] is None:
+            lines.append("Need at least two runs to compute drift.")
+        else:
+            lines.append("No runner present in both first and last run.")
+        return lines
+
+    lines.extend(
+        [
+            f"- First run: {drift['first_run']}",
+            f"- Last run: {drift['last_run']}",
+            "",
+            "| Runner | First avg ms | Last avg ms | Diff ms | Diff % |",
+            "| --- | ---: | ---: | ---: | ---: |",
+        ]
+    )
+
+    for row in drift["runners"]:
+        first = row["first_avg_mean_ms"]
+        last = row["last_avg_mean_ms"]
+        lines.append(
+            "| {runner} | {first:.3f} | {last:.3f} | {diff_ms} | {diff_pct} |".format(
+                runner=markdown_cell(row["runner"]),
+                first=first,
+                last=last,
+                diff_ms=format_diff(last, first),
+                diff_pct=format_percent_diff(last, first),
+            )
+        )
+
+    return lines
+
+
 # RENDERS ONE RUNNER DIFF ROW FOR A SINGLE RUN
 def render_run_diff_row(run_id: str, fastest_runner: str, baseline: float, row: Dict[str, Any]) -> str:
     return "| {run_id} | {fastest} | {runner} | {avg_mean_ms:.3f} | {diff_ms} | {diff_pct} | {failed} |".format(
@@ -452,6 +523,7 @@ def render_final_markdown_report(final_result: Dict[str, Any]) -> str:
     sections = [
         render_final_header(metadata),
         render_global_runner_diff(results),
+        render_runner_run_drift(results, metadata.get("runs", [])),
         render_diff_by_run(results, metadata.get("runs", [])),
         render_biggest_case_gaps(results),
         render_failed_runner_reports(final_result["reports"]),
