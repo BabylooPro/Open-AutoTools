@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import re
 import shutil
 import statistics
 import subprocess
@@ -27,7 +28,8 @@ DEFAULT_TIMEOUT_S = 30
 DEFAULT_OUTPUT_DIR = "/benchmarks/data"
 DEFAULT_PROJECT_ROOT = "/app"
 DEFAULT_WORKDIR = f"{DEFAULT_PROJECT_ROOT}/.benchmark-work"
-RUN_ID_TIMESTAMP_FORMAT = "run_%Y%m%dT%H%MZ"
+RUN_ID_PREFIX = "run_"
+RUN_ID_PATTERN = re.compile(r"run_(\d+)")
 
 
 # STORES DOCKER BENCHMARK RUNTIME CONFIGURATION
@@ -71,7 +73,8 @@ def parse_tool_filter(value: str | None) -> Set[str]:
 # LOADS BENCHMARK CONFIGURATION FROM ENVIRONMENT VARIABLES
 def load_config(env: Dict[str, str] | None = None) -> BenchmarkConfig:
     env = dict(os.environ if env is None else env)
-    run_id = env.get("BENCHMARK_RUN_ID") or default_run_id()
+    output_dir = Path(env.get("BENCHMARK_OUTPUT_DIR", DEFAULT_OUTPUT_DIR))
+    run_id = env.get("BENCHMARK_RUN_ID") or next_sequential_run_id(output_dir)
 
     return BenchmarkConfig(
         iterations=parse_int_env(env, "BENCHMARK_ITERATIONS", DEFAULT_ITERATIONS, 1),
@@ -79,7 +82,7 @@ def load_config(env: Dict[str, str] | None = None) -> BenchmarkConfig:
         timeout_s=parse_int_env(env, "BENCHMARK_TIMEOUT", DEFAULT_TIMEOUT_S, 1),
         include=parse_tool_filter(env.get("BENCHMARK_INCLUDE")),
         exclude=parse_tool_filter(env.get("BENCHMARK_EXCLUDE")),
-        output_dir=Path(env.get("BENCHMARK_OUTPUT_DIR", DEFAULT_OUTPUT_DIR)),
+        output_dir=output_dir,
         workdir=Path(env.get("BENCHMARK_WORKDIR", DEFAULT_WORKDIR)),
         project_root=Path(env.get("BENCHMARK_PROJECT_ROOT", DEFAULT_PROJECT_ROOT)),
         run_id=slugify(run_id),
@@ -93,9 +96,15 @@ def platform_python_version() -> str:
     return f"{sys.version_info.major}.{sys.version_info.minor}"
 
 
-# RETURNS THE DEFAULT BENCHMARK RUN DIRECTORY NAME
-def default_run_id() -> str:
-    return datetime.now(timezone.utc).strftime(RUN_ID_TIMESTAMP_FORMAT)
+# RETURNS THE NEXT SEQUENTIAL BENCHMARK RUN DIRECTORY NAME LIKE run_01
+def next_sequential_run_id(output_dir: Path) -> str:
+    highest = 0
+    if output_dir.exists():
+        for entry in output_dir.iterdir():
+            if not entry.is_dir(): continue
+            match = RUN_ID_PATTERN.fullmatch(entry.name)
+            if match: highest = max(highest, int(match.group(1)))
+    return f"{RUN_ID_PREFIX}{highest + 1:02d}"
 
 
 # NORMALIZES A VALUE FOR FILE AND DIRECTORY NAMES
@@ -360,7 +369,7 @@ def atomic_write_text(path: Path, content: str) -> None:
 # WRITES JSON AND MARKDOWN BENCHMARK REPORTS
 def write_reports(report: Dict[str, Any], output_dir: Path) -> Dict[str, str]:
     metadata = report["metadata"]
-    run_id = slugify(str(metadata.get("run_id", default_run_id())))
+    run_id = slugify(str(metadata.get("run_id", next_sequential_run_id(output_dir))))
     platform_slug = slugify(str(metadata.get("platform", "unknown")))
     report_dir = output_dir / run_id / platform_slug
     report_dir.mkdir(parents=True, exist_ok=True)

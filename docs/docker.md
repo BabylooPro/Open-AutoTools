@@ -124,7 +124,7 @@ Configuration is environment-only:
 - `BENCHMARK_TIMEOUT` (default: `30`)
 - `BENCHMARK_INCLUDE` (comma- or space-separated tool names)
 - `BENCHMARK_EXCLUDE` (comma- or space-separated tool names)
-- `BENCHMARK_RUN_ID` (default: UTC minute folder such as `run_20260528T1432Z`)
+- `BENCHMARK_RUN_ID` (default: next sequential folder such as `run_06`)
 
 The benchmark is informational. It does not enforce performance thresholds.
 

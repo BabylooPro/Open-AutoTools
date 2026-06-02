@@ -93,6 +93,29 @@ def test_load_config_parses_benchmark_env(tmp_path):
     assert config.run_id == "run_01"
 
 
+# TEST FOR SEQUENTIAL RUN ID ASSIGNMENT
+def test_next_sequential_run_id_increments_highest(tmp_path):
+    assert benchmark_runner.next_sequential_run_id(tmp_path) == "run_01"
+
+    (tmp_path / "run_01").mkdir()
+    (tmp_path / "run_02").mkdir()
+    (tmp_path / "run_09").mkdir()
+    (tmp_path / "final_result.json").write_text("{}", encoding="utf-8")
+
+    assert benchmark_runner.next_sequential_run_id(tmp_path) == "run_10"
+
+
+# TEST FOR AUTO-ASSIGNED RUN ID WHEN BENCHMARK_RUN_ID IS UNSET
+def test_load_config_auto_assigns_sequential_run_id(tmp_path):
+    output_dir = tmp_path / "reports"
+    output_dir.mkdir()
+    (output_dir / "run_01").mkdir()
+
+    config = benchmark_runner.load_config({"BENCHMARK_OUTPUT_DIR": str(output_dir)})
+
+    assert config.run_id == "run_02"
+
+
 # TEST FOR INVALID INTEGER ENVIRONMENT VALUES
 @pytest.mark.parametrize(
     "name,raw_value,minimum",

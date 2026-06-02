@@ -1,0 +1,4148 @@
+{
+  "metadata": {
+    "started_at": "2026-06-02T00:18:25.204473+00:00",
+    "finished_at": "2026-06-02T00:19:38.559953+00:00",
+    "platform": "Windows",
+    "python_version": "3.12",
+    "iterations": 5,
+    "warmup": 1,
+    "timeout_s": 30,
+    "include": [],
+    "exclude": [],
+    "project_root": "/app",
+    "run_id": "run_05",
+    "case_count": 34,
+    "failed_case_count": 0
+  },
+  "results": [
+    {
+      "category": "Text",
+      "tool": "autocaps",
+      "case": "basic",
+      "args": [
+        "test",
+        "with",
+        "multiple",
+        "words"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 215.041,
+        "mean_ms": 231.959,
+        "median_ms": 230.381,
+        "p95_ms": 253.276,
+        "max_ms": 253.276
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.371952,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "test",
+            "with",
+            "multiple",
+            "words"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.215041,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "test",
+            "with",
+            "multiple",
+            "words"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.253276,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "test",
+            "with",
+            "multiple",
+            "words"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.235322,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "test",
+            "with",
+            "multiple",
+            "words"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.225774,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "test",
+            "with",
+            "multiple",
+            "words"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.230381,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "test",
+            "with",
+            "multiple",
+            "words"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Text",
+      "tool": "autocaps",
+      "case": "special",
+      "args": [
+        "special",
+        "chars:",
+        "!@#$%^&*()"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 216.378,
+        "mean_ms": 236.877,
+        "median_ms": 235.379,
+        "p95_ms": 259.689,
+        "max_ms": 259.689
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.216136,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "special",
+            "chars:",
+            "!@#$%^&*()"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.216378,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "special",
+            "chars:",
+            "!@#$%^&*()"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.235379,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "special",
+            "chars:",
+            "!@#$%^&*()"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.259689,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "special",
+            "chars:",
+            "!@#$%^&*()"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.218142,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "special",
+            "chars:",
+            "!@#$%^&*()"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.254795,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "special",
+            "chars:",
+            "!@#$%^&*()"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Text",
+      "tool": "autocaps",
+      "case": "mixed",
+      "args": [
+        "123",
+        "mixed",
+        "WITH",
+        "lowercase",
+        "456"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 326.148,
+        "mean_ms": 426.446,
+        "median_ms": 453.25,
+        "p95_ms": 460.061,
+        "max_ms": 460.061
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.325778,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "123",
+            "mixed",
+            "WITH",
+            "lowercase",
+            "456"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.457109,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "123",
+            "mixed",
+            "WITH",
+            "lowercase",
+            "456"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.43566,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "123",
+            "mixed",
+            "WITH",
+            "lowercase",
+            "456"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.45325,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "123",
+            "mixed",
+            "WITH",
+            "lowercase",
+            "456"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.460061,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "123",
+            "mixed",
+            "WITH",
+            "lowercase",
+            "456"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.326148,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "123",
+            "mixed",
+            "WITH",
+            "lowercase",
+            "456"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Text",
+      "tool": "autocaps",
+      "case": "unicode",
+      "args": [
+        "áccênts",
+        "ànd",
+        "émojis",
+        "🚀",
+        "⭐"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 262.779,
+        "mean_ms": 355.433,
+        "median_ms": 369.627,
+        "p95_ms": 466.454,
+        "max_ms": 466.454
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.387107,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "áccênts",
+            "ànd",
+            "émojis",
+            "🚀",
+            "⭐"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.40853,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "áccênts",
+            "ànd",
+            "émojis",
+            "🚀",
+            "⭐"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.369627,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "áccênts",
+            "ànd",
+            "émojis",
+            "🚀",
+            "⭐"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.466454,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "áccênts",
+            "ànd",
+            "émojis",
+            "🚀",
+            "⭐"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.269776,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "áccênts",
+            "ànd",
+            "émojis",
+            "🚀",
+            "⭐"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.262779,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocaps",
+            "áccênts",
+            "ànd",
+            "émojis",
+            "🚀",
+            "⭐"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Color",
+      "tool": "autocolor",
+      "case": "hex-default",
+      "args": [
+        "#FF5733"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 217.621,
+        "mean_ms": 271.245,
+        "median_ms": 269.707,
+        "p95_ms": 343.101,
+        "max_ms": 343.101
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.241865,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "#FF5733"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.272122,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "#FF5733"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.253675,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "#FF5733"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.343101,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "#FF5733"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.269707,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "#FF5733"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.217621,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "#FF5733"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Color",
+      "tool": "autocolor",
+      "case": "hex-rgb",
+      "args": [
+        "#FF5733",
+        "--format",
+        "rgb"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 217.671,
+        "mean_ms": 239.697,
+        "median_ms": 219.667,
+        "p95_ms": 320.633,
+        "max_ms": 320.633
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.221526,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "#FF5733",
+            "--format",
+            "rgb"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.218378,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "#FF5733",
+            "--format",
+            "rgb"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.222138,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "#FF5733",
+            "--format",
+            "rgb"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.217671,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "#FF5733",
+            "--format",
+            "rgb"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.219667,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "#FF5733",
+            "--format",
+            "rgb"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.320633,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "#FF5733",
+            "--format",
+            "rgb"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Color",
+      "tool": "autocolor",
+      "case": "rgb-hsl",
+      "args": [
+        "rgb(255,87,51)",
+        "--format",
+        "hsl"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 222.604,
+        "mean_ms": 233.749,
+        "median_ms": 230.287,
+        "p95_ms": 246.523,
+        "max_ms": 246.523
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.221815,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "rgb(255,87,51)",
+            "--format",
+            "hsl"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.246523,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "rgb(255,87,51)",
+            "--format",
+            "hsl"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.229674,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "rgb(255,87,51)",
+            "--format",
+            "hsl"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.239659,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "rgb(255,87,51)",
+            "--format",
+            "hsl"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.230287,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "rgb(255,87,51)",
+            "--format",
+            "hsl"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.222604,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "rgb(255,87,51)",
+            "--format",
+            "hsl"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Color",
+      "tool": "autocolor",
+      "case": "hsl-rgba",
+      "args": [
+        "hsl(9,100%,60%)",
+        "--format",
+        "rgba"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 223.48,
+        "mean_ms": 228.566,
+        "median_ms": 227.986,
+        "p95_ms": 235.723,
+        "max_ms": 235.723
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.222505,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "hsl(9,100%,60%)",
+            "--format",
+            "rgba"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.227986,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "hsl(9,100%,60%)",
+            "--format",
+            "rgba"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.224665,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "hsl(9,100%,60%)",
+            "--format",
+            "rgba"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.235723,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "hsl(9,100%,60%)",
+            "--format",
+            "rgba"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.230975,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "hsl(9,100%,60%)",
+            "--format",
+            "rgba"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.22348,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autocolor",
+            "hsl(9,100%,60%)",
+            "--format",
+            "rgba"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Files",
+      "tool": "autoconvert",
+      "case": "md-json",
+      "args": [
+        "README.md",
+        ".autotools-smoke/autoconvert-smoke.json"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 212.012,
+        "mean_ms": 225.058,
+        "median_ms": 219.071,
+        "p95_ms": 261.628,
+        "max_ms": 261.628
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.212032,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoconvert",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autoconvert/md-json/warmup-1/inputs/README.md",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autoconvert/md-json/warmup-1/outputs/autoconvert-smoke.json"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.212822,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoconvert",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autoconvert/md-json/iteration-1/inputs/README.md",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autoconvert/md-json/iteration-1/outputs/autoconvert-smoke.json"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.261628,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoconvert",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autoconvert/md-json/iteration-2/inputs/README.md",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autoconvert/md-json/iteration-2/outputs/autoconvert-smoke.json"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.212012,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoconvert",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autoconvert/md-json/iteration-3/inputs/README.md",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autoconvert/md-json/iteration-3/outputs/autoconvert-smoke.json"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.219071,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoconvert",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autoconvert/md-json/iteration-4/inputs/README.md",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autoconvert/md-json/iteration-4/outputs/autoconvert-smoke.json"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.219756,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoconvert",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autoconvert/md-json/iteration-5/inputs/README.md",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autoconvert/md-json/iteration-5/outputs/autoconvert-smoke.json"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Network",
+      "tool": "autoip",
+      "case": "basic",
+      "args": [
+        "--no-ip"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 446.696,
+        "mean_ms": 460.637,
+        "median_ms": 464.404,
+        "p95_ms": 475.035,
+        "max_ms": 475.035
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.461767,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--no-ip"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.446696,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--no-ip"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.464404,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--no-ip"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.452317,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--no-ip"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.464733,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--no-ip"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.475035,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--no-ip"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Network",
+      "tool": "autoip",
+      "case": "connectivity",
+      "args": [
+        "--test"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 688.006,
+        "mean_ms": 734.512,
+        "median_ms": 711.032,
+        "p95_ms": 818.107,
+        "max_ms": 818.107
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.704196,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--test"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.761072,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--test"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.694342,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--test"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.688006,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--test"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.818107,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--test"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.711032,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--test"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Network",
+      "tool": "autoip",
+      "case": "dns",
+      "args": [
+        "--dns"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 604.789,
+        "mean_ms": 613.208,
+        "median_ms": 612.051,
+        "p95_ms": 621.033,
+        "max_ms": 621.033
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.652304,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--dns"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.621033,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--dns"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.618985,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--dns"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.604789,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--dns"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.60918,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--dns"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.612051,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--dns"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Network",
+      "tool": "autoip",
+      "case": "ports",
+      "args": [
+        "--ports"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 613.568,
+        "mean_ms": 636.881,
+        "median_ms": 614.879,
+        "p95_ms": 689.425,
+        "max_ms": 689.425
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.610385,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--ports"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.613568,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--ports"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.614879,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--ports"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.614607,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--ports"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.651925,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--ports"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.689425,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autoip",
+            "--ports"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Text",
+      "tool": "autolower",
+      "case": "basic",
+      "args": [
+        "TEST",
+        "WITH",
+        "MULTIPLE",
+        "WORDS"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 217.007,
+        "mean_ms": 251.774,
+        "median_ms": 222.034,
+        "p95_ms": 349.892,
+        "max_ms": 349.892
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.218427,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "TEST",
+            "WITH",
+            "MULTIPLE",
+            "WORDS"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.217007,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "TEST",
+            "WITH",
+            "MULTIPLE",
+            "WORDS"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.218241,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "TEST",
+            "WITH",
+            "MULTIPLE",
+            "WORDS"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.222034,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "TEST",
+            "WITH",
+            "MULTIPLE",
+            "WORDS"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.251695,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "TEST",
+            "WITH",
+            "MULTIPLE",
+            "WORDS"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.349892,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "TEST",
+            "WITH",
+            "MULTIPLE",
+            "WORDS"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Text",
+      "tool": "autolower",
+      "case": "special",
+      "args": [
+        "SPECIAL",
+        "CHARS:",
+        "!@#$%^&*()"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 266.575,
+        "mean_ms": 309.64,
+        "median_ms": 325.031,
+        "p95_ms": 332.645,
+        "max_ms": 332.645
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.278799,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "SPECIAL",
+            "CHARS:",
+            "!@#$%^&*()"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.266575,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "SPECIAL",
+            "CHARS:",
+            "!@#$%^&*()"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.331007,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "SPECIAL",
+            "CHARS:",
+            "!@#$%^&*()"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.332645,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "SPECIAL",
+            "CHARS:",
+            "!@#$%^&*()"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.29294,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "SPECIAL",
+            "CHARS:",
+            "!@#$%^&*()"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.325031,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "SPECIAL",
+            "CHARS:",
+            "!@#$%^&*()"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Text",
+      "tool": "autolower",
+      "case": "mixed",
+      "args": [
+        "123",
+        "MIXED",
+        "with",
+        "UPPERCASE",
+        "456"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 246.837,
+        "mean_ms": 281.954,
+        "median_ms": 273.18,
+        "p95_ms": 319.016,
+        "max_ms": 319.016
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.31158,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "123",
+            "MIXED",
+            "with",
+            "UPPERCASE",
+            "456"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.246837,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "123",
+            "MIXED",
+            "with",
+            "UPPERCASE",
+            "456"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.303353,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "123",
+            "MIXED",
+            "with",
+            "UPPERCASE",
+            "456"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.319016,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "123",
+            "MIXED",
+            "with",
+            "UPPERCASE",
+            "456"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.267386,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "123",
+            "MIXED",
+            "with",
+            "UPPERCASE",
+            "456"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.27318,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "123",
+            "MIXED",
+            "with",
+            "UPPERCASE",
+            "456"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Text",
+      "tool": "autolower",
+      "case": "unicode",
+      "args": [
+        "ÁCCÊNTS",
+        "ÀND",
+        "ÉMOJIS",
+        "🚀",
+        "⭐"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 233.09,
+        "mean_ms": 277.669,
+        "median_ms": 295.492,
+        "p95_ms": 330.423,
+        "max_ms": 330.423
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.275692,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "ÁCCÊNTS",
+            "ÀND",
+            "ÉMOJIS",
+            "🚀",
+            "⭐"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.295492,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "ÁCCÊNTS",
+            "ÀND",
+            "ÉMOJIS",
+            "🚀",
+            "⭐"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.23309,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "ÁCCÊNTS",
+            "ÀND",
+            "ÉMOJIS",
+            "🚀",
+            "⭐"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.295903,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "ÁCCÊNTS",
+            "ÀND",
+            "ÉMOJIS",
+            "🚀",
+            "⭐"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.330423,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "ÁCCÊNTS",
+            "ÀND",
+            "ÉMOJIS",
+            "🚀",
+            "⭐"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.233439,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autolower",
+            "ÁCCÊNTS",
+            "ÀND",
+            "ÉMOJIS",
+            "🚀",
+            "⭐"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Text",
+      "tool": "autonote",
+      "case": "add-note",
+      "args": [
+        "--add",
+        "Test note"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 195.652,
+        "mean_ms": 231.021,
+        "median_ms": 243.055,
+        "p95_ms": 267.267,
+        "max_ms": 267.267
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.249211,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autonote",
+            "--add",
+            "Test note"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.267267,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autonote",
+            "--add",
+            "Test note"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.195652,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autonote",
+            "--add",
+            "Test note"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.250338,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autonote",
+            "--add",
+            "Test note"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.198794,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autonote",
+            "--add",
+            "Test note"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.243055,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autonote",
+            "--add",
+            "Test note"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Text",
+      "tool": "autonote",
+      "case": "list-notes",
+      "args": [
+        "--list"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 201.055,
+        "mean_ms": 250.609,
+        "median_ms": 261.41,
+        "p95_ms": 312.5,
+        "max_ms": 312.5
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.232539,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autonote",
+            "--list"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.206563,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autonote",
+            "--list"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.271515,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autonote",
+            "--list"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.201055,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autonote",
+            "--list"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.26141,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autonote",
+            "--list"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.3125,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autonote",
+            "--list"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Security",
+      "tool": "autopassword",
+      "case": "basic",
+      "args": [],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 254.014,
+        "mean_ms": 286.949,
+        "median_ms": 300.298,
+        "p95_ms": 319.903,
+        "max_ms": 319.903
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.246661,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.300298,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.304416,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.319903,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.256115,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.254014,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Security",
+      "tool": "autopassword",
+      "case": "length",
+      "args": [
+        "--length",
+        "32"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 225.071,
+        "mean_ms": 248.098,
+        "median_ms": 236.475,
+        "p95_ms": 284.112,
+        "max_ms": 284.112
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.318577,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--length",
+            "32"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.236475,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--length",
+            "32"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.269162,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--length",
+            "32"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.284112,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--length",
+            "32"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.22567,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--length",
+            "32"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.225071,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--length",
+            "32"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Security",
+      "tool": "autopassword",
+      "case": "no-special",
+      "args": [
+        "--no-special"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 215.999,
+        "mean_ms": 229.903,
+        "median_ms": 221.141,
+        "p95_ms": 259.727,
+        "max_ms": 259.727
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.240667,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-special"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.259727,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-special"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.219078,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-special"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.23357,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-special"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.215999,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-special"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.221141,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-special"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Security",
+      "tool": "autopassword",
+      "case": "no-numbers",
+      "args": [
+        "--no-numbers"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 214.007,
+        "mean_ms": 223.733,
+        "median_ms": 225.117,
+        "p95_ms": 237.32,
+        "max_ms": 237.32
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.22631,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-numbers"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.225924,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-numbers"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.216297,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-numbers"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.23732,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-numbers"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.214007,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-numbers"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.225117,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-numbers"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Security",
+      "tool": "autopassword",
+      "case": "no-uppercase",
+      "args": [
+        "--no-uppercase"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 202.123,
+        "mean_ms": 212.334,
+        "median_ms": 208.836,
+        "p95_ms": 226.719,
+        "max_ms": 226.719
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.21638,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-uppercase"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.202123,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-uppercase"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.208836,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-uppercase"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.226719,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-uppercase"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.216875,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-uppercase"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.207116,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--no-uppercase"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Security",
+      "tool": "autopassword",
+      "case": "min-special",
+      "args": [
+        "--min-special",
+        "3"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 203.559,
+        "mean_ms": 209.146,
+        "median_ms": 208.84,
+        "p95_ms": 215.371,
+        "max_ms": 215.371
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.206041,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--min-special",
+            "3"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.203559,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--min-special",
+            "3"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.20884,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--min-special",
+            "3"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.207974,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--min-special",
+            "3"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.209985,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--min-special",
+            "3"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.215371,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--min-special",
+            "3"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Security",
+      "tool": "autopassword",
+      "case": "min-numbers",
+      "args": [
+        "--min-numbers",
+        "3"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 210.915,
+        "mean_ms": 224.098,
+        "median_ms": 217.952,
+        "p95_ms": 253.401,
+        "max_ms": 253.401
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.211251,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--min-numbers",
+            "3"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.217952,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--min-numbers",
+            "3"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.210915,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--min-numbers",
+            "3"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.21515,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--min-numbers",
+            "3"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.223073,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--min-numbers",
+            "3"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.253401,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--min-numbers",
+            "3"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Security",
+      "tool": "autopassword",
+      "case": "analysis",
+      "args": [
+        "--analyze"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 209.631,
+        "mean_ms": 212.923,
+        "median_ms": 211.305,
+        "p95_ms": 217.776,
+        "max_ms": 217.776
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.35295,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--analyze"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.210206,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--analyze"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.209631,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--analyze"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.215697,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--analyze"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.217776,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--analyze"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.211305,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--analyze"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Security",
+      "tool": "autopassword",
+      "case": "encryption",
+      "args": [
+        "--gen-key"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 204.382,
+        "mean_ms": 246.404,
+        "median_ms": 224.015,
+        "p95_ms": 352.375,
+        "max_ms": 352.375
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.207354,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--gen-key"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.204382,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--gen-key"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.352375,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--gen-key"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.224015,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--gen-key"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.24027,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--gen-key"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.21098,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autopassword",
+            "--gen-key"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Task",
+      "tool": "autotodo",
+      "case": "autotodo-list",
+      "args": [
+        "--list"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 194.298,
+        "mean_ms": 203.293,
+        "median_ms": 202.429,
+        "p95_ms": 214.567,
+        "max_ms": 214.567
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.201056,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autotodo",
+            "--list"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.202429,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autotodo",
+            "--list"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.194298,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autotodo",
+            "--list"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.201974,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autotodo",
+            "--list"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.203199,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autotodo",
+            "--list"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.214567,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autotodo",
+            "--list"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Conversion",
+      "tool": "autounit",
+      "case": "length-meters-feet",
+      "args": [
+        "100",
+        "meter",
+        "feet"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 628.416,
+        "mean_ms": 648.512,
+        "median_ms": 653.214,
+        "p95_ms": 667.49,
+        "max_ms": 667.49
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.674377,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "100",
+            "meter",
+            "feet"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.66749,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "100",
+            "meter",
+            "feet"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.653214,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "100",
+            "meter",
+            "feet"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.63663,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "100",
+            "meter",
+            "feet"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.628416,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "100",
+            "meter",
+            "feet"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.656811,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "100",
+            "meter",
+            "feet"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Conversion",
+      "tool": "autounit",
+      "case": "volume-liters-gallons",
+      "args": [
+        "10",
+        "liter",
+        "gallon"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 634.605,
+        "mean_ms": 666.437,
+        "median_ms": 648.975,
+        "p95_ms": 736.896,
+        "max_ms": 736.896
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.675681,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "10",
+            "liter",
+            "gallon"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.648975,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "10",
+            "liter",
+            "gallon"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.662833,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "10",
+            "liter",
+            "gallon"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.736896,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "10",
+            "liter",
+            "gallon"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.634605,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "10",
+            "liter",
+            "gallon"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.648876,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "10",
+            "liter",
+            "gallon"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Conversion",
+      "tool": "autounit",
+      "case": "weight-kg-lb",
+      "args": [
+        "50",
+        "kilogram",
+        "pound"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 639.434,
+        "mean_ms": 654.232,
+        "median_ms": 654.33,
+        "p95_ms": 666.356,
+        "max_ms": 666.356
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.696158,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "50",
+            "kilogram",
+            "pound"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.657801,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "50",
+            "kilogram",
+            "pound"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.65433,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "50",
+            "kilogram",
+            "pound"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.639434,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "50",
+            "kilogram",
+            "pound"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.666356,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "50",
+            "kilogram",
+            "pound"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.653238,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "50",
+            "kilogram",
+            "pound"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Conversion",
+      "tool": "autounit",
+      "case": "temperature-celsius-fahrenheit",
+      "args": [
+        "25",
+        "celsius",
+        "fahrenheit"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 650.347,
+        "mean_ms": 837.091,
+        "median_ms": 691.265,
+        "p95_ms": 1157.442,
+        "max_ms": 1157.442
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.635755,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "25",
+            "celsius",
+            "fahrenheit"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.650347,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "25",
+            "celsius",
+            "fahrenheit"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.653573,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "25",
+            "celsius",
+            "fahrenheit"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.691265,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "25",
+            "celsius",
+            "fahrenheit"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 1.157442,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "25",
+            "celsius",
+            "fahrenheit"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 1.03283,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autounit",
+            "25",
+            "celsius",
+            "fahrenheit"
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "category": "Files",
+      "tool": "autozip",
+      "case": "zip-readme",
+      "args": [
+        "README.md",
+        "--output",
+        ".autotools-smoke/autozip-smoke.zip"
+      ],
+      "status": "OK",
+      "stats": {
+        "count": 5,
+        "min_ms": 220.372,
+        "mean_ms": 341.901,
+        "median_ms": 235.438,
+        "p95_ms": 567.85,
+        "max_ms": 567.85
+      },
+      "warmups": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.64398,
+          "output": "",
+          "phase": "warmup",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autozip",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autozip/zip-readme/warmup-1/inputs/README.md",
+            "--output",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autozip/zip-readme/warmup-1/outputs/autozip-smoke.zip"
+          ]
+        }
+      ],
+      "runs": [
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.56785,
+          "output": "",
+          "phase": "iteration",
+          "index": 1,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autozip",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autozip/zip-readme/iteration-1/inputs/README.md",
+            "--output",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autozip/zip-readme/iteration-1/outputs/autozip-smoke.zip"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.463616,
+          "output": "",
+          "phase": "iteration",
+          "index": 2,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autozip",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autozip/zip-readme/iteration-2/inputs/README.md",
+            "--output",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autozip/zip-readme/iteration-2/outputs/autozip-smoke.zip"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.235438,
+          "output": "",
+          "phase": "iteration",
+          "index": 3,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autozip",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autozip/zip-readme/iteration-3/inputs/README.md",
+            "--output",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autozip/zip-readme/iteration-3/outputs/autozip-smoke.zip"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.222229,
+          "output": "",
+          "phase": "iteration",
+          "index": 4,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autozip",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autozip/zip-readme/iteration-4/inputs/README.md",
+            "--output",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autozip/zip-readme/iteration-4/outputs/autozip-smoke.zip"
+          ]
+        },
+        {
+          "status": "OK",
+          "returncode": 0,
+          "duration_s": 0.220372,
+          "output": "",
+          "phase": "iteration",
+          "index": 5,
+          "cmd": [
+            "/opt/venv/bin/python",
+            "-m",
+            "autotools.cli",
+            "autozip",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autozip/zip-readme/iteration-5/inputs/README.md",
+            "--output",
+            "/tmp/autotools-benchmarks/run-20260602T001825Z/autozip/zip-readme/iteration-5/outputs/autozip-smoke.zip"
+          ]
+        }
+      ],
+      "failures": []
+    }
+  ]
+}
