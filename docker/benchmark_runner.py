@@ -16,6 +16,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Sequence, Set
 
+from benchmark_final_report import write_final_result
 from autotools.utils.commands import discover_tool_command_entries, get_tool_category
 from autotools.utils.smoke import _build_default_case, _normalize_smoke_tests
 
@@ -348,6 +349,14 @@ def build_report(config: BenchmarkConfig, results: List[Dict[str, Any]], started
     }
 
 
+# WRITES TEXT THROUGH A TEMPORARY FILE BEFORE REPLACING THE DESTINATION
+def atomic_write_text(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temp_path = path.with_name(f".{path.name}.{os.getpid()}.{time.time_ns()}.tmp")
+    temp_path.write_text(content, encoding="utf-8")
+    temp_path.replace(path)
+
+
 # WRITES JSON AND MARKDOWN BENCHMARK REPORTS
 def write_reports(report: Dict[str, Any], output_dir: Path) -> Dict[str, str]:
     metadata = report["metadata"]
@@ -358,10 +367,12 @@ def write_reports(report: Dict[str, Any], output_dir: Path) -> Dict[str, str]:
     json_path = report_dir / "benchmark.json"
     markdown_path = report_dir / "benchmark.md"
 
-    json_path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    markdown_path.write_text(render_markdown_report(report), encoding="utf-8")
+    atomic_write_text(json_path, json.dumps(report, indent=2, ensure_ascii=False) + "\n")
+    atomic_write_text(markdown_path, render_markdown_report(report))
 
-    return {"json": str(json_path), "markdown": str(markdown_path)}
+    paths = {"json": str(json_path), "markdown": str(markdown_path)}
+    paths.update(write_final_result(output_dir))
+    return paths
 
 
 # RENDERS A MARKDOWN SUMMARY REPORT
@@ -412,11 +423,13 @@ def render_markdown_report(report: Dict[str, Any]) -> str:
 def print_summary(report: Dict[str, Any], paths: Dict[str, str]) -> None:
     metadata = report["metadata"]
     print()
-    print("Benchmark summary")
-    print(f"Cases: {metadata['case_count']}")
-    print(f"Failed cases: {metadata['failed_case_count']}")
-    print(f"JSON report: {paths['json']}")
-    print(f"Markdown report: {paths['markdown']}")
+    print("BENCHMARK SUMMARY")
+    print(f"CASES: {metadata['case_count']}")
+    print(f"FAILED CASES: {metadata['failed_case_count']}")
+    print(f"JSON REPORT: {paths['json']}")
+    print(f"MARKDOWN REPORT: {paths['markdown']}")
+    print(f"FINAL JSON REPORT: {paths['final_json']}")
+    print(f"FINAL MARKDOWN REPORT: {paths['final_markdown']}")
 
 
 # RUNS ALL SELECTED BENCHMARK CASES AND RETURNS A REPORT
